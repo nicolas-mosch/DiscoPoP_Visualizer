@@ -25,6 +25,9 @@ var template = [{
           properties: ['openFile']
         });
 
+        if(filePaths == null)
+          return;
+
         //TODO: build graph from data
         mainWindow.webContents.executeJavaScript("renderGraph('"+filePaths[0]+"');");
       }

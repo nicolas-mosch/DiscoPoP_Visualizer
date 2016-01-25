@@ -6,6 +6,26 @@ var fs = require('fs');
 var graphGenerator = require('./node_modules/graphGenerator/graphGenerator');
 var g;
 
+
+$(function(){
+
+  var onSampleResized = function(e){
+    var columns = $(e.currentTarget).find("td");
+  };
+
+
+  $("#table").colResizable();
+
+})
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/monokai");
+  editor.getSession().setMode("ace/mode/javascript");
+
+
+
+
+
+
 function renderGraph(path){
   graphGenerator.buildGraphFromXML(path);
   alert('test');
