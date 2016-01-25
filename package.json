@@ -1,0 +1,17 @@
+{
+  "name": "DiscoPoP",
+  "version": "0.0.0",
+  "description": "",
+  "main": "main",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Nicolas Morew",
+  "license": "MIT",
+  "devDependencies": {
+    "electron-prebuilt": "~0.36.2"
+  },
+  "dependencies": {
+    "nconf": "^0.8.2"
+  }
+}
