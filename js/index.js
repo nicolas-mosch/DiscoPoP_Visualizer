@@ -7,9 +7,9 @@ var graphGenerator = require('./node_modules/graphGenerator/graphGenerator');
 var g;
 
 
-$(function(){
+$(function() {
 
-  var onSampleResized = function(e){
+  var onSampleResized = function(e) {
     var columns = $(e.currentTarget).find("td");
   };
 
@@ -17,16 +17,23 @@ $(function(){
   $("#table").colResizable();
 
 })
+
+
+
+function initAce() {
   var editor = ace.edit("editor");
+
   editor.setTheme("ace/theme/monokai");
-  editor.getSession().setMode("ace/mode/javascript");
+  editor.getSession().setMode("ace/mode/c_cpp");
+  editor.setReadOnly(true);
+  editor.setOptions({
+    maxLines: 1000
+  });
+
+}
 
 
-
-
-
-
-function renderGraph(path){
+function renderGraph(path) {
   graphGenerator.buildGraphFromXML(path);
   alert('test');
 }
@@ -104,33 +111,31 @@ function loadTestGraph() {
 
 }
 
-function loadDependencyWheel(){
-  var data = {
-  packageNames: ['Main', 'A', 'B'],
-  matrix: [[0, 1, 1], // Main depends on A and B
-           [0, 0, 1], // A depends on B
-           [0, 0, 0]] // B doesn't depend on A or Main
-};
-var chart = d3.chart.dependencyWheel()
-  .width(700)    // also used for height, since the wheel is in a a square
-  .margin(150)   // used to display package names
-  .padding(.02); // separating groups in the wheel
-}
 
 function renderGraph() {
   loadTestGraph();
   var render = new dagreD3.render();
+
   // Set up an SVG group so that we can translate the final graph.
   var svg = d3.select("svg"),
-    svgGroup = svg.append("g");
+    inner = svg.append("g");
+
+  // Set up zoom support
+  var zoom = d3.behavior.zoom().on("zoom", function() {
+    inner.attr("transform", "translate(" + d3.event.translate + ")" +
+      "scale(" + d3.event.scale + ")");
+  });
+  svg.call(zoom);
+
 
   // Run the renderer. This is what draws the final graph.
-  render(d3.select("svg g"), g);
+  render(inner, g);
 
-  // Center the graph
-  var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
-  svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)");
-  svg.attr("height", g.graph().height + 40);
+  inner.selectAll("g.cluster").on('click', function(d) {
+    alert(d);
+  });
+
+
   alert('Done');
 }
 

@@ -1,0 +1,24 @@
+{
+  "name": "DiscoPoP",
+  "description": "FrontEnd for DiscoPoP",
+  "main": "main",
+  "authors": [
+    "Nicolas Morew"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/nicolas-mosch/DiscoPoP_Frontend",
+  "moduleType": [
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.2.0",
+    "iron-elements": "PolymerElements/iron-elements#~1.0.7"
+  }
+}

@@ -1,0 +1,35 @@
+<link rel="import"
+      href="../bower_components/polymer/polymer.html">
+
+      <dom-module id="element-name">
+
+        <template>
+          <style>
+            div{
+              border: 5px solid red;
+            }
+          </style>
+
+          <!-- local DOM for your element -->
+
+          <div>Test</div> <!-- data bindings in local DOM -->
+        </template>
+
+        <script>
+          // element registration
+          Polymer({
+            is: "element-name",
+
+            // add properties and methods on the element's prototype
+
+            properties: {
+              // declare properties for the element's public API
+              greeting: {
+                type: String,
+                value: "Hello!"
+              }
+            }
+          });
+        </script>
+
+      </dom-module>

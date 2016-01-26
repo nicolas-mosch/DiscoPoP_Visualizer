@@ -12,6 +12,7 @@
     "electron-prebuilt": "~0.36.2"
   },
   "dependencies": {
-    "nconf": "^0.8.2"
+    "nconf": "^0.8.2",
+    "lodash": "~4.0.1"
   }
 }

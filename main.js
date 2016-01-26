@@ -29,6 +29,7 @@ var template = [{
           return;
 
         //TODO: build graph from data
+
         mainWindow.webContents.executeJavaScript("renderGraph('"+filePaths[0]+"');");
       }
     }]
@@ -54,7 +55,16 @@ var template = [{
         label: 'File Mapping',
         role: 'fileMapping',
       }]
-    }]
+    },
+    {
+      label: 'Code',
+      role: 'codeView',
+      submenu: [{
+        label: 'Tabbed',
+        role: 'All',
+      }]
+    }
+  ]
   }
 
 ];
