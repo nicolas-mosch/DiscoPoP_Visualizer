@@ -21,21 +21,42 @@ $(function() {
 
 
 function initAce() {
-  var editor = ace.edit("editor");
 
-  editor.setTheme("ace/theme/monokai");
-  editor.getSession().setMode("ace/mode/c_cpp");
-  editor.setReadOnly(true);
-  editor.setOptions({
-    maxLines: 1000
+  $('.editor').each(function(i, obj) {
+    var editor = ace.edit(obj);
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/c_cpp");
+    editor.setReadOnly(true);
+    editor.setHighlightActiveLine(false);
+    editor.setOptions({
+      maxLines: 1000
+    });
   });
-
 }
 
 
 function renderGraph(path) {
   graphGenerator.buildGraphFromXML(path);
   alert('test');
+}
+
+
+function testProgressBar(){
+  var elem = document.getElementById("progress-bar");
+
+  var width = 0;
+  var id = setInterval(frame, 70);
+  function frame() {
+    if (width == 100) {
+      clearInterval(id);
+      elem.style.display = "none";
+    } else {
+      width++;
+      elem.style.width = width + '%';
+      elem.innerHTML = width + "%";
+    }
+  }
+  //$('#progress-bar').css("display", "none");
 }
 
 function loadTestGraph() {
@@ -117,8 +138,9 @@ function renderGraph() {
   var render = new dagreD3.render();
 
   // Set up an SVG group so that we can translate the final graph.
-  var svg = d3.select("svg"),
-    inner = svg.append("g");
+  var svg = d3.select("svg");
+  svg.selectAll("*").remove()
+  var inner = svg.append("g");
 
   // Set up zoom support
   var zoom = d3.behavior.zoom().on("zoom", function() {
@@ -135,8 +157,6 @@ function renderGraph() {
     alert(d);
   });
 
-
-  alert('Done');
 }
 
 module.exports = {

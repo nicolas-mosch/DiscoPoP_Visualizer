@@ -2,29 +2,152 @@
 <html lang="en">
 
 <head>
-  <title>DiscoPoP Visualizer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="ace/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
   <script  src="js/jquery.js"></script>
   <script  src="js/colResizable-1.5.min.js"></script>
   <script src="js/index.js"></script>
+
+  <title>DiscoPoP Visualizer</title>
 </head>
 
-<body style="height:95%;">
+<body>
 <table id="table" style="height: 100%; width:100%;" border="1"><tr>
-<td style="height:100%;overflow:auto;background-color: #707070;">
-  <div id="editor">
-    function foo(items) { var x = "All this is syntax highlighted"; return x; }
+<td style="height:100%;"><div style="height:100%;overflow:auto;background-color: #707070;">
+  <div class="editor">
+    int mergesort(int *input, int size)
+{
+    int *scratch = (int *)malloc(size * sizeof(int));
+    if(scratch != NULL)
+    {
+        merge_helper(input, 0, size, scratch);
+        free(scratch);
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
   </div>
+  <div class="editor">
+    void merge_helper(int *input, int left, int right, int *scratch)
+{
+    /* base case: one element */
+    if(right == left + 1)
+    {
+        return;
+    }
+    else
+    {
+        int i = 0;
+        int length = right - left;
+        int midpoint_distance = length/2;
+        /* l and r are to the positions in the left and right subarrays */
+        int l = left, r = left + midpoint_distance;
+
+        /* sort each subarray */
+        merge_helper(input, left, left + midpoint_distance, scratch);
+        merge_helper(input, left + midpoint_distance, right, scratch);
+
+        /* merge the arrays together using scratch for temporary storage */
+        for(i = 0; i < length; i++)
+        {
+            /* Check to see if any elements remain in the left array; if so,
+             * we check if there are any elements left in the right array; if
+             * so, we compare them.  Otherwise, we know that the merge must
+             * use take the element from the left array */
+            if(l < left + midpoint_distance &&
+                    (r == right || max(input[l], input[r]) == input[l]))
+            {
+                scratch[i] = input[l];
+                l++;
+            }
+            else
+            {
+                scratch[i] = input[r];
+                r++;
+            }
+        }
+        /* Copy the sorted subarray back to the input */
+        for(i = left; i < right; i++)
+        {
+            input[i] = scratch[i - left];
+        }
+    }
+}
+  </div>
+
+  <div class="editor">
+    int max(int x, int y)
+{
+    if(x > y)
+    {
+        return x;
+    }
+    else
+    {
+        return y;
+    }
+}
+  </div>
+</div>
 </td>
 <td style="height:100%;overflow:auto;">
+  <table style="height: 100%; width: 100%;" border="1">
+      <tr style="height: 80%;">
+        <td>
+          <div id="graph" style="margin: 0 auto;">
+            <svg id="svg-canvas" width=100%></svg>
+        </div>
+        </td>
+      </tr>
+      <tr style="height: 20%;">
+        <td>
+          <div class="row">
+              <div class="col-sm-6">
+                <table style="height:100%; width:100%;">
+                  <tr>
+                    <td style="height: 15%;text-align:center;">
+                      <h3>Legend</h3>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="height: 85%;">
+                      <div id="legend">
 
-  <div id="graph" style="margin: 0 auto;">
-    <svg id="svg-canvas" width=100%></svg>
-</div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+                </center>
+              </div>
+              <div class="col-sm-6">
+                <button type="button" class="btn btn-default">Reset Graph</button>
+              </div>
+          </div>
+
+
+        </td>
+      </tr>
+  </table>
+
 
 </td>
 
+</tr>
+<tr>
+  <td colspan="2">
+    <div class="progress" id="progress" style="text-align:center;">
+    <div id="progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
+
+    </div>
+  </div>
+  </td>
 </tr>
 </table>
 </body>
@@ -32,6 +155,7 @@
 <script>
 renderGraph('/home/nicolas/Downloads/RegionVars_rot-cc.xml');
 initAce();
+testProgressBar();
 </script>
 
 
