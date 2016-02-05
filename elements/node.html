@@ -1,0 +1,27 @@
+<link rel="import"
+      href="../bower_components/polymer/polymer.html">
+
+      <dom-module id="node-element">
+
+        <template>
+          <style>
+            div{
+              border: 2px solid red;
+            }
+          </style>
+
+          <!-- local DOM for your element -->
+
+          <div>Test</div> <!-- data bindings in local DOM -->
+        </template>
+
+        <script>
+          Polymer({
+            is: "node-element",
+            properties: {
+              height: String
+            }
+          });
+        </script>
+
+      </dom-module>

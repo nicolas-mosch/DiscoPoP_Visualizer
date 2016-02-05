@@ -39,6 +39,12 @@ html{
     overflow:hidden;
   }
 
+  .myMarker {
+  position:absolute;
+  background:rgba(100,200,100,0.5);
+  z-index:20
+}
+
   .editor {
         width: calc(100% - 40px);
         border-radius: 4px;
@@ -60,3 +66,36 @@ html{
       margin: 0 auto;
 
     }
+
+    .node {
+    cursor: pointer;
+  }
+
+  .node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+  }
+
+  .node text {
+    font: 10px sans-serif;
+  }
+
+  .link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+  }
+
+  /* This styles the title of the tooltip */
+  .tipsy .name {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #60b1fc;
+    margin: 0;
+  }
+
+  /* This styles the body of the tooltip */
+  .tipsy .description {
+    font-size: 1.2em;
+  }

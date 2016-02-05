@@ -19,11 +19,18 @@
   <element-name></element-name>
 
 
-  <iron-collapse>
-    <div class="collapse-content">
-      <div>Content goes here...</div>
-    </div>
+  <button on-click="toggle">toggle collapse</button>
+
+  <iron-collapse id="collapse">
+    <div>Content goes here...</div>
   </iron-collapse>
 </body>
+
+<script>
+  toggle: function() {
+    alert('test');
+    this.$.collapse.toggle();
+  }
+</script>
 
 </html>
