@@ -105,11 +105,11 @@ ipc.on('renderGraph1', function(event, message) {
     })
     .each(function(v) {
       //alert($(this).css('opacity'));
-        $(this).tipsy({
-          gravity: "w",
-          opacity: 1,
-          html: true
-        });
+      $(this).tipsy({
+        gravity: "w",
+        opacity: 1,
+        html: true
+      });
     });
 
 
@@ -124,9 +124,21 @@ ipc.on('renderGraph1', function(event, message) {
     editors[4].addSelectionMarker(
       range
     );
-    $('#node-info').text( JSON.stringify(data[this.id], null, 2) );
+    displayNodeInfo(data[this.id]);
+    //$('#node-info').text( JSON.stringify(data[this.id], null, 2) );
   });
 
+  function displayNodeInfo(info) {
+    var infoTable = document.getElementById('node-info');
+    $("#node-info tr").remove();
+    _.forEach(info, function(value, key) {
+      var row = infoTable.insertRow();
+      var cell = row.insertCell();
+      cell.innerHTML = key;
+      cell = row.insertCell();
+      cell.innerHTML = "<pre>" + JSON.stringify(value, null, 2) + "</pre>";
+    });
+  }
 
   // Set right-click events for nodes
   function hideChildren(node) {
