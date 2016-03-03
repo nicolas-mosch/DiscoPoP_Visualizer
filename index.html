@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/index.css">
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="js/tipsy/src/stylesheets/tipsy.css">
+  <link href="node_modules/vis/dist/vis.css" rel="stylesheet" type="text/css" />
 
   <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="js/ace/ace.js" type="text/javascript"></script>
@@ -14,6 +15,7 @@
   <script src="js/jquery.js"></script>
   <script src="js/tipsy/src/javascripts/jquery.tipsy.js"></script>
   <script src="js/colResizable-1.5.min.js"></script>
+  <script type="text/javascript" src="node_modules/vis/dist/vis.js"></script>
   <script src="js/index.js"></script>
   <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.3.10/d3.min.js"></script>
@@ -95,7 +97,7 @@ int main( void)
         <table style="height: 100%; width: 100%;" border="1">
           <tr style="height: 80%;">
             <td>
-              <svg style="width:100%;height:100%;"></svg>
+              <div id="graph-container" style="width:100%;height:100%;"></div>
             </td>
           </tr>
           <tr style="height: 20%;">
@@ -107,11 +109,9 @@ int main( void)
                       <table id="node-info" style="width:100%;" border="1"></table>
                     </div>
                   </td>
-                  <td style="width: 50%;">
-                    <div class="row">
-                      <button class="col-sm-6" type="button" class="btn btn-default">Reset Graph</button>
-                      <button class="col-sm-6" type="button" class="btn btn-default" id="legendButton">Legend</button>
-                    </div>
+                  <td style="width: 50%;text-align:center;">
+                      <button type="button" class="btn btn-default" id="legendButton">Legend</button><button type="button" class="btn btn-default" id="legendButton">Layout Options</button><br>
+                      <div style="max-height:150px;width:350px;margin:0 auto;border:solid 1px black;overflow:auto;" id="layoutConfigContainer"></div>
                   </td>
                 </tr>
               </table>
@@ -123,7 +123,7 @@ int main( void)
       </td>
 
     </tr>
-    <tr>
+    <!--<tr>
       <td colspan="2">
         <div class="progress" id="progress" style="text-align:center;">
           <div id="progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
@@ -131,7 +131,7 @@ int main( void)
           </div>
         </div>
       </td>
-    </tr>
+    </tr>-->
   </table>
 </body>
 
