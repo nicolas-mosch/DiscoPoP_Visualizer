@@ -1,0 +1,3 @@
+[submodule "js/tipsy"]
+	path = js/tipsy
+	url = git://github.com/jaz303/tipsy.git
