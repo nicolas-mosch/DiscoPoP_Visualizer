@@ -7,7 +7,7 @@ var graphGenerator = require('./node_modules/graphGenerator/graphGenerator');
 var fs = require('fs');
 var _ = require('lodash/core');
 var legendWindow = null;
-
+var randomInputWindow = null;
 var mainWindow = null;
 
 function wait(ms){
@@ -39,15 +39,32 @@ var template = [{
         if (filePaths == null)
           return;
         var fileContents = fs.readFileSync(filePaths[0]);
-
-
-
-        //        console.log(JSON.stringify(data, null, 2));
-
         mainWindow.webContents.send('setData', JSON.parse(fileContents));
         mainWindow.webContents.send('renderGraph1');
       }
-    }]
+    },
+    {
+      label: 'Random',
+      accelerator: 'CmdOrCtrl+R',
+      role: 'random',
+      click: function(){
+        if (randomInputWindow){
+          randomInputWindow.close();
+          return;
+        }
+        randomInputWindow = new BrowserWindow({
+          width: 100,
+          height: 100
+        });
+        randomInputWindow.setMenu(null);
+        randomInputWindow.setAlwaysOnTop(true);
+        randomInputWindow.loadURL('file://' + __dirname + '/Modals/randomInput.html');
+        randomInputWindow.on('closed', function () {
+              legendWindow = null;
+          });
+      }
+    }
+  ]
   }, {
     label: 'View',
     submenu: [{
@@ -101,13 +118,18 @@ ipc.on('showLegend', function(event, arg) {
   });
   legendWindow.setMenu(null);
   legendWindow.setAlwaysOnTop(true);
-  legendWindow.loadURL('file://' + __dirname + '/legends/' + arg + '.html');
+  legendWindow.loadURL('file://' + __dirname + '/Modals/' + arg + '.html');
   legendWindow.on('closed', function () {
         legendWindow = null;
     });
 
 });
-
+ipc.on('randomInput', function(event, arg){
+  console.log('randomInput', JSON.stringify(arg));
+  randomInputWindow.close();
+  randomInputWindow = null;
+  mainWindow.webContents.send('renderGraph0', arg);
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
