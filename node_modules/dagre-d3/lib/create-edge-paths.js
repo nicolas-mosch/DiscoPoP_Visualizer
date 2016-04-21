@@ -4,7 +4,6 @@ var _ = require("./lodash"),
     intersectNode = require("./intersect/intersect-node"),
     util = require("./util"),
     d3 = require("./d3");
-
 module.exports = createEdgePaths;
 
 function createEdgePaths(selection, g, arrows) {
@@ -39,7 +38,7 @@ function createEdgePaths(selection, g, arrows) {
 
       var domEdge = d3.select(this)
         .attr("marker-end", function() {
-          return "url(#" + edge.arrowheadId + ")";
+            return "url(" + makeFragmentRef(location.href, edge.arrowheadId) + ")";
         })
         .style("fill", "none");
 
@@ -58,6 +57,11 @@ function createEdgePaths(selection, g, arrows) {
     });
 
   return svgPaths;
+}
+
+function makeFragmentRef(url, fragmentId) {
+  var baseUrl = url.split("#")[0];
+  return baseUrl + "#" + fragmentId;
 }
 
 function calcPoints(g, e) {
@@ -89,7 +93,9 @@ function createLine(edge, points) {
 
 function getCoords(elem) {
   var bbox = elem.getBBox(),
-      matrix = elem.getTransformToElement(elem.ownerSVGElement)
+      matrix = elem.ownerSVGElement.getScreenCTM()
+        .inverse()
+        .multiply(elem.getScreenCTM())
         .translate(bbox.width / 2, bbox.height / 2);
   return { x: matrix.e, y: matrix.f };
 }
@@ -121,7 +127,7 @@ function exit(svgPaths, g) {
       var source = g.node(e.v);
 
       if (source) {
-        var points = _.range(this.pathSegList.length).map(function() { return source; });
+        var points = _.range(this.getTotalLength()).map(function() { return source; });
         return createLine({}, points);
       } else {
         return d3.select(this).attr("d");
