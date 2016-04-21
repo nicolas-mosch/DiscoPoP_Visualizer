@@ -1,0 +1,19 @@
+Functions: readable name plz
+Mark a root node somehow
+Initial graph, how much to render? Just root node and have user expand everything on his own? (Options: expand all sub-nodes for a cluster)
+Somehow put filemapping and CU-Nodes together?
+Dependency graph: in another tab? In same graph (too many edges)? When node is clicked?
+Add predecessor-CUs property to CUs
+Add successor and predecessor nodes
+
+Assumptions:  A node can have only one parentNode
+              A non-CU node can have only CU-nodes as children
+
+
+Problem:  Why is return stmt (1:30) a child of loop 1:19, but loop declaration (1:20) is not?
+          Why does root node have faulty type (what should it be?)
+          Objects missing IDs in mergesort...
+
+
+
+TO-DO:    Hover: display node info

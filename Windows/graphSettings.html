@@ -1,0 +1,71 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+  <script src="../js/Windows/graphSettings.js" type="text/javascript"></script>
+  <title>Graph Settings</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="panel-group" id="accordion">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#colorSettings">Colors</a>
+        </h4>
+        </div>
+        <div id="colorSettings" class="panel-collapse collapse in">
+          <script type="text/x-handlebars-template" id="graphColorSettingsTableTemplate">
+          <div class="panel-body">
+              <table class="table table-condensed">
+                <tr>
+                  {{#each colorSettings}}
+                  <th>
+                    {{@key}}
+                  </th>
+                  {{/each}}
+                </tr>
+                <tr>
+                  {{#each colorSettings}}
+                  <td>
+                    <div id="{{@key}}_colorpicker" class="input-group colorpicker-component">
+                      <input type="text" data-key="{{@key}}" class="form-control settingInput" value="{{this}}" />
+                      <span class="input-group-addon"><i></i></span>
+                    </div>
+                  </td>
+                  {{/each}}
+                </tr>
+              </table>
+          </div>
+          </script>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#shapeSettings">Shapes</a>
+        </h4>
+        </div>
+        <div id="shapeSettings" class="panel-collapse collapse">
+          <div class="panel-body">TODO</div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Collapsible Group 3</a>
+        </h4>
+        </div>
+        <div id="collapse3" class="panel-collapse collapse">
+          <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary" id="restoreDefaultSettings">Restore default settings</button>
+    <button type="button" class="btn btn-primary" id="saveSettings">Save settings</button>
+  </div>
+</body>
+
+</html>
