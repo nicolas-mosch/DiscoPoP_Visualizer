@@ -5,6 +5,7 @@ body {
   background-color: #F6F6F6;
   box-sizing: border-box;
   height: 100%;
+  overflow: hidden;
 }
 #index-table {
   height: 100%;

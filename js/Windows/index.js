@@ -305,9 +305,9 @@ function redraw(g) {
   inner.selectAll('g.label').style("fill", configuration.readSetting('labelColor'));
 
   // Tooltip
-  /*var tooltip = d3.select('#tooltip-container');
-  nodes.on("mouseover", function(nodeID) {
-      tooltip.text(JSON.stringify(data[nodeID]));
+  var tooltip = d3.select('#tooltip-container');
+  inner.selectAll('.cluster.function-node').on("mouseover", function(nodeID) {
+      tooltip.text('Function (' + data[nodeID].name + ')');
       return tooltip.style("visibility", "visible");
     })
     .on("mousemove", function() {
@@ -315,7 +315,7 @@ function redraw(g) {
     })
     .on("mouseout", function() {
       return tooltip.style("visibility", "hidden");
-    });*/
+    });
 
 
 
@@ -402,7 +402,7 @@ function initContextMenus() {
     }]
   });
 
-  var menu2 = new BootstrapMenu('.loop-node .function-node', {
+  var clusterNodeMenu = {
     fetchElementData: function($nodeElem) {
       var nodeId = $nodeElem[0].id;
       return data[nodeId];
@@ -471,9 +471,12 @@ function initContextMenus() {
         ipc.send('showCuInfo', node);
       }
     }]
-  });
+  };
 
-  var menu3 = new BootstrapMenu('.cluster', {
+  var menu2 = new BootstrapMenu('.loop-node', clusterNodeMenu);
+  var menu3 = new BootstrapMenu('.function-node', clusterNodeMenu);
+
+  var menu4 = new BootstrapMenu('.cluster', {
     fetchElementData: function($nodeElem) {
       var nodeId = $nodeElem[0].id;
       return data[nodeId];
@@ -519,7 +522,7 @@ function expandNode(node, g) {
     });
 
     var graphNode = g.node(node.id);
-    graphNode.clusterLabelPos = 'bottom';
+    graphNode.clusterLabelPos = 'top';
     g.setNode(node.id, graphNode);
 
     // remove edges from expanded node
@@ -617,12 +620,12 @@ function addNodeToGraph(node, g) {
       nodeClass = 'cu-node';
       break;
     case 1:
-      label = 'function (' + node.name + ')\nlines: ' + node.start + ' - ' + node.end;
+      label = ' function (' + node.name + ')\nlines: ' + node.start + ' - ' + node.end + '\n ';
       shape = 'diamond';
       nodeClass = 'function-node';
       break;
     case 2:
-      label = 'loop (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end;
+      label = ' loop (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end + '\n ';
       shape = 'ellipse';
       nodeClass = 'loop-node';
       break;
@@ -636,6 +639,7 @@ function addNodeToGraph(node, g) {
     id: node.id,
     label: label,
     //labelType: "html",
+    style: "stroke: #000; stroke-width: 3px;",
     shape: shape,
     rx: 5,
     ry: 5,
