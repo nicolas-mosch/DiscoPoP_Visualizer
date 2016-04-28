@@ -6,100 +6,33 @@ var $ = require('jquery');
 global.jQuery = require('jquery');
 window.$ = $;
 require('bootstrap');
+
 //require("colresizable");
 var BootstrapMenu = require('bootstrap-menu');
 var configuration = require('../js/Controllers/configuration.js');
 
 var data = null;
 var displayedData = null;
-
+var flowGraph = null;
+var dependencyGraph = null;
 var fileMaps = null;
 var editors = {};
 var ranges = [];
 var codeSnippets = null;
 var tempSettings = null;
-
-$(document).ready(function() {
-  $("#legendButton").click(function() {
-    ipc.send('showLegend', 'test');
-  });
-});
-
+var render;
+var maxCuDataSize = 0;
 
 ipc.on('alert', function(event, message) {
   alert(message);
 });
 
-ipc.on('clearGraph', function(event, message){
+ipc.on('clearGraph', function(event, message) {
   clearGraph();
 });
 
-ipc.on('setData', function(event, dat) {
-  if (fileMaps == null) {
-    alert('Import FileMapping first');
-    return;
-  } else {
-    data = {};
-    displayedData = {};
-    codeSnippets = {};
-    _.forEach(dat, function(node) {
-      node.successorCUs = node.successorCUs || [];
-      node.predecessorCUs = [];
-      node.parentNode = '';
-      data[node.id] = node;
-
-    });
-
-
-/*
-    // Add parentNode and predecessorCUs properties to CU-nodes
-    _.forEach(dat, function(node) {
-      // parentNode
-      for (var i = 0; i < node.childrenNodes.length; i++) {
-        data[node.childrenNodes[i]].parentNode = node.id;
-      }
-
-      // predecessorCUs
-      if (node.type == 0) {
-        for (var i = 0; i < node.successorCUs.length; i++) {
-          data[node.successorCUs[i]].predecessorCUs.push(node.id);
-        }
-      }
-    });
-
-    // Add successor and predecessor CUs to clusters
-    _.forEach(data, function(node) {
-      if (node.type == 1 || node.type == 2) {
-        node.successorCUs = [];
-        node.predecessorCUs = [];
-        var childNode;
-        for (var i = 0; i < node.childrenNodes.length; i++) {
-          childNode = data[node.childrenNodes[i]];
-          var successorNodeID;
-          for (var j = 0; j < childNode.successorCUs.length; j++) {
-            successorNodeID = childNode.successorCUs[j];
-            if (node.childrenNodes.indexOf(successorNodeID) > -1) {
-              node.successorCUs.push(successorNodeID);
-            }
-          }
-          var predecessorNodeID;
-          for (var j = 0; j < childNode.predecessorCUs.length; j++) {
-            predecessorNodeID = childNode.predecessorCUs[j];
-            if (node.childrenNodes.indexOf(predecessorNodeID) > -1) {
-              node.predecessorCUs.push(predecessorNodeID);
-            }
-          }
-
-          node.collapsed = true;
-        }
-      }
-    });
-
-*/
-
-    console.log('Imported Node-Data', data);
-
-  }
+ipc.on('redrawGraph', function(event, message) {
+  redraw(flowGraph);
 });
 
 ipc.on('setFileMapping', function(event, dat) {
@@ -120,141 +53,275 @@ ipc.on('setFileMapping', function(event, dat) {
     editor.setReadOnly(true);
     editor.setHighlightActiveLine(false);
     editor.setOptions({
-      maxLines: 1000,
-      fontSize: "14pt"
+      maxLines: 10000,
+      fontSize: "14pt",
+      wrapBehavioursEnabled: true,
+      animatedScroll: true
     });
     document.getElementById("code-container").appendChild(codeElement);
   });
 
 });
 
-function display() {
-
+function addToDescendantNodeCount(node) {
+  node.descendantNodeCount = node.descendantNodeCount + 1;
+  _.each(node.parentNodes, function(parentID) {
+    if (node.type == 1) {
+      _.each(data[parentID].parentNodes, function(grandparentID) {
+        addToDescendantNodeCount(data[grandparentID]);
+      });
+    } else {
+      addToDescendantNodeCount(data[parentID]);
+    }
+  });
 }
 
-ipc.on('renderGraph1', function(event, message) {
-  // check which nodes to render
+ipc.on('initializeGraphAndData', function(event, dat) {
+  var rootNode, startCU, endCU;
+  if (fileMaps == null) {
+    alert('Import FileMapping first');
+    return;
+  }
+  data = {};
+  displayedData = {};
+  codeSnippets = {};
+  _.each(dat, function(node) {
+    node.parentNodes = [];
+    if (node.type == 0) {
+      node.predecessorCUs = [];
+      maxCuDataSize = Math.max(maxCuDataSize, node.readDataSize + node.writeDataSize);
+    } else {
+      node.descendantNodeCount = 0;
+    }
+    node.collapsed = true;
+    data[node.id] = node;
+  });
 
-  var g = new dagreD3.graphlib.Graph({
-      compound: true
+  // Add parentNodes, predecessorCUs and descendantNodeCount properties to CU-nodes
+  _.forEach(dat, function(node) {
+    // parentNodes
+    _.each(node.childrenNodes, function(childNodeID) {
+      data[childNodeID].parentNodes.push(node.id);
+    });
+
+    // predecessorCUs
+    if (node.type == 0) {
+      for (var i = 0; i < node.successorCUs.length; i++) {
+        try {
+          data[node.successorCUs[i]].predecessorCUs.push(node.id);
+        } catch (error) {
+          console.log('Error trying to add predecessorCU ' + node.id + ' to ' + node.successorCUs[i]);
+          console.log('data', data);
+          throw error;
+        }
+      }
+    }
+  });
+
+  _.forEach(data, function(node) {
+    if (node.type != 0 && !node.parentNodes.length) {
+      rootNode = node;
+    }
+    if (node.type == 0) {
+      _.each(node.parentNodes, function(parentID) {
+        addToDescendantNodeCount(data[parentID]);
+      });
+    }
+  });
+  _.forEach(data, function(node) {
+    if (node.type == 0 && node.parentNodes[0] == rootNode.id) {
+      if (!node.predecessorCUs.length) {
+        node.predecessorCUs.push('startNode');
+      }
+      if (!node.successorCUs.length) {
+        node.successorCUs.push('endNode');
+      }
+    }
+  });
+
+  // check which nodes to render
+  flowGraph = new dagreD3.graphlib.Graph({
+      compound: true,
+      multigraph: true,
+      directed: true
     })
     .setGraph({})
     .setDefaultEdgeLabel(function() {
       return {};
     });
 
-  // add Nodes
-  _.forEach(data, function(value, key) {
-    var fillColor, label;
-    switch (value.type) {
-      case 0:
-        fillColor = configuration.readSetting('cuColor');
-        label = value.id;
-        break;
-      case 1:
-        fillColor = configuration.readSetting('functionColor');
-        label = 'function (' + value.name + ')';
-        break;
-      case 2:
-        fillColor = configuration.readSetting('loopColor');
-        label = 'loop (' + value.id + ')';
-        break;
-      default:
-        fillColor = configuration.readSetting('defaultColor');
-        label = value.name;
-    }
-    var node = {
-      id: value.id,
-      label: label,
-      style: 'fill: ' + fillColor,
-      type: value.type,
-      childrenNodes: value.childrenNodes,
-      rx: 5,
-      ry: 5
-    };
-
-    if (value.type != 0) {
-      node.clusterLabelPos = 'bottom';
-    }
-
-    g.setNode(value.id, node);
-
-  });
-
-  // add Edges and children
-  _.forEach(data, function(currentNode, key) {
-    // add CU successor edges
-    _.forEach(currentNode.successorCUs, function(successorNodeID) {
-      g.setEdge(currentNode.id, successorNodeID, {
-        style: "stroke: " + configuration.readSetting('cuColor') + "; stroke-width: 3px;",
-        arrowheadStyle: "fill: " + configuration.readSetting('cuColor') + "; stroke: " + configuration.readSetting('cuColor')
-      });
+  dependencyGraph = new dagreD3.graphlib.Graph({
+      compound: true,
+      multigraph: true,
+      directed: false
+    })
+    .setGraph({})
+    .setDefaultEdgeLabel(function() {
+      return {};
     });
 
-    if (currentNode.type != 0) {
-      _.forEach(currentNode.childrenNodes, function(childNodeID) {
-        g.setParent(childNodeID, currentNode.id);
-      });
-    } else {
-      _.forEach(currentNode.childrenNodes, function(childNodeID) {
-        _.forEach(data[childNodeID].childrenNodes, function(grandChildNodeID) {
-          g.setEdge(currentNode.id, grandChildNodeID, {
-            style: "stroke: #000000; stroke-width: 1px; stroke-dasharray: 5, 5;",
-            arrowheadStyle: "fill: #000000"
-          });
-        });
-      });
-    }
-  });
+  flowGraph.graphType = "flow";
+  dependencyGraph.graphType = "dependency";
 
+  var svgFlow = d3.select("#flow-graph-container svg"),
+    innerFlow = d3.select("#flow-graph-container svg g"),
+    zoomFlow = d3.behavior.zoom().on("zoom", function() {
+      innerFlow.attr("transform", "translate(" + d3.event.translate + ")" +
+        "scale(" + d3.event.scale + ")");
+    });
+  svgFlow.call(zoomFlow);
 
-  // Create the renderer
-  var render = new dagreD3.render();
+  var svgDependency = d3.select("#dependency-graph-container svg"),
+    innerDependency = d3.select("#dependency-graph-container svg g"),
+    zoomDependency = d3.behavior.zoom().on("zoom", function() {
+      innerDependency.attr("transform", "translate(" + d3.event.translate + ")" +
+        "scale(" + d3.event.scale + ")");
+    });
+  svgDependency.call(zoomDependency);
 
-  // Set up an SVG group so that we can translate the final graph.
-  var svg = d3.select("svg"),
-    inner = svg.append("g");
-
-  // Run the renderer. This is what draws the final graph.
-  render(d3.select("svg g"), g);
-
-  // Set up zoom support
-  var zoom = d3.behavior.zoom().on("zoom", function() {
-    inner.attr("transform", "translate(" + d3.event.translate + ")" +
-      "scale(" + d3.event.scale + ")");
-  });
-  svg.call(zoom);
-
-  // Center the graph
-  var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
-  inner.attr("transform", "translate(" + xCenterOffset + ", 20)");
-  svg.attr("height", g.graph().height + 40);
-
-
-  // Set click behavior
-  var nodes = inner.selectAll("g.node");
-  nodes.on('click', function(d) {
-    ipc.send('showCuInfo', data[d]);
-    unhighlight();
-    highlightNodeInCode(data[d]);
-  });
-
-  var clusters = inner.selectAll("g.cluster");
-  clusters.on('click', function(d) {
-    ipc.send('showCuInfo', data[d]);
-    unhighlight();
-    highlightNodeInCode(data[d]);
-  });
+  // Create and configure the renderer
+  render = dagreD3.render();
   initContextMenus();
+
+  data['startNode'] = {
+    collapsed: false,
+    parentNodes: ['startNode'],
+    type: 3
+  };
+
+  data['endNode'] = {
+
+    collapsed: false,
+    parentNodes: ['endNode'],
+    type: 3
+  };
+
+  flowGraph.setNode('startNode', {
+    id: '-1',
+    label: "Entry",
+    shape: "circle",
+    class: "default-node"
+  });
+  flowGraph.setNode('endNode', {
+    id: '-2',
+    label: "Exit",
+    shape: "circle",
+    class: "default-node"
+  });
+
+  addNodeToGraph(rootNode, flowGraph);
+  flowGraph.setEdge('startNode', rootNode.id);
+  flowGraph.setEdge(rootNode.id, 'endNode');
+  //addNodeToGraph(rootNode, dependencyGraph);
+  renderFullDependencyGraph();
+  redraw(flowGraph);
+  //redraw(dependencyGraph);
 });
 
-function expand(node) {
+
+function redraw(g) {
+  console.log('redraw ' + g.graphType, g);
+  // Set margins, if not present
+  if (!g.graph().hasOwnProperty("marginx") &&
+    !g.graph().hasOwnProperty("marginy")) {
+    g.graph().marginx = 20;
+    g.graph().marginy = 20;
+  }
+
   g.graph().transition = function(selection) {
     return selection.transition().duration(500);
   };
-  d3.select("svg g").call(render, g);
-}
+  // Render the graph into svg g
+  var inner = d3.select("#" + g.graphType + "-graph-container svg g");
+  d3.select("#" + g.graphType + "-graph-container svg g").call(render, g);
 
+  // Set click behavior
+  var nodes = inner.selectAll("g.node");
+  var clusters = inner.selectAll("g.cluster");
+
+  nodes.on('click', function(d) {
+    //d3.event.stopPropagation();
+    unhighlight();
+    highlightNodeInCode(data[d]);
+  });
+
+  nodes.on('dblclick', function(nodeID) {
+    var node = data[nodeID];
+    var cuNodes, loopNodes, functionNodes;
+
+    d3.event.stopPropagation();
+    unhighlight();
+    highlightNodeInCode(node);
+    if (!node.type && (node.RAWDepsOn.length || node.WARDepsOn.length || node.WAWDepsOn.length)) {
+      toggleDependencyEdges(node);
+      redraw(g);
+    } else if (node.childrenNodes.length && node.collapsed) {
+      expandNode(node, g);
+      redraw(g);
+    }
+  });
+
+  clusters.on('click', function(d) {
+    //d3.event.stopPropagation();
+    unhighlight();
+    highlightNodeInCode(data[d]);
+  });
+
+  cuNodes = inner.selectAll(".node.cu-node");
+  cuNodes.append("svg:foreignObject")
+    .attr("width", 20)
+    .attr("height", 20)
+    .attr("y", "-32px")
+    .attr("x", "50px")
+    .append("xhtml:span")
+    .attr("class", "control glyphicon glyphicon-fire")
+    .attr("style", "color: yellow;");
+
+  loopNodes = inner.selectAll(".node.loop-node");
+  loopNodes.append("svg:foreignObject")
+    .attr("width", 20)
+    .attr("height", 20)
+    .attr("y", "13px")
+    .attr("x", "-8px")
+    .append("xhtml:span")
+    .attr("class", "control glyphicon glyphicon-fire")
+    .attr("style", "color: red;");
+
+  functionNodes = inner.selectAll(".node.function-node");
+  functionNodes.append("svg:foreignObject")
+    .attr("width", 20)
+    .attr("height", 20)
+    .attr("y", "15px")
+    .attr("x", "-8px")
+    .append("xhtml:span")
+    .attr("class", "control glyphicon glyphicon-fire")
+    .attr("style", "color: red;");
+
+  // Set colors from settings
+  inner.selectAll('g.cu-node').style("fill", configuration.readSetting('cuColor'));
+  inner.selectAll('g.function-node').style("fill", configuration.readSetting('functionColor'));
+  inner.selectAll('g.loop-node').style("fill", configuration.readSetting('loopColor'));
+  inner.selectAll('g.default-node').style("fill", configuration.readSetting('defaultColor'));
+  inner.selectAll('g.label').style("fill", configuration.readSetting('labelColor'));
+
+  // Tooltip
+  /*var tooltip = d3.select('#tooltip-container');
+  nodes.on("mouseover", function(nodeID) {
+      tooltip.text(JSON.stringify(data[nodeID]));
+      return tooltip.style("visibility", "visible");
+    })
+    .on("mousemove", function() {
+      return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 50) + "px");
+    })
+    .on("mouseout", function() {
+      return tooltip.style("visibility", "hidden");
+    });*/
+
+
+
+
+  $('[data-toggle="popover"]').popover();
+}
 
 function highlightNodeInCode(info) {
   var Range = ace.require('ace/range').Range;
@@ -269,7 +336,6 @@ function highlightNodeInCode(info) {
 }
 
 function unhighlight() {
-  console.log('Batman', editors);
   _.forEach(ranges, function(range) {
     _.forEach(editors, function(editor, key) {
       editors[key].removeSelectionMarker(range);
@@ -277,26 +343,6 @@ function unhighlight() {
   });
   ranges = [];
 }
-
-function displayNodeInfo(info) {
-  /*var infoTable = document.getElementById('node-info');
-  $("#node-info tr").remove();
-  _.forEach(info, function(value, key) {
-    var row = infoTable.insertRow();
-    var cell = row.insertCell();
-    cell.innerHTML = key;
-    cell = row.insertCell();
-    cell.innerHTML = "<pre>" + JSON.stringify(value, null, 2) + "</pre>";
-  });*/
-}
-
-function removeNodeInfo() {
-  var infoTable = document.getElementById('node-info');
-  $("#node-info tr").remove();
-}
-
-
-
 
 function testProgressBar() {
   var elem = document.getElementById("progress-bar");
@@ -318,26 +364,365 @@ function testProgressBar() {
 }
 
 function initContextMenus() {
-  var menu = new BootstrapMenu('.node', {
+  var menu1 = new BootstrapMenu('.node.cu-node', {
+    fetchElementData: function($nodeElem) {
+      var nodeId = $nodeElem[0].id;
+      return data[nodeId];
+    },
     actions: [{
-      name: 'Action',
-      onClick: function() {
-        alert("'Action' clicked!");
+      name: function(node) {
+        var hasDependencies = node.type == 0 && (node.RAWDepsOn.length > 0 || node.WARDepsOn.length > 0 || node.WAWDepsOn.length > 0);
+        if (hasDependencies) {
+          return (node.collapsed) ? 'Show Dependencies' : 'Hide Dependencies';
+        } else {
+          return '<i>Show Dependencies</i>';
+        }
+      },
+      iconClass: 'glyphicon glyphicon-retweet',
+      onClick: function(node) {
+        toggleDependencyEdges(node);
+        redraw(flowGraph);
+      },
+      classNames: function(node) {
+        var hasDependencies = node.type == 0 && (node.RAWDepsOn.length > 0 || node.WARDepsOn.length > 0 || node.WAWDepsOn.length > 0);
+        return {
+          'action-success': hasDependencies
+        };
+      },
+      isEnabled: function(node) {
+        var hasDependencies = node.type == 0 && (node.RAWDepsOn.length > 0 || node.WARDepsOn.length > 0 || node.WAWDepsOn.length > 0);
+        return hasDependencies;
       }
     }, {
-      name: 'Another action',
-      onClick: function() {
-        alert("'Another action' clicked!");
+      name: 'Node-Info',
+      iconClass: 'glyphicon glyphicon-info-sign',
+      onClick: function(node) {
+        ipc.send('showCuInfo', node);
+      }
+    }]
+  });
+
+  var menu2 = new BootstrapMenu('.loop-node .function-node', {
+    fetchElementData: function($nodeElem) {
+      var nodeId = $nodeElem[0].id;
+      return data[nodeId];
+    },
+    actions: [{
+      name: function(node) {
+        if (_.has(node, 'childrenNodes') && node.childrenNodes.length) {
+          return 'Expand';
+        } else {
+          return '<i>Expand</i>';
+        }
+      },
+      iconClass: 'glyphicon glyphicon-expand',
+      onClick: function(node) {
+        expandNode(node, flowGraph);
+        redraw(flowGraph);
+      },
+      classNames: function(node) {
+        return {
+          'action-success': (_.has(node, 'childrenNodes') && node.childrenNodes.length > 0)
+        };
+      },
+      isEnabled: function(node) {
+        console.log('node', node);
+        console.log(_.has(node, 'childrenNodes') && node.childrenNodes.length);
+        return (_.has(node, 'childrenNodes') && node.childrenNodes.length > 0);
       }
     }, {
-      name: 'A third action',
-      onClick: function() {
-        alert("'A third action' clicked!");
+      name: function(node) {
+        if (_.has(node, 'childrenNodes') && node.childrenNodes.length) {
+          return 'Expand All  <span class="badge">' + node.descendantNodeCount + '</span>';
+        } else {
+          return '<i>Expand All</i>';
+        }
+      },
+      iconClass: 'glyphicon glyphicon-expand',
+      onClick: function(node) {
+        var currentNode, childNode;
+        var stack = [];
+        stack.push(node);
+        do {
+          currentNode = stack.pop();
+          expandNode(currentNode, flowGraph);
+          _.each(currentNode.childrenNodes, function(childNodeID) {
+            childNode = data[childNodeID];
+            if (_.has(childNode, 'childrenNodes') && childNode.childrenNodes.length) {
+              stack.push(childNode);
+            }
+          });
+        }
+        while (stack.length);
+        redraw(flowGraph);
+      },
+      classNames: function(node) {
+        return {
+          'action-success': (_.has(node, 'childrenNodes') && node.childrenNodes.length > 0)
+        };
+      },
+      isEnabled: function(node) {
+        return (_.has(node, 'childrenNodes') && node.childrenNodes.length > 0);
+      }
+    }, {
+      name: 'Node-Info',
+      iconClass: 'glyphicon glyphicon-info-sign',
+      onClick: function(node) {
+        ipc.send('showCuInfo', node);
+      }
+    }]
+  });
+
+  var menu3 = new BootstrapMenu('.cluster', {
+    fetchElementData: function($nodeElem) {
+      var nodeId = $nodeElem[0].id;
+      return data[nodeId];
+    },
+    actions: [{
+      name: 'Collapse',
+      iconClass: 'glyphicon glyphicon-collapse-up',
+      onClick: function(node) {
+        collapseNode(node, flowGraph);
+        redraw(flowGraph);
+      }
+    }, {
+      name: 'Node-Info',
+      iconClass: 'glyphicon glyphicon-info-sign',
+      onClick: function(node) {
+        ipc.send('showCuInfo', node);
       }
     }]
   });
 }
 
-function clearGraph(){
-    $("svg").empty();
+function clearGraph(type) {
+  $("#" + type + "-graph-container svg").empty();
+}
+
+function expandNode(node, g) {
+  if (_.has(node, 'childrenNodes') && node.childrenNodes.length && node.collapsed && node.type > 0 && g.graphType == 'flow') {
+    var childNode, successorCU, predecessorCU, sourceNodeID, sinkNodeID;
+    node.collapsed = false;
+    // Add children nodes to graph
+    _.each(node.childrenNodes, function(childNodeID) {
+      if (data[childNodeID].type != 0) {
+        data[childNodeID].collapsed = true;
+      } else {
+        _.each(data[childNodeID].childrenNodes, function(functionNodeID) {
+          addNodeToGraph(data[functionNodeID], g);
+          g.setEdge(childNodeID, functionNodeID, {
+            style: "stroke: #000; stroke-width: 1px; stroke-dasharray: 5, 5;"
+          });
+        });
+      }
+      addNodeToGraph(data[childNodeID], g);
+    });
+
+    var graphNode = g.node(node.id);
+    graphNode.clusterLabelPos = 'bottom';
+    g.setNode(node.id, graphNode);
+
+    // remove edges from expanded node
+    _.each(g.nodeEdges(node.id), function(edge) {
+      g.removeEdge(edge);
+    });
+
+    // add edges to children of expanded nodes
+    _.each(node.childrenNodes, function(childNodeID) {
+      g.setParent(childNodeID, node.id);
+      childNode = data[childNodeID];
+      _.each(childNode.successorCUs, function(successorID) {
+        console.log('AChecking successor ' + successorID);
+        successorCU = data[successorID];
+        sinkNodeID = data[successorCU.parentNodes[0]].collapsed ? successorCU.parentNodes[0] : successorID;
+        console.log('ASetting edge ' + childNodeID + ' -> ' + sinkNodeID);
+        g.setEdge(childNodeID, sinkNodeID, {
+          style: "stroke: " + configuration.readSetting('cuColor') + "; stroke-width: 3px;",
+          arrowheadStyle: "fill: " + configuration.readSetting('cuColor') + "; stroke: " + configuration.readSetting('cuColor')
+        });
+      });
+
+      _.each(childNode.predecessorCUs, function(predecessorID) {
+        var predecessorCU = data[predecessorID];
+        var fromNode;
+        if (predecessorCU.parentNodes[0] != node.id) {
+          sourceNodeID = data[predecessorCU.parentNodes[0]].collapsed ? predecessorCU.parentNodes[0] : predecessorID;
+          console.log('BSetting edge ' + sourceNodeID + ' -> ' + childNodeID);
+          g.setEdge(sourceNodeID, childNodeID, {
+            style: "stroke: " + configuration.readSetting('cuColor') + "; stroke-width: 3px;",
+            arrowheadStyle: "fill: " + configuration.readSetting('cuColor') + "; stroke: " + configuration.readSetting('cuColor')
+          });
+        }
+      });
+    });
+
+    if (node.type == 1) {
+      _.each(node.childrenNodes, function(childNodeID) {
+        if (!g.inEdges(childNodeID).length) {
+          _.each(node.parentNodes, function(parentCU) {
+            g.setEdge(parentCU, childNodeID, {
+              style: "stroke: #000; stroke-width: 1px; stroke-dasharray: 5, 5;"
+            });
+          });
+        }
+      });
+    }
+  }
+}
+
+function collapseNode(node, g) {
+  if (!node.collapsed && g.graphType == 'flow') {
+    console.log('collapsing', node);
+    var childNode;
+    node.collapsed = true;
+    _.each(node.childrenNodes, function(childNodeID) {
+      childNode = data[childNodeID];
+      _.each(g.inEdges(childNodeID), function(edge) {
+        if (data[edge.v].parentNodes.indexOf(node.id) == -1) {
+          console.log('Cluster predecessor edge', g.edge(edge));
+          g.setEdge(edge.v, node.id, g.edge(edge));
+        }
+      });
+      _.each(g.outEdges(childNodeID), function(edge) {
+        if (data[edge.w].parentNodes.indexOf(node.id) == -1) {
+          g.setEdge(node.id, edge.w, g.edge(edge));
+        }
+      });
+      if (childNode.type == 0 && childNode.childrenNodes.length) {
+        _.each(childNode.childrenNodes, function(functionNodeID) {
+          collapseNode(data[functionNodeID], g);
+          g.removeNode(functionNodeID);
+        });
+      } else if (!childNode.collapsed) {
+        collapseNode(childNode, g);
+      }
+      g.removeNode(childNodeID);
+    });
+  }
+}
+
+function textifyNumber(value) {
+  switch (value.length) {
+
+
+  }
+}
+
+function addNodeToGraph(node, g) {
+  var label, shape, nodeClass;
+  switch (node.type) {
+    case 0:
+      label = 'CU (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end + '\nData Read: ' + node.readDataSize + '\nData Written: ' + node.writeDataSize;
+      shape = 'rect';
+      nodeClass = 'cu-node';
+      break;
+    case 1:
+      label = 'function (' + node.name + ')\nlines: ' + node.start + ' - ' + node.end;
+      shape = 'diamond';
+      nodeClass = 'function-node';
+      break;
+    case 2:
+      label = 'loop (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end;
+      shape = 'ellipse';
+      nodeClass = 'loop-node';
+      break;
+    default:
+      label = node.name;
+      nodeClass = 'default-node';
+      shape = 'circle';
+  }
+
+  g.setNode(node.id, {
+    id: node.id,
+    label: label,
+    //labelType: "html",
+    shape: shape,
+    rx: 5,
+    ry: 5,
+    class: nodeClass
+  });
+}
+
+
+function renderFullDependencyGraph() {
+  _.each(data, function(node) {
+    if (node.type == 0) {
+      addNodeToGraph(node, dependencyGraph);
+    }
+  });
+
+  _.each(data, function(node) {
+    _.each(node.RAWDepsOn, function(dependentCuId) {
+      dependencyGraph.setEdge(node.id, dependentCuId, {
+        label: "RaW"
+          //,style: "stroke: #000; stroke-width: 1px; stroke-dasharray: 5, 5;"
+      });
+    });
+    _.each(node.WARDepsOn, function(dependentCuId) {
+      dependencyGraph.setEdge(node.id, dependentCuId, {
+        label: "WaR",
+        style: "stroke: #000; stroke-width: 1px; stroke-dasharray: 5, 5;"
+      });
+    });
+    _.each(node.WAWDepsOn, function(dependentCuId) {
+      dependencyGraph.setEdge(node.id, dependentCuId, {
+        label: "WaW",
+        style: "stroke: #000; stroke-width: 1px; stroke-dasharray: 5, 5;"
+      });
+    });
+    if (node.type != 1) {
+      dependencyGraph.setParent(node.id, node.parentNodes[0]);
+    }
+
+  });
+}
+
+function toggleDependencyEdges(node) {
+  if (node.collapsed) {
+    _.each(node.RAWDepsOn, function(dependencyID) {
+      flowGraph.setEdge(node.id, dependencyID, {
+        style: "stroke: #000; stroke-width: 1px;",
+        label: "RaW",
+        arrowheadStyle: "fill: #000; stroke: #000;"
+      }, "RaW");
+    });
+    _.each(node.WARDepsOn, function(dependencyID) {
+      flowGraph.setEdge(node.id, dependencyID, {
+        style: "stroke: #000; stroke-width: 1px;",
+        label: "WaR",
+        arrowheadStyle: "fill: #000; stroke: #000;"
+      }, "WaR");
+    });
+    _.each(node.WAWDepsOn, function(dependencyID) {
+      flowGraph.setEdge(node.id, dependencyID, {
+        style: "stroke: #000; stroke-width: 1px;",
+        label: "WaW",
+        arrowheadStyle: "fill: #000; stroke: #000;"
+      }, "WaW");
+    });
+    node.collapsed = false;
+  } else {
+    _.each(node.RAWDepsOn, function(dependencyID) {
+      flowGraph.removeEdge({
+        v: node.id,
+        w: dependencyID,
+        name: "RaW"
+      });
+    });
+    _.each(node.WARDepsOn, function(dependencyID) {
+      flowGraph.removeEdge({
+        v: node.id,
+        w: dependencyID,
+        name: "WaR"
+      });
+    });
+    _.each(node.WAWDepsOn, function(dependencyID) {
+      flowGraph.removeEdge({
+        v: node.id,
+        w: dependencyID,
+        name: "WaW"
+      });
+    });
+    node.collapsed = true;
+  }
 }

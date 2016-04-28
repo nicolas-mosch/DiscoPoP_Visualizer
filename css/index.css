@@ -6,6 +6,28 @@ body {
   box-sizing: border-box;
   height: 100%;
 }
+#index-table {
+  height: 100%;
+  width: 100%;
+}
+#index-table td {
+  height: 100%;
+}
+#code-container {
+  height: 100%;
+  overflow: auto;
+  background-color: #707070;
+}
+#graph-container{
+  height: 100%;
+  width: 100%;
+}
+
+.tab-content{
+  height: 100%;
+  width: 100%;
+}
+
 svg {
   width: 100%;
   height: 100%;
@@ -16,11 +38,6 @@ text {
   font-size: 14px;
   D
 }
-.node rect {
-  stroke: #999;
-  fill: #fff;
-  stroke-width: 1.5px;
-}
 .edgePath path {
   stroke: #333;
   fill: none;
@@ -30,6 +47,9 @@ text {
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+.node{
+  cursor: pointer;
 }
 .arrowhead {
   stroke: black;
@@ -54,27 +74,28 @@ text {
   margin: 0 auto;
   height: 100%;
 }
-#legend {
-  background-color: #C0C0C0;
-  width: 100%;
-  height: 100%;
-  margin: 0 auto;
-}
-.node {
-  cursor: pointer;
-}
-.node circle {
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
-.node text {
+
+.label {
   font: 10px sans-serif;
+  color: black;
 }
+
 .link {
   fill: none;
   stroke: #ccc;
   stroke-width: 1.5px;
+}
+
+.control.glyphicon {
+  position: static;
+}
+
+#tooltip-container{
+  position: absolute;
+  z-index: 1000000;
+  visibility: hidden;
+  background-color: white;
+  border: 2px solid black;
 }
 
 /* This styles the title of the tooltip */

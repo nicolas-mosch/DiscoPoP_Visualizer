@@ -34,8 +34,7 @@ var template = [{
         if (filePaths == null)
           return;
         var fileContents = fs.readFileSync(filePaths[0]);
-        mainWindow.webContents.send('setData', JSON.parse(fileContents));
-        mainWindow.webContents.send('renderGraph1');
+        mainWindow.webContents.send('initializeGraphAndData', JSON.parse(fileContents));
       }
     }, {
       label: 'Import File-Mapping',
@@ -137,8 +136,7 @@ ipc.on('closeGraphSettingsWindow', function(){
 ipc.on('saveGraphSettings', function(){
   console.log('svae');
   graphSettingsWindow.close();
-  mainWindow.webContents.send('clearGraph');
-  mainWindow.webContents.send('renderGraph1');
+  mainWindow.webContents.send('redrawGraph');
 });
 
 

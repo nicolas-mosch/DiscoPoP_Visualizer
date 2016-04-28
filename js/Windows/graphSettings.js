@@ -14,7 +14,8 @@ $(document).ready(function() {
     cuColor: configuration.readSetting('cuColor'),
     functionColor: configuration.readSetting('functionColor'),
     loopColor: configuration.readSetting('loopColor'),
-    defaultColor: configuration.readSetting('defaultColor')
+    defaultColor: configuration.readSetting('defaultColor'),
+    labelColor: configuration.readSetting('labelColor')
   }
 
   var template = Handlebars.compile(document.getElementById('graphColorSettingsTableTemplate').innerHTML);

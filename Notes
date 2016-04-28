@@ -1,19 +1,18 @@
 Functions: readable name plz
-Mark a root node somehow
-Initial graph, how much to render? Just root node and have user expand everything on his own? (Options: expand all sub-nodes for a cluster)
-Somehow put filemapping and CU-Nodes together?
 Dependency graph: in another tab? In same graph (too many edges)? When node is clicked?
-Add predecessor-CUs property to CUs
-Add successor and predecessor nodes
+Should loops display its function calls without being expanded?
+How are function names mapped? (_Z3fooii, ii stants for two int parameters, what about double, complex etc...?,
+could parse the name with that info)
+Why are globalVariableNames == localVariableNames in functions? What are these for in non-function CUs?
+Is read/writeDataSize in Bytes? I want to change it to kB/mB/gB...etc in display (readability)
 
-Assumptions:  A node can have only one parentNode
-              A non-CU node can have only CU-nodes as children
-
-
-Problem:  Why is return stmt (1:30) a child of loop 1:19, but loop declaration (1:20) is not?
-          Why does root node have faulty type (what should it be?)
-          Objects missing IDs in mergesort...
+Assumptions:
 
 
+Problem:
 
-TO-DO:    Hover: display node info
+
+
+TO-DO:  Hover: display node info
+        Click on code line: show CU in graph (all code has CU right?)
+        Use shapes to identify types of nodes and color for data (problem: too much red?, which colors? red,yellow,green? What are the levels?)
