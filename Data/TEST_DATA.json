@@ -1,0 +1,108 @@
+[
+    {
+        "id": "1:12",
+        "type": 1,
+        "start": "1:25",
+        "end": "1:33",
+        "name": "main",
+        "childrenNodes": [
+            "1:13",
+            "1:19",
+            "1:30"
+        ]
+    },
+    {
+        "id": "1:13",
+        "type": 0,
+        "start": "1:25",
+        "end": "1:27",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 4197845672,
+        "writeDataSize": 32607,
+        "successorCUs": [
+            "1:20"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:25",
+            "1:26",
+            "1:27"
+        ],
+        "readPhaseLineNumbers": [],
+        "writePhaseLineNumbers": [
+            "1:26",
+            "1:27"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [],
+        "functionCall": [
+            {
+                "atLine": "1:25",
+                "funcId": "1:14"
+            },
+            {
+                "atLine": "1:25",
+                "funcId": "1:15"
+            },
+            {
+                "atLine": "1:25",
+                "funcId": "1:16"
+            },
+            {
+                "atLine": "1:25",
+                "funcId": "1:17"
+            },
+            {
+                "atLine": "1:26",
+                "funcId": "1:18"
+            }
+        ],
+        "RAWDepsOn": [],
+        "WARDepsOn": [
+            "1:20"
+        ],
+        "WAWDepsOn": []
+    },
+
+
+    {
+        "id": "1:19",
+        "type": 2,
+        "start": "1:27",
+        "end": "1:33",
+        "name": "",
+        "childrenNodes": [
+            "1:20",
+            "1:21",
+            "1:22",
+            "1:23",
+            "1:24",
+            "1:29"
+        ]
+    },
+    {
+        "id": "1:30",
+        "type": 0,
+        "start": "1:33",
+        "end": "1:33",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 4197845672,
+        "writeDataSize": 32607,
+        "successorCUs": [],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:33"
+        ],
+        "readPhaseLineNumbers": [],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    }
+    
+]

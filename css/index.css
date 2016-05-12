@@ -62,11 +62,12 @@ text {
   background: rgba(100, 200, 100, 0.5);
   z-index: 20
 }
-.editor {
+#ace-editor {
   width: calc(100% - 40px);
   border-radius: 4px;
   margin: 0 auto;
   margin: 20px;
+  max-height: 100%;
 }
 .ace_scrollbar {
   height: 5px !important;
@@ -99,17 +100,24 @@ text {
   border: 2px solid black;
 }
 
-/* This styles the title of the tooltip */
-
-.tipsy .name {
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #60b1fc;
-  margin: 0;
+#node-info-container{
+  z-index: 1000000;
+  position: absolute;
+  top: 40px;
+  right: 5px;
+  display: none;
+  background-color: #B0B0B0;
 }
 
-/* This styles the body of the tooltip */
+#node-info-table td{
+  padding: 7px;
+}
 
-.tipsy .description {
-  font-size: 1.2em;
+#code-view{
+  height: 100%;
+  width: 100%;
+}
+
+#file-select option {
+  font-size: 22px;
 }

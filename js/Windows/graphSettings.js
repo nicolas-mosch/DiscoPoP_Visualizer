@@ -10,13 +10,39 @@ var Handlebars = require('handlebars');
 $(document).ready(function() {
   console.log("ready!");
 
-  var colorData = {
-    cuColor: configuration.readSetting('cuColor'),
-    functionColor: configuration.readSetting('functionColor'),
-    loopColor: configuration.readSetting('loopColor'),
-    defaultColor: configuration.readSetting('defaultColor'),
-    labelColor: configuration.readSetting('labelColor')
-  }
+  var colorData = [
+    {
+      id: 'cuColor',
+      name: 'Computational Unit',
+      color: configuration.readSetting('cuColor')
+    },
+    {
+      id: 'functionColor',
+      name: 'Function',
+      color: configuration.readSetting('functionColor')
+    },
+    {
+      id: 'loopColor',
+      name: 'Loop',
+      color: configuration.readSetting('loopColor')
+    },
+    {
+      id: 'defaultColor',
+      name: 'Other',
+      color: configuration.readSetting('defaultColor'),
+      newRow: true
+    },
+    {
+      id: 'labelColor',
+      name: 'Labels',
+      color: configuration.readSetting('labelColor')
+    },
+    {
+      id: 'selectedNodeColor',
+      name: 'Selected Node',
+      color: configuration.readSetting('selectedNodeColor')
+    }
+  ];
 
   var template = Handlebars.compile(document.getElementById('graphColorSettingsTableTemplate').innerHTML);
   var graphSettingsTemplate = template({
@@ -24,15 +50,15 @@ $(document).ready(function() {
   });
 
   $("#colorSettings").html(graphSettingsTemplate);
-  $( ".colorpicker-component" ).each(function() {
-    $( this ).colorpicker();
+  $(".colorpicker-component").each(function() {
+    $(this).colorpicker();
   });
 
   $('#saveSettings').on('click', saveSettings);
 });
 
-function saveSettings(){
-  $( ".settingInput" ).each(function() {
+function saveSettings() {
+  $(".settingInput").each(function() {
     console.log('Saving: ' + $(this).data('key') + ' = ' + $(this).val());
     configuration.saveSetting($(this).data('key'), $(this).val());
   });

@@ -21,21 +21,19 @@
           <div class="panel-body">
               <table class="table table-condensed">
                 <tr>
-                  {{#each colorSettings}}
-                  <th>
-                    {{@key}}
-                  </th>
-                  {{/each}}
+                {{#each colorSettings}}
+                {{#if this.newRow}}
                 </tr>
                 <tr>
-                  {{#each colorSettings}}
+                {{/if}}
                   <td>
-                    <div id="{{@key}}_colorpicker" class="input-group colorpicker-component">
-                      <input type="text" data-key="{{@key}}" class="form-control settingInput" value="{{this}}" />
+                    <label>{{this.name}}</label><br />
+                    <div id="{{this.id}}_colorpicker" class="input-group colorpicker-component">
+                      <input type="text" data-key="{{this.id}}" class="form-control settingInput" value="{{this.color}}" />
                       <span class="input-group-addon"><i></i></span>
                     </div>
                   </td>
-                  {{/each}}
+                {{/each}}
                 </tr>
               </table>
           </div>

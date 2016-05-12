@@ -3,6 +3,7 @@ nconf.defaults({
   cuColor: '#00FF00',
   functionColor: '#00FFFF',
   loopColor: '#FF6633',
+  selectedNodeColor: '#FFFFFF',
   defaultColor: '#FFFF33'
 });
 

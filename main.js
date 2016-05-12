@@ -3,107 +3,66 @@ var BrowserWindow = require('browser-window'); // Module to create native browse
 var Menu = require('menu');
 var MenuItem = require('menu-item');
 var Handlebars = require('handlebars');
-var ipc = require("electron").ipcMain;
-var fs = require('fs');
+const ipc = require("electron").ipcMain;
 var _ = require('lodash/core');
 var configuration = require('./js/Controllers/configuration.js');
+
 // Windows
 var mainWindow = null;
 var graphSettingsWindow = null;
 var codeSettingsWindow = null;
 var cuInfoWindows = {};
+var nodeData = null;
+
+const dialog = require('electron').dialog;
 
 var template = [{
-    label: 'File',
-    submenu: [{
-      label: 'Import CU-File',
-      accelerator: 'CmdOrCtrl+I',
-      role: 'import',
-      click: function(item, focusedWindow) {
-        const dialog = require('electron').dialog;
-        var filePaths = dialog.showOpenDialog({
-          title: 'Import CU-File',
-          defaultPath: 'Data',
-          filters: [{
-            name: 'JSON',
-            extensions: ['json']
-          }],
-          properties: ['openFile']
-        });
-
-        if (filePaths == null)
-          return;
-        var fileContents = fs.readFileSync(filePaths[0]);
-        mainWindow.webContents.send('initializeGraphAndData', JSON.parse(fileContents));
-      }
-    }, {
-      label: 'Import File-Mapping',
-      accelerator: 'CmdOrCtrl+F',
-      role: 'import',
-      click: function(item, focusedWindow) {
-        const dialog = require('electron').dialog;
-        var filePaths = dialog.showOpenDialog({
-          title: 'Import File-Mapping',
-          defaultPath: 'Data',
-          filters: [{
-            name: 'Text',
-            extensions: ['txt']
-          }],
-          properties: ['openFile']
-        });
-
-        if (filePaths == null)
-          return;
-        var fileContents = fs.readFileSync(filePaths[0], "utf-8");
-        var fileLines = fileContents.split('\n');
-        var fileMaps = {};
-        for (var line = 0; line < fileLines.length; line++) {
-          var fileLine = fileLines[line].split('\t');
-          if (fileLine.length == 2) {
-            fileContents = fs.readFileSync(fileLine[1].trim(), "utf-8");
-            fileMaps[fileLine[0]] = {
-              path: fileLine[1].trim(),
-              content: fileContents
-            };
-          }
-        }
-        mainWindow.webContents.send('setFileMapping', fileMaps);
-      }
-    }]
-  },
-  {
-      label: 'Preferences',
-      submenu: [{
-        label: 'Graph',
-        accelerator: 'CmdOrCtrl+G',
-        role: 'graphSettings',
-        click: function(item, focusedWindow) {
-          if (graphSettingsWindow) {
-            graphSettingsWindow.focus();
-            return;
-          }
-          graphSettingsWindow = new BrowserWindow({
-            width: 600,
-            height: 350
-          });
-          graphSettingsWindow.setMenu(null);
-          graphSettingsWindow.setAlwaysOnTop(true);
-          graphSettingsWindow.loadURL('file://' + __dirname + '/Windows/graphSettings.html');
-          graphSettingsWindow.on('closed', function() {
-            graphSettingsWindow = null;
-          });
-          //graphSettingsWindow.webContents.openDevTools();
-        }
-      },
-      {
-        label: 'Code',
-        accelerator: 'CmdOrCtrl+C',
-        role: 'codeSettings',
-        click: function(item, focusedWindow) {
-        }
-      }]
+  label: 'File',
+  submenu: [{
+    label: 'Import Data',
+    accelerator: 'CmdOrCtrl+I',
+    role: 'import',
+    click: function(item, focusedWindow) {
+      importFiles();
     }
-];
+  }, {
+    label: 'Open DevTools',
+    accelerator: 'CmdOrCtrl+T',
+    role: 'import',
+    click: function(item, focusedWindow) {
+      mainWindow.webContents.openDevTools();
+    }
+  }]
+}, {
+  label: 'Preferences',
+  submenu: [{
+    label: 'Graph',
+    accelerator: 'CmdOrCtrl+G',
+    role: 'graphSettings',
+    click: function(item, focusedWindow) {
+      if (graphSettingsWindow) {
+        graphSettingsWindow.focus();
+        return;
+      }
+      graphSettingsWindow = new BrowserWindow({
+        width: 600,
+        height: 350
+      });
+      graphSettingsWindow.setMenu(null);
+      graphSettingsWindow.setAlwaysOnTop(true);
+      graphSettingsWindow.loadURL('file://' + __dirname + '/Windows/graphSettings.html');
+      graphSettingsWindow.on('closed', function() {
+        graphSettingsWindow = null;
+      });
+      //graphSettingsWindow.webContents.openDevTools();
+    }
+  }, {
+    label: 'Code',
+    accelerator: 'CmdOrCtrl+C',
+    role: 'codeSettings',
+    click: function(item, focusedWindow) {}
+  }]
+}];
 
 ipc.on('showCuInfo', function(event, cuData) {
   if (!_.has(cuInfoWindows, cuData.id)) {
@@ -116,7 +75,7 @@ ipc.on('showCuInfo', function(event, cuData) {
     });
     cuInfoWindow.setMenu(null);
     cuInfoWindow.loadURL('file://' + __dirname + '/Windows/cuInfo.html');
-    cuInfoWindow.webContents.on('did-finish-load', function(){
+    cuInfoWindow.webContents.on('did-finish-load', function() {
       cuInfoWindow.webContents.send('init', cuData);
     });
     cuInfoWindow.on('closed', function() {
@@ -124,17 +83,20 @@ ipc.on('showCuInfo', function(event, cuData) {
     });
     //cuInfoWindow.webContents.openDevTools();
     cuInfoWindows[cuData.id] = cuInfoWindow;
-  }else{
+  } else {
     cuInfoWindows[cuData.id].focus();
   }
 });
 
-ipc.on('closeGraphSettingsWindow', function(){
+ipc.on('import-files', function() {
+  importFiles();
+});
+
+ipc.on('closeGraphSettingsWindow', function() {
   graphSettingsWindow.close();
 });
 
-ipc.on('saveGraphSettings', function(){
-  console.log('svae');
+ipc.on('saveGraphSettings', function() {
   graphSettingsWindow.close();
   mainWindow.webContents.send('redrawGraph');
 });
@@ -169,3 +131,52 @@ app.on('ready', function() {
     mainWindow = null;
   });
 });
+
+
+
+
+function importFiles() {
+  var mappingPath;
+
+  // Import File-Mapping
+  var filePaths = dialog.showOpenDialog({
+    title: 'Import File-Mapping',
+    defaultPath: 'Data',
+    filters: [{
+      name: 'Text',
+      extensions: ['txt']
+    }],
+    properties: ['openFile']
+  });
+
+  if (filePaths == null)
+    return;
+  mappingPath = filePaths[0];
+
+  // Import Node-Data
+  var filePaths = dialog.showOpenDialog({
+    title: 'Import Node-Data',
+    defaultPath: 'Data',
+    filters: [{
+      name: 'JSON',
+      extensions: ['json']
+    }],
+    properties: ['openFile']
+  });
+
+  if (filePaths == null)
+    return;
+  mainWindow.setProgressBar(0.5);
+  //var data = DataImporter.buildFromFile(mappingPath, filePaths[0]);
+  //console.log('Root-Node', data.rootNode);
+  //console.log('Root-Node Children', JSON.stringify(data.rootNode.childrenNodes));
+
+  mainWindow.webContents.on('did-finish-load', function() {
+    console.log('finished loading');
+    mainWindow.webContents.send('init', mappingPath, filePaths[0]);
+  });
+
+  mainWindow.loadURL('file://' + __dirname + '/Windows/visualizer.html');
+
+
+}
