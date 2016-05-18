@@ -15,7 +15,7 @@ Assumptions:
   Two CUs that contain the same line in code, will be children of the same node
   Nodes do not extend over several files
   There is only one root node (main) which has no parent-nodes
-  CUs only have dependencies on CUs in same (parent)function
+  * CUs only have dependencies on CUs in same (parent)function
 
 Problem:
 
@@ -34,6 +34,10 @@ TO-DO:
         Add more color customization (Edges, selected Nodes ...)
         Deselect node (on outside click? on click again?)
         Button for displaying all dependencies for visible CUs
+        Tooltip for parentCUs
+        Display all root-nodes
+        Re-Import should work
+
 
 Requests:
   Full ChildNodeCount of subtree / or full childCuCount of subtree

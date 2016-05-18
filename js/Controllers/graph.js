@@ -3,7 +3,7 @@ var dagreD3 = require('./../dagre-d3');
 var _ = require('lodash/core');
 var configuration = require('./configuration.js');
 
-var Graph = function(svg, rootNode, entryNode, exitNode) {
+var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
   var highlightedNodes = [];
   // Initialization of graph and renderer
   var render, inner, zoom;
@@ -29,10 +29,12 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
 
   // Initialize starting graph (rootNode and entry/exit)
 
-  addNode(rootNode);
+  _.each(rootNodes, function(node){
+    addNode(node);
+  });
 
 
-  addNode(entryNode);
+  /*addNode(entryNode);
   addNode(exitNode);
   graph.setEdge('entryNode', rootNode.id, {
     style: "stroke: #000; stroke-width: 1px;",
@@ -49,6 +51,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
 
   */
   function addNode(node) {
+    console.log("addNode", node);
     var label, shape, nodeClass, parentNodes;
     switch (node.type) {
       case 0:
@@ -76,10 +79,6 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
         nodeClass = 'default-node';
         shape = 'circle';
     }
-    parentNodes = [];
-    _.each(node.parentNodes, function(parentNode) {
-      parentNodes.push(parentNode.id);
-    });
 
     var nodeObject = {
       id: node.id,
@@ -113,6 +112,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
 
   */
   function toggleDependencyEdges(node) {
+    console.log("toggleDependencyEdges", node);
     var graphNode = graph.node(node.id);
     if (graphNode.collapsed) {
       // Show dependency nodes
@@ -169,6 +169,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
 
   */
   function redraw() {
+    console.log("redraw");
     // Set margins, if not present
     if (!graph.graph().hasOwnProperty("marginx") &&
       !graph.graph().hasOwnProperty("marginy")) {
@@ -206,6 +207,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
   }
 
   function expandNode(node) {
+    console.log("expandNode", node);
     if (_.has(node, 'childrenNodes') && node.childrenNodes.length && node.type > 0) {
       var graphNode, sourceNodeID, sinkNodeID;
       var flowEdgeStyle = {
@@ -273,6 +275,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
   }
 
   function collapseNode(node) {
+    console.log("collapseNode", node);
     graph.node(node.id).collapsed = true;
     _.each(node.childrenNodes, function(childNode) {
       _.each(graph.inEdges(childNode.id), function(edge) {
@@ -300,6 +303,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
   }
 
   function expandAll(node) {
+    console.log("expandAll", node);
     var stack = [];
     stack.push(node);
     do {
@@ -327,6 +331,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
   }
 
   function panToNode(node) {
+    console.log("panToNode", node);
     var graphNode = graph.node(node.id);
     var height = parseInt(svg.style("height"));
     var width = parseInt(svg.style("width"));
@@ -338,6 +343,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
   }
 
   function highlightNode(node) {
+    console.log("highlightNode", node);
     if (highlightedNodes.indexOf(node) == -1 && node.type >= 0 && node.type <= 2) {
       var graphNode = graph.node(node.id);
       var svgNode = svg.select('[data-id="' + node.id + '"]');
@@ -355,6 +361,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
   }
 
   function unhighlightNodes() {
+    console.log("unhighlightNodes");
     var graphNode;
     var svgNode;
     var svgShape, svgLabel;
@@ -399,6 +406,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
   }
 
   function resetView() {
+    console.log("resetView");
     svg.transition()
       .duration(750)
       .call(zoom.translate([0, 0]).scale(1).event);

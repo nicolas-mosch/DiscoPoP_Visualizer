@@ -4,8 +4,9 @@ var sizeof = require('sizeof');
 var IntervalTree = require('../Models/tree.js');
 
 function buildFromFile(mappingFilePath, nodeFilePath) {
-  var rootNode, startCU, endCU, nodeID, i, start, end, fileID;
+  var startCU, endCU, nodeID, i, start, end, fileID;
   var data = {};
+  var rootNodes = [];
   var fileMaps = {};
   var fileNodeIntervalTrees = {};
   var maxCuDataSize = 0;
@@ -116,6 +117,7 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
   });
 
   // Create entry and exit nodes
+  /*
   var entryNode = {
     parentNodes: [],
     type: -1,
@@ -128,7 +130,7 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
     type: -1,
     name: 'Exit',
     id: 'exitNode'
-  };
+  };*/
 
   _.each(data, function(node) {
     if (node.type == 0) {
@@ -137,9 +139,9 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
         addToDescendantNodeCount(parentNode, node.dataSize);
       });
     } else if (!node.parentNodes.length) {
-      // Find the root Node
-      rootNode = node;
-      _.each(node.childrenNodes, function(childNode) {
+      // Find the root Nodes
+      rootNodes.push(node);
+      /*_.each(node.childrenNodes, function(childNode) {
         //connect starting and ending CUs to start and end nodes
         if (childNode.type == 0) {
           if (!childNode.predecessorCUs.length) {
@@ -149,7 +151,7 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
             childNode.successorCUs.push(exitNode);
           }
         }
-      });
+      });*/
     }
   });
 
@@ -168,13 +170,15 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
   });
 
   // Add start and end nodes to dataset
+  /*
   data['entryNode'] = entryNode;
   data['exitNode'] = exitNode;
+  */
   console.log('Resulting dataset size: ' + sizeof.sizeof(data, true));
 
   return {
     fileMapping: fileMaps,
-    rootNode: rootNode,
+    rootNodes: rootNodes,
     nodeData: data,
     fileNodeIntervalTrees: fileNodeIntervalTrees
   };

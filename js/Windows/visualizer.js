@@ -41,10 +41,10 @@ ipc.on('init', function(event, mappingPath, nodesPath) {
   fileNodeIntervalTrees = data.fileNodeIntervalTrees;
 
   canvas.selectAll('*').remove();
-  graphController = new GraphController(canvas, data.rootNode, nodeData['entryNode'], nodeData['exitNode']);
+  graphController = new GraphController(canvas, data.rootNodes/*, nodeData['entryNode'], nodeData['exitNode']*/);
 
   editorController = new EditorController(data.fileMapping);
-  editorController.displayFile(data.rootNode.id.split(':')[0]);
+  $('#file-select-tab').trigger('click');
   initEventListeners();
   graphController.redraw();
   //Graph
@@ -328,7 +328,7 @@ function initEventListeners() {
   });
 
   var codeMenu = new BootstrapMenu('#code-container #ace-editor', {
-    menuEvent: 'click',
+    //menuEvent: 'click',
     fetchElementData: function() {
       var node = fileNodeIntervalTrees[editorController.getCurrentFileID()]
         .findOne([editorController.getCursorRow() + 1, editorController.getCursorRow() + 1]);
