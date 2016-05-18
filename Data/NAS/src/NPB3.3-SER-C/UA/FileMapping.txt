@@ -1,0 +1,12 @@
+1	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/adapt.c
+2	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/convect.c
+3	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/diffuse.c
+4	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/header.h
+5	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/mason.c
+6	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/move.c
+7	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/precond.c
+8	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/setup.c
+9	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/transfer.c
+10	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/ua.c
+11	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/utils.c
+12	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/UA/verify.c

@@ -1,10 +1,17 @@
 var nconf = require('nconf').file({file: getUserHome() + '/config.json'});
 nconf.defaults({
-  cuColor: '#00FF00',
-  functionColor: '#00FFFF',
-  loopColor: '#FF6633',
-  selectedNodeColor: '#FFFFFF',
-  defaultColor: '#FFFF33'
+  cuColorFill: '#00FF00',
+  cuColorLabel: '#000000',
+  functionColorFill: '#00FFFF',
+  functionColorLabel: '#000000',
+  loopColorFill: '#FF6633',
+  loopColorLabel: '#000000',
+  selectedNodeColorFill: '#FFFF33',
+  selectedNodeColorLabel: '#000000',
+  libraryFunctionColorFill: '#FF0F33',
+  libraryFunctionColorLabel: '#000000',
+  defaultColorFill: '#FFFFFF',
+  defaultColorLabel: '#000000'
 });
 
 function saveSetting(settingKey, settingValue) {

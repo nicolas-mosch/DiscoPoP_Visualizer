@@ -39,10 +39,6 @@ ipc.on('init', function(event, mappingPath, nodesPath) {
   nodeData = data.nodeData;
   fileMaps = data.fileMapping;
   fileNodeIntervalTrees = data.fileNodeIntervalTrees;
-  _.each(fileNodeIntervalTrees, function(value, key) {
-    console.log('Root for ' + key);
-    value.log();
-  });
 
   canvas.selectAll('*').remove();
   graphController = new GraphController(canvas, data.rootNode, nodeData['entryNode'], nodeData['exitNode']);
@@ -78,10 +74,10 @@ function initEventListeners() {
   //  Node-Info
   $("#node-info-button").on('click', function() {
     $("#node-info-container").slideToggle("medium", function() {
-      if($( "#node-info-container" ).is( ":hidden" )){
+      if ($("#node-info-container").is(":hidden")) {
         $('#node-info-collapse-icon').removeClass('glyphicon-collapse-up');
         $('#node-info-collapse-icon').addClass('glyphicon-collapse-down');
-      }else{
+      } else {
         $('#node-info-collapse-icon').removeClass('glyphicon-collapse-down');
         $('#node-info-collapse-icon').addClass('glyphicon-collapse-up');
       }
@@ -95,11 +91,12 @@ function initEventListeners() {
 
 
   // File selector click behavior
-  var fileSelector = $('#file-select');
-  fileSelector.on('change', function() {
-    var fileID = fileSelector.val();
-    editorController.displayFile(fileID);
-    $('#code-container-tab').trigger('click');
+  $('#file-select-container').on("changed.jstree", function(e, data) {
+    if(data.node.type == "file"){
+      editorController.displayFile(data.node.id);
+      $('#code-container-tab').trigger('click');
+      editorController.unhighlight();
+    }
   });
 
   var editor = $('#ace-editor');
@@ -139,10 +136,28 @@ function initEventListeners() {
     }
 
     if (!node.type) {
-      data.read = node.readDataSize,
-        data.write = node.writeDataSize,
-        data.local_variables = JSON.stringify(node.localVariableNames),
-        data.global_variables = JSON.stringify(node.globalVariableNames)
+      data.read = humanFileSize(node.readDataSize, true);
+      data.write = humanFileSize(node.writeDataSize, true);
+      if(node.localVariableNames.length){
+        data.local_variables = "";
+        _.each(node.localVariableNames, function(variable) {
+          data.local_variables += variable.name + ' (' + variable.type + '), ';
+        });
+      }else{
+        data.local_variables = " - ";
+      }
+
+      if(node.globalVariableNames.length){
+        data.global_variables = "";
+        _.each(node.globalVariableNames, function(variable) {
+          data.global_variables += variable.name + ' (' + variable.type + '), ';
+        });
+      }else{
+        data.global_variables = " - ";
+      }
+
+      data.local_variables = data.local_variables.replace(/,(\s+)?$/, '');
+      data.global_variables = data.global_variables.replace(/,(\s+)?$/, '');
     }
 
     var template = Handlebars.compile(document.getElementById('cuInfoTableTemplate').innerHTML);
@@ -313,6 +328,7 @@ function initEventListeners() {
   });
 
   var codeMenu = new BootstrapMenu('#code-container #ace-editor', {
+    menuEvent: 'click',
     fetchElementData: function() {
       var node = fileNodeIntervalTrees[editorController.getCurrentFileID()]
         .findOne([editorController.getCursorRow() + 1, editorController.getCursorRow() + 1]);
@@ -327,11 +343,23 @@ function initEventListeners() {
         graphController.expandTo(node);
         graphController.redraw();
         graphController.panToNode(node);
-        graphController.unhighlightNodes();
-        graphController.highlightNode(node);
-        editorController.unhighlight();
-        editorController.highlightNodeInCode(node);
+        $('#' + node.id.replace(':', '\\:')).trigger('click');
       }
     }]
   });
+}
+
+
+function humanFileSize(bytes, si) {
+  var thresh = si ? 1000 : 1024;
+  if (Math.abs(bytes) < thresh) {
+    return bytes + ' B';
+  }
+  var units = si ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+  var u = -1;
+  do {
+    bytes /= thresh;
+    ++u;
+  } while (Math.abs(bytes) >= thresh && u < units.length - 1);
+  return bytes.toFixed(1) + ' ' + units[u];
 }

@@ -10,43 +10,71 @@ var Handlebars = require('handlebars');
 $(document).ready(function() {
   console.log("ready!");
 
-  var colorData = [
-    {
-      id: 'cuColor',
-      name: 'Computational Unit',
-      color: configuration.readSetting('cuColor')
+  var nodeColorData = [{
+    name: 'Computational Unit',
+    fillColor: {
+      id: 'cuColorFill',
+      color: configuration.readSetting('cuColorFill')
     },
-    {
-      id: 'functionColor',
-      name: 'Function',
-      color: configuration.readSetting('functionColor')
-    },
-    {
-      id: 'loopColor',
-      name: 'Loop',
-      color: configuration.readSetting('loopColor')
-    },
-    {
-      id: 'defaultColor',
-      name: 'Other',
-      color: configuration.readSetting('defaultColor'),
-      newRow: true
-    },
-    {
-      id: 'labelColor',
-      name: 'Labels',
-      color: configuration.readSetting('labelColor')
-    },
-    {
-      id: 'selectedNodeColor',
-      name: 'Selected Node',
-      color: configuration.readSetting('selectedNodeColor')
+    labelColor: {
+      id: 'cuColorLabel',
+      color: configuration.readSetting('cuColorLabel')
     }
-  ];
+  }, {
+    name: 'Function',
+    fillColor: {
+      id: 'functionColorFill',
+      color: configuration.readSetting('functionColorFill')
+    },
+    labelColor: {
+      id: 'functionColorLabel',
+      color: configuration.readSetting('functionColorLabel')
+    }
+  }, {
+    name: 'Loop',
+    fillColor: {
+      id: 'loopColorFill',
+      color: configuration.readSetting('loopColorFill')
+    },
+    labelColor: {
+      id: 'loopColorLabel',
+      color: configuration.readSetting('loopColorLabel')
+    }
+  }, {
+    name: 'Library-Function',
+    fillColor: {
+      id: 'libraryFunctionColorFill',
+      color: configuration.readSetting('libraryFunctionColorFill')
+    },
+    labelColor: {
+      id: 'libraryFunctionColorLabel',
+      color: configuration.readSetting('libraryFunctionColorLabel')
+    }
+  }, {
+    name: 'Other',
+    fillColor: {
+      id: 'defaultColorFill',
+      color: configuration.readSetting('defaultColorFill')
+    },
+    labelColor: {
+      id: 'defaultColorLabel',
+      color: configuration.readSetting('defaultColorLabel')
+    }
+  }, {
+    name: 'Selected Node',
+    fillColor: {
+      id: 'selectedNodeColorFill',
+      color: configuration.readSetting('selectedNodeColorFill')
+    },
+    labelColor: {
+      id: 'selectedNodeColorLabel',
+      color: configuration.readSetting('selectedNodeColorLabel')
+    }
+  }];
 
   var template = Handlebars.compile(document.getElementById('graphColorSettingsTableTemplate').innerHTML);
   var graphSettingsTemplate = template({
-    colorSettings: colorData
+    nodeColorSettings: nodeColorData
   });
 
   $("#colorSettings").html(graphSettingsTemplate);

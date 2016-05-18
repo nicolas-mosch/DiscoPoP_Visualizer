@@ -14,7 +14,8 @@ Assumptions:
   childrenNodes of CU-nodes can only contain Function-nodes
   Two CUs that contain the same line in code, will be children of the same node
   Nodes do not extend over several files
-
+  There is only one root node (main) which has no parent-nodes
+  CUs only have dependencies on CUs in same (parent)function
 
 Problem:
 
@@ -27,13 +28,12 @@ TO-DO:
         // Highlight selected nodes
         // Make button for CU-info toggle show whether CU-info is available
         // Show and highlight CU from code on right click
-        Separate file-selector files by folder (remove path portion common to all)
+        // Separate file-selector files by folder (remove path portion common to all)
+        // Make dependencies edges go to parents if the CU is not visible
         *Max-visible parents (configuration variable, lower for better graph performance in very large graphs)
         Add more color customization (Edges, selected Nodes ...)
         Deselect node (on outside click? on click again?)
-        Test dependency graph
         Button for displaying all dependencies for visible CUs
-        Make dependencies edges go to parents if the CU is not visible
 
 Requests:
   Full ChildNodeCount of subtree / or full childCuCount of subtree

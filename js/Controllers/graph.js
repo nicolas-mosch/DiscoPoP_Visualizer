@@ -52,7 +52,7 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
     var label, shape, nodeClass, parentNodes;
     switch (node.type) {
       case 0:
-        label = 'CU (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end + '\nData Read: ' + node.readDataSize + '\nData Written: ' + node.writeDataSize;
+        label = 'CU (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end + '\nData Read: ' + humanFileSize(node.readDataSize, true) + '\nData Written: ' + humanFileSize(node.writeDataSize, true);
         shape = 'rect';
         nodeClass = 'cu-node';
         break;
@@ -65,6 +65,11 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
         label = ' loop (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end + '\n ';
         shape = 'ellipse';
         nodeClass = 'loop-node';
+        break;
+      case 3:
+        label = ' Library-Function (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end + '\n ';
+        shape = 'diamond';
+        nodeClass = 'library-function-node';
         break;
       default:
         label = node.name;
@@ -108,57 +113,51 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
 
   */
   function toggleDependencyEdges(node) {
-    console.log('Dependencies for ', node);
     var graphNode = graph.node(node.id);
     if (graphNode.collapsed) {
+      // Show dependency nodes
       var style = "stroke: #000; stroke-width: 1px;";
       var arrowheadStyle = "fill: #000; stroke: #000;";
-      _.each(node.RAWDepsOn, function(dependencyID) {
-        graph.setEdge(node.id, dependencyID, {
+      _.each(node.RAWDepsOn, function(dependencyCU) {
+        while (!graph.hasNode(dependencyCU.id)) {
+          dependencyCU = dependencyCU.parentNodes[0];
+        }
+        graph.setEdge(node.id, dependencyCU.id, {
           style: style,
           label: "RaW",
           arrowheadStyle: arrowheadStyle,
           lineInterpolate: 'basis'
-        }, "RaW");
+        }, "DependencyEdge");
       });
-      _.each(node.WARDepsOn, function(dependencyID) {
-        graph.setEdge(node.id, dependencyID, {
+      _.each(node.WARDepsOn, function(dependencyCU) {
+        while (!graph.hasNode(dependencyCU.id)) {
+          dependencyCU = dependencyCU.parentNodes[0];
+        }
+        graph.setEdge(node.id, dependencyCU.id, {
           style: style,
           label: "WaR",
           arrowheadStyle: arrowheadStyle,
           lineInterpolate: 'basis'
-        }, "WaR");
+        }, "DependencyEdge");
       });
-      _.each(node.WAWDepsOn, function(dependencyID) {
-        graph.setEdge(node.id, dependencyID, {
+      _.each(node.WAWDepsOn, function(dependencyCU) {
+        while(!graph.hasNode(dependencyCU.id)) {
+          dependencyCU = dependencyCU.parentNodes[0];
+        }
+        graph.setEdge(node.id, dependencyCU.id, {
           style: style,
           label: "WaW",
           arrowheadStyle: arrowheadStyle,
           lineInterpolate: 'basis'
-        }, "WaW");
+        }, "DependencyEdge");
       });
       graphNode.collapsed = false;
     } else {
-      _.each(node.RAWDepsOn, function(dependencyID) {
-        graph.removeEdge({
-          v: node.id,
-          w: dependencyID,
-          name: "RaW"
-        });
-      });
-      _.each(node.WARDepsOn, function(dependencyID) {
-        graph.removeEdge({
-          v: node.id,
-          w: dependencyID,
-          name: "WaR"
-        });
-      });
-      _.each(node.WAWDepsOn, function(dependencyID) {
-        graph.removeEdge({
-          v: node.id,
-          w: dependencyID,
-          name: "WaW"
-        });
+      // Hide dependency nodes
+      _.each(graph.outEdges(node.id), function(edge) {
+        if(_.has(edge, 'name') && edge.name == "DependencyEdge"){
+          graph.removeEdge(edge);
+        }
       });
       graphNode.collapsed = true;
     }
@@ -170,7 +169,6 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
 
   */
   function redraw() {
-    console.log('redraw');
     // Set margins, if not present
     if (!graph.graph().hasOwnProperty("marginx") &&
       !graph.graph().hasOwnProperty("marginy")) {
@@ -186,17 +184,29 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
     inner.call(render, graph);
 
     // Set colors from settings
-    inner.selectAll('g.cu-node:not(.selected-node)').style("fill", configuration.readSetting('cuColor'));
-    inner.selectAll('g.function-node:not(.selected-node)').style("fill", configuration.readSetting('functionColor'));
-    inner.selectAll('g.loop-node:not(.selected-node)').style("fill", configuration.readSetting('loopColor'));
-    inner.selectAll('g.default-node:not(.selected-node)').style("fill", configuration.readSetting('defaultColor'));
-    inner.selectAll('g.label').style("fill", configuration.readSetting('labelColor'));
-    inner.selectAll('g.selected-node').style("fill", configuration.readSetting('selectedNodeColor'));
+    inner.selectAll('g.cu-node:not(.selected-node)').style("fill", configuration.readSetting('cuColorFill'));
+    inner.selectAll('g.cu-node:not(.selected-node) g.label').style("fill", configuration.readSetting('cuColorLabel'));
+
+    inner.selectAll('g.function-node:not(.selected-node)').style("fill", configuration.readSetting('functionColorFill'));
+    inner.selectAll('g.function-node:not(.selected-node) g.label').style("fill", configuration.readSetting('functionColorLabel'));
+
+    inner.selectAll('g.loop-node:not(.selected-node)').style("fill", configuration.readSetting('loopColorFill'));
+    inner.selectAll('g.loop-node:not(.selected-node) g.label').style("fill", configuration.readSetting('loopColorLabel'));
+
+    inner.selectAll('g.library-function-node:not(.selected-node)').style("fill", configuration.readSetting('libraryFunctionColorFill'));
+    inner.selectAll('g.library-function-node:not(.selected-node) g.label').style("fill", configuration.readSetting('libraryFunctionColorLabel'));
+
+    inner.selectAll('g.default-node:not(.selected-node)').style("fill", configuration.readSetting('defaultColorFill'));
+    inner.selectAll('g.default-node:not(.selected-node) g.label').style("fill", configuration.readSetting('defaultColorLabel'));
+
+    inner.selectAll('g.selected-node').style("fill", configuration.readSetting('selectedNodeColorFill'));
+    inner.selectAll('g.selected-node g.label').style("fill", configuration.readSetting('selectedNodeColorLabel'));
+
+
   }
 
   function expandNode(node) {
     if (_.has(node, 'childrenNodes') && node.childrenNodes.length && node.type > 0) {
-      console.log('expanding', node);
       var graphNode, sourceNodeID, sinkNodeID;
       var flowEdgeStyle = {
         style: "stroke: " + configuration.readSetting('cuColor') + "; stroke-width: 3px;",
@@ -263,7 +273,6 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
   }
 
   function collapseNode(node) {
-    console.log('collapsing', node);
     graph.node(node.id).collapsed = true;
     _.each(node.childrenNodes, function(childNode) {
       _.each(graph.inEdges(childNode.id), function(edge) {
@@ -306,7 +315,6 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
   }
 
   function expandTo(node) {
-    console.log(graph);
     var currentNode = node;
     var queue = [];
     while (!graph.hasNode(currentNode.id)) {
@@ -334,8 +342,11 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
       var graphNode = graph.node(node.id);
       var svgNode = svg.select('[data-id="' + node.id + '"]');
       var svgShape = svgNode.select('.node-shape');
+      var svgLabel = svgNode.select('g.label');
       graphNode.class = graphNode.class + " selected-node";
-      svgShape.style('fill', configuration.readSetting('selectedNodeColor'))
+      svgShape.style('fill', configuration.readSetting('selectedNodeColorFill'))
+        .style('stroke-width', 5);
+      svgLabel.style('fill', configuration.readSetting('selectedNodeColorLabel'))
         .style('stroke-width', 5);
       highlightedNodes.push(node);
       return true;
@@ -346,33 +357,43 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
   function unhighlightNodes() {
     var graphNode;
     var svgNode;
-    var svgRect;
-    var fillColor;
+    var svgShape, svgLabel;
+    var fillColor, labelColor;
     var node;
     while (highlightedNodes.length) {
       node = highlightedNodes.pop();
       if (graph.hasNode(node.id)) {
-        graphNode = graph.node(node.id);
-        svgNode = svg.select('[data-id="' + node.id + '"]');
-        svgShape = svgNode.select('.node-shape');
         switch (node.type) {
           case 0:
-            fillColor = configuration.readSetting('cuColor');
+            fillColor = configuration.readSetting('cuColorFill');
+            labelColor = configuration.readSetting('cuColorLabel');
             break;
           case 1:
-            fillColor = configuration.readSetting('functionColor');
+            fillColor = configuration.readSetting('functionColorFill');
+            labelColor = configuration.readSetting('functionColorLabel');
             break;
           case 2:
-            fillColor = configuration.readSetting('loopColor');
+            fillColor = configuration.readSetting('loopColorFill');
+            labelColor = configuration.readSetting('loopColorLabel');
+            break;
+          case 3:
+            fillColor = configuration.readSetting('LibraryFunctionColorFill');
+            labelColor = configuration.readSetting('LibraryFunctionColorLabel');
             break;
           default:
             console.error('Tried to unhighlight a special node', node);
         }
+        graphNode = graph.node(node.id);
+        svgNode = svg.select('[data-id="' + node.id + '"]');
+        svgShape = svgNode.select('.node-shape');
+        svgLabel = svgNode.select('g.label');
+
         graphNode.class = graphNode.class.replace(" selected-node", "");
         svgNode.classed('selected-node', false);
         svgShape.style('fill', fillColor)
           .style('stroke-width', 3);
-        //svgNode.style('stroke-width', 3);
+        svgLabel.style('fill', labelColor)
+          .style('stroke-width', 3);
       }
     }
   }
@@ -402,3 +423,18 @@ var Graph = function(svg, rootNode, entryNode, exitNode) {
 
 
 module.exports = Graph;
+
+
+function humanFileSize(bytes, si) {
+  var thresh = si ? 1000 : 1024;
+  if (Math.abs(bytes) < thresh) {
+    return bytes + ' B';
+  }
+  var units = si ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+  var u = -1;
+  do {
+    bytes /= thresh;
+    ++u;
+  } while (Math.abs(bytes) >= thresh && u < units.length - 1);
+  return bytes.toFixed(1) + ' ' + units[u];
+}

@@ -19,22 +19,27 @@
         <div id="colorSettings" class="panel-collapse collapse in">
           <script type="text/x-handlebars-template" id="graphColorSettingsTableTemplate">
           <div class="panel-body">
+            <h4>Node Colors</h4>
               <table class="table table-condensed">
+                {{#each nodeColorSettings}}
                 <tr>
-                {{#each colorSettings}}
-                {{#if this.newRow}}
-                </tr>
-                <tr>
-                {{/if}}
+                  <th>
+                    <label>{{this.name}}</label>
+                  </th>
                   <td>
-                    <label>{{this.name}}</label><br />
-                    <div id="{{this.id}}_colorpicker" class="input-group colorpicker-component">
-                      <input type="text" data-key="{{this.id}}" class="form-control settingInput" value="{{this.color}}" />
+                    <div id="{{this.fillColor.id}}_colorpicker" class="input-group colorpicker-component">
+                      <input type="text" data-key="{{this.fillColor.id}}" class="form-control settingInput" value="{{this.fillColor.color}}" />
                       <span class="input-group-addon"><i></i></span>
                     </div>
                   </td>
-                {{/each}}
+                  <td>
+                    <div id="{{this.labelColor.id}}_colorpicker" class="input-group colorpicker-component">
+                      <input type="text" data-key="{{this.labelColor.id}}" class="form-control settingInput" value="{{this.labelColor.color}}" />
+                      <span class="input-group-addon"><i></i></span>
+                    </div>
+                  </td>
                 </tr>
+                {{/each}}
               </table>
           </div>
           </script>

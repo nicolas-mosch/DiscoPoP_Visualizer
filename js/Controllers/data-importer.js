@@ -69,7 +69,7 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
 
   // Add parentNodes and predecessorCUs properties to CU-nodes
   _.each(data, function(node) {
-    // set pointers to parentNodes and childrenNodes
+    // set references to parentNodes and childrenNodes
     for (i = 0; i < node.childrenNodes.length; i++) {
       nodeID = node.childrenNodes[i];
       try {
@@ -90,7 +90,7 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
     }
 
     if (node.type == 0) {
-      // set pointers to predecessorCUs and successorCUs
+      // set references to predecessorCUs and successorCUs and dependencies
       for (i = 0; i < node.successorCUs.length; i++) {
         try {
           nodeID = node.successorCUs[i];
@@ -101,20 +101,31 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
           throw err;
         }
       }
+      for (i = 0; i < node.RAWDepsOn.length; i++) {
+        node.RAWDepsOn[i] = data[node.RAWDepsOn[i]];
+      }
+
+      for (i = 0; i < node.WAWDepsOn.length; i++) {
+        node.WAWDepsOn[i] = data[node.WAWDepsOn[i]];
+      }
+
+      for (i = 0; i < node.WARDepsOn.length; i++) {
+        node.WARDepsOn[i] = data[node.WARDepsOn[i]];
+      }
     }
   });
 
   // Create entry and exit nodes
   var entryNode = {
     parentNodes: [],
-    type: 3,
+    type: -1,
     name: 'Entry',
     id: 'entryNode'
   };
 
   var exitNode = {
     parentNodes: [],
-    type: 3,
+    type: -1,
     name: 'Exit',
     id: 'exitNode'
   };
@@ -144,8 +155,6 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
 
   // get max/min-CuDataSize
   _.each(data, function(node) {
-    console.log('Comparing: ' + node.dataSize + ' with ' + maxCuDataSize, node);
-
     maxCuDataSize = Math.max(maxCuDataSize, node.dataSize);
     minCuDataSize = Math.min(maxCuDataSize, node.dataSize);
   });

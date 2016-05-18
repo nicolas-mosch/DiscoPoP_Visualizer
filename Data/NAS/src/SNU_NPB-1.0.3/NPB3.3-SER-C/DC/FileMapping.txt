@@ -1,0 +1,10 @@
+1	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/DC/adc.c
+2	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/DC/adcc.h
+3	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/DC/adc.h
+4	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/DC/dc.c
+5	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/DC/extbuild.c
+6	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/DC/jobcntl.c
+7	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/DC/macrodef.h
+8	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/DC/protots.h
+9	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/DC/rbt.c
+10	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/DC/rbt.h

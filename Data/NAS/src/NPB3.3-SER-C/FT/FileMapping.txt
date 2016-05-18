@@ -1,0 +1,6 @@
+1	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/FT/appft.c
+2	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/FT/auxfnct.c
+3	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/FT/fft3d.c
+4	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/FT/global.h
+5	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/FT/mainft.c
+6	/home/grszhen/DiscoPoP/SNU_NPB-1.0.3/NPB3.3-SER-C/FT/verify.c
