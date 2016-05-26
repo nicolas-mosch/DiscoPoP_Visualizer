@@ -72,12 +72,39 @@ $(document).ready(function() {
     }
   }];
 
-  var template = Handlebars.compile(document.getElementById('graphColorSettingsTableTemplate').innerHTML);
-  var graphSettingsTemplate = template({
+  var edgeColorData = [{
+    id: 'flowEdge',
+    name: 'Data-Flow',
+    color: configuration.readSetting('flowEdgeFill'),
+    width: configuration.readSetting('flowEdgeWidth')
+  }, {
+    id: 'dependencyEdge',
+    name: 'Dependency',
+    color: configuration.readSetting('dependencyEdgeFill'),
+    width: configuration.readSetting('dependencyEdgeWidth')
+  }, {
+    id: 'functionCallEdge',
+    name: 'Function-Call',
+    color: configuration.readSetting('functionCallEdgeFill'),
+    width: configuration.readSetting('functionCallEdgeWidth')
+  }];
+
+
+  var nodeColorTemplate = Handlebars.compile(document.getElementById('nodeColorSettingsTableTemplate').innerHTML);
+  var edgeColorTemplate = Handlebars.compile(document.getElementById('edgeColorSettingsTableTemplate').innerHTML);
+
+  var nodeColorSettingsTemplate = nodeColorTemplate({
     nodeColorSettings: nodeColorData
   });
 
-  $("#colorSettings").html(graphSettingsTemplate);
+  var edgeColorSettingsTemplate = edgeColorTemplate({
+    edgeColorSettings: edgeColorData
+  });
+
+  $("#nodeColorSettings").html(nodeColorSettingsTemplate);
+  $("#edgeColorSettings").html(edgeColorSettingsTemplate);
+
+
   $(".colorpicker-component").each(function() {
     $(this).colorpicker();
   });

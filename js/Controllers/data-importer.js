@@ -15,6 +15,7 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
   // Set file-mapping
   var fileContents = fs.readFileSync(mappingFilePath, "utf-8");
   var fileLines = fileContents.split('\n');
+  var checkedNodes = [];
 
   for (var line = 0; line < fileLines.length; line++) {
     var fileLine = fileLines[line].split('\t');
@@ -32,18 +33,35 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
   fileContents = fs.readFileSync(nodeFilePath);
   fileContents = JSON.parse(fileContents);
 
-
   // Updates the descendantNodeCount of a CU's ancestor-nodes
   function addToDescendantNodeCount(node, dataSize) {
-    node.descendantNodeCount = node.descendantNodeCount + 1;
-    node.dataSize = node.dataSize + dataSize;
     _.each(node.parentNodes, function(parentNode) {
-      if (node.type == 1) {
-        _.each(parentNode.parentNodes, function(grandparentNode) {
-          addToDescendantNodeCount(grandparentNode, dataSize);
-        });
-      } else {
-        addToDescendantNodeCount(parentNode, dataSize);
+      if (checkedNodes.indexOf(parentNode.id) == -1) {
+        checkedNodes.push(parentNode.id);
+        parentNode.descendantNodeCount = parentNode.descendantNodeCount + 1;
+        parentNode.dataSize = parentNode.dataSize + dataSize;
+        if (parentNode.type == 1) {
+          _.each(parentNode.parentNodes, function(grandparentNode) {
+            addToDescendantNodeCount(grandparentNode, dataSize);
+          });
+        } else {
+          /*_.each(node.RAWDepsOn, function(dependency) {
+            if (dependency.CU.parentNodes[0].id != parentNode.id) {
+              parentNode.RAWDepsOn.push(dependency);
+            }
+          });
+          _.each(node.WARDepsOn, function(dependency) {
+            if (dependency.CU.parentNodes[0].id != parentNode.id) {
+              parentNode.WARDepsOn.push(dependency);
+            }
+          });
+          _.each(node.WAWDepsOn, function(dependency) {
+            if (dependency.CU.parentNodes[0].id != parentNode.id) {
+              parentNode.WAWDepsOn.push(dependency);
+            }
+          });*/
+          addToDescendantNodeCount(parentNode, dataSize);
+        }
       }
     });
   }
@@ -61,12 +79,14 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
     } else {
       node.descendantNodeCount = 0;
       node.dataSize = 0
+      node.RAWDepsOn = [];
+      node.WARDepsOn = [];
+      node.WAWDepsOn = [];
     }
     data[node.id] = node;
   });
 
   console.log('Initial dataset size: ' + sizeof.sizeof(data, true));
-  //console.log('Initial dataset size: ' + sizeof(data) + 'B');
 
   // Add parentNodes and predecessorCUs properties to CU-nodes
   _.each(data, function(node) {
@@ -103,15 +123,18 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
         }
       }
       for (i = 0; i < node.RAWDepsOn.length; i++) {
-        node.RAWDepsOn[i] = data[node.RAWDepsOn[i]];
+        node.RAWDepsOn[i].CU = data[node.RAWDepsOn[i].CUid];
       }
 
       for (i = 0; i < node.WAWDepsOn.length; i++) {
-        node.WAWDepsOn[i] = data[node.WAWDepsOn[i]];
+        node.WAWDepsOn[i].CU = data[node.WAWDepsOn[i].CUid];
       }
 
       for (i = 0; i < node.WARDepsOn.length; i++) {
-        node.WARDepsOn[i] = data[node.WARDepsOn[i]];
+        node.WARDepsOn[i].CU = data[node.WARDepsOn[i].CUid];
+      }
+      for (i = 0; i < node.functionCall.length; i++) {
+        node.functionCall[i].functionNode = data[node.functionCall[i].funcId];
       }
     }
   });
@@ -135,9 +158,9 @@ function buildFromFile(mappingFilePath, nodeFilePath) {
   _.each(data, function(node) {
     if (node.type == 0) {
       // set descendantNodeCounts of CU's ancestor-nodes
-      _.each(node.parentNodes, function(parentNode) {
-        addToDescendantNodeCount(parentNode, node.dataSize);
-      });
+      checkedNodes = [];
+      countA = 0;
+      addToDescendantNodeCount(node, node.dataSize);
     } else if (!node.parentNodes.length) {
       // Find the root Nodes
       rootNodes.push(node);

@@ -3,7 +3,8 @@ var dagreD3 = require('./../dagre-d3');
 var _ = require('lodash/core');
 var configuration = require('./configuration.js');
 
-var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
+var Graph = function(svg, canZoom) {
+  clearGraph();
   var highlightedNodes = [];
   // Initialization of graph and renderer
   var render, inner, zoom;
@@ -27,13 +28,6 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
   // Create and configure the renderer
   render = dagreD3.render();
 
-  // Initialize starting graph (rootNode and entry/exit)
-
-  _.each(rootNodes, function(node){
-    addNode(node);
-  });
-
-
   /*addNode(entryNode);
   addNode(exitNode);
   graph.setEdge('entryNode', rootNode.id, {
@@ -53,24 +47,26 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
   function addNode(node) {
     console.log("addNode", node);
     var label, shape, nodeClass, parentNodes;
+    var labelType = 'text';
     switch (node.type) {
       case 0:
-        label = 'CU (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end + '\nData Read: ' + humanFileSize(node.readDataSize, true) + '\nData Written: ' + humanFileSize(node.writeDataSize, true);
+        label = '<span>Lines: ' + node.start + ' - ' + node.end + '</span><br><span>Data Read: ' + humanFileSize(node.readDataSize, true) + '</span><br><span>Data Written: ' + humanFileSize(node.writeDataSize, true) + '</span><br>';
         shape = 'rect';
         nodeClass = 'cu-node';
         break;
       case 1:
-        label = ' function (' + node.name + ')\nlines: ' + node.start + ' - ' + node.end + '\n ';
+        label = '<span>' + node.name + '</span><br><span>Lines: ' + node.start + ' - ' + node.end + '</span><br>';
+        labelType = 'html';
         shape = 'hexagon';
         nodeClass = 'function-node';
         break;
       case 2:
-        label = ' loop (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end + '\n ';
+        label = '<span>Loop</span><br><span>Lines: ' + node.start + ' - ' + node.end + '<span><br>';
         shape = 'ellipse';
         nodeClass = 'loop-node';
         break;
       case 3:
-        label = ' Library-Function (' + node.id + ')\nlines: ' + node.start + ' - ' + node.end + '\n ';
+        label = node.name;
         shape = 'diamond';
         nodeClass = 'library-function-node';
         break;
@@ -79,29 +75,73 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
         nodeClass = 'default-node';
         shape = 'circle';
     }
+    parentNodes = [];
+    _.each(node.parentNodes, function(value) {
+      parentNodes.push(value.id);
+    });
+
+    if (_.has(node, 'heatFactor') && node.type != 3) {
+      var r = Math.floor(255 * node.heatFactor);
+      var g = Math.floor(255 * (1 - node.heatFactor));
+      label += '<br><span style="color: rgb(' + r + ', ' + g + ', 0);font-size: 26px;">&#9832;</span>';
+    }
 
     var nodeObject = {
       id: node.id,
       parentNodes: parentNodes,
       label: label,
+      labelType: 'html',
       style: "stroke: #000; stroke-width: 3px;",
       shape: shape,
       rx: 5,
       ry: 5,
       class: nodeClass,
       collapsed: true,
+      depsOn: false,
       data: {
         id: node.id
-      },
-      heatFactor: node.heatFactor
+      }
     };
+    graph.setNode(node.id, nodeObject);
+  }
 
-    if (_.has(node, 'heatFactor')) {
-      nodeObject.heatFactor = node.heatFactor;
+  function addLegendNode(id, type) {
+    var label, shape, nodeClass;
+    switch (type) {
+      case 0:
+        label = 'Computational-Unit';
+        shape = 'rect';
+        nodeClass = 'cu-node';
+        break;
+      case 1:
+        label = 'Function';
+        shape = 'hexagon';
+        nodeClass = 'function-node';
+        break;
+      case 2:
+        label = 'Loop';
+        shape = 'ellipse';
+        nodeClass = 'loop-node';
+        break;
+      case 3:
+        label = 'Library-Function';
+        shape = 'diamond';
+        nodeClass = 'library-function-node';
+        break;
+      default:
+        label = 'Other';
+        nodeClass = 'default-node';
+        shape = 'circle';
     }
 
-    graph.setNode(node.id, nodeObject);
-
+    graph.setNode(id, {
+      label: label,
+      shape: shape,
+      rx: 5,
+      ry: 5,
+      class: nodeClass,
+      style: "stroke: #000; stroke-width: 3px;"
+    });
   }
 
 
@@ -114,54 +154,73 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
   function toggleDependencyEdges(node) {
     console.log("toggleDependencyEdges", node);
     var graphNode = graph.node(node.id);
-    if (graphNode.collapsed) {
-      // Show dependency nodes
-      var style = "stroke: #000; stroke-width: 1px;";
-      var arrowheadStyle = "fill: #000; stroke: #000;";
-      _.each(node.RAWDepsOn, function(dependencyCU) {
-        while (!graph.hasNode(dependencyCU.id)) {
-          dependencyCU = dependencyCU.parentNodes[0];
+    if (node.type == 0 || ((node.type == 1 || node.type == 2) && graphNode.collapsed)) {
+      var visibleCuParent;
+
+      if (!graphNode.depsOn) {
+        // Show dependency nodes
+        var style = "stroke: #000; stroke-width: 1px;";
+        var arrowheadStyle = "fill: #000; stroke: #000;";
+        var i, dependency;
+        for (i = 0; i < node.RAWDepsOn.length; i++) {
+          dependency = node.RAWDepsOn[i];
+          visibleCuParent = dependency.CU;
+          while (!graph.hasNode(visibleCuParent.id)) {
+            visibleCuParent = visibleCuParent.parentNodes[0];
+          }
+          graph.setEdge(node.id, visibleCuParent.id, {
+            labelId: node.id + '-RAWDepsOn-' + i,
+            labelClass: 'dependency-edge-label',
+            class: 'dependency-edge',
+            lineInterpolate: 'basis',
+            label: 'RaW: ' + dependency.varName
+          }, "DependencyEdge");
         }
-        graph.setEdge(node.id, dependencyCU.id, {
-          style: style,
-          label: "RaW",
-          arrowheadStyle: arrowheadStyle,
-          lineInterpolate: 'basis'
-        }, "DependencyEdge");
-      });
-      _.each(node.WARDepsOn, function(dependencyCU) {
-        while (!graph.hasNode(dependencyCU.id)) {
-          dependencyCU = dependencyCU.parentNodes[0];
+        for (i = 0; i < node.WARDepsOn.length; i++) {
+          dependency = node.WARDepsOn[i];
+          visibleCuParent = dependency.CU;
+          while (!graph.hasNode(visibleCuParent.id)) {
+            visibleCuParent = visibleCuParent.parentNodes[0];
+          }
+          graph.setEdge(node.id, visibleCuParent.id, {
+            labelId: node.id + '-WARDepsOn-' + i,
+            labelClass: 'dependency-edge-label',
+            class: 'dependency-edge',
+            lineInterpolate: 'basis',
+            label: 'WaR:' + dependency.varName
+          }, "DependencyEdge");
         }
-        graph.setEdge(node.id, dependencyCU.id, {
-          style: style,
-          label: "WaR",
-          arrowheadStyle: arrowheadStyle,
-          lineInterpolate: 'basis'
-        }, "DependencyEdge");
-      });
-      _.each(node.WAWDepsOn, function(dependencyCU) {
-        while(!graph.hasNode(dependencyCU.id)) {
-          dependencyCU = dependencyCU.parentNodes[0];
+        for (i = 0; i < node.WAWDepsOn.length; i++) {
+          dependency = node.WAWDepsOn[i];
+          visibleCuParent = dependency.CU;
+          while (!graph.hasNode(visibleCuParent.id)) {
+            visibleCuParent = visibleCuParent.parentNodes[0];
+          }
+          graph.setEdge(node.id, visibleCuParent.id, {
+            labelId: node.id + '-WAWDepsOn-' + i,
+            labelClass: 'dependency-edge-label',
+            class: 'dependency-edge',
+            lineInterpolate: 'basis',
+            label: 'WaW: ' + dependency.varName
+          }, "DependencyEdge");
         }
-        graph.setEdge(node.id, dependencyCU.id, {
-          style: style,
-          label: "WaW",
-          arrowheadStyle: arrowheadStyle,
-          lineInterpolate: 'basis'
-        }, "DependencyEdge");
+        graphNode.depsOn = true;
+      } else {
+        // Hide dependency nodes
+        _.each(graph.outEdges(node.id), function(edge) {
+          if (_.has(edge, 'name') && edge.name == "DependencyEdge") {
+            graph.removeEdge(edge);
+          }
+        });
+        graphNode.depsOn = false;
+      }
+    } else if ((node.type == 1 || node.type == 2) && !graphNode.collapsed) {
+      _.each(node.childrenNodes, function(childNode) {
+        toggleDependencyEdges(childNode);
       });
-      graphNode.collapsed = false;
-    } else {
-      // Hide dependency nodes
-      _.each(graph.outEdges(node.id), function(edge) {
-        if(_.has(edge, 'name') && edge.name == "DependencyEdge"){
-          graph.removeEdge(edge);
-        }
-      });
-      graphNode.collapsed = true;
     }
   }
+
 
   /*
 
@@ -170,6 +229,7 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
   */
   function redraw() {
     console.log("redraw");
+
     // Set margins, if not present
     if (!graph.graph().hasOwnProperty("marginx") &&
       !graph.graph().hasOwnProperty("marginy")) {
@@ -203,33 +263,48 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
     inner.selectAll('g.selected-node').style("fill", configuration.readSetting('selectedNodeColorFill'));
     inner.selectAll('g.selected-node g.label').style("fill", configuration.readSetting('selectedNodeColorLabel'));
 
+    // Edges
 
+    console.log('flowEdgeFill', configuration.readSetting('flowEdgeFill'));
+    inner.selectAll('g.flow-edge path')
+      .style("stroke", configuration.readSetting('flowEdgeFill'))
+      .style("stroke-width", configuration.readSetting('flowEdgeWidth'));
+    inner.selectAll('g.dependency-edge path')
+      .style("stroke", configuration.readSetting('dependencyEdgeFill'))
+      .style("stroke-width", configuration.readSetting('dependencyEdgeWidth'));
+    inner.selectAll('g.function-call-edge path')
+      .style("stroke", configuration.readSetting('functionCallEdgeFill'))
+      .style("stroke-width", configuration.readSetting('functionCallEdgeWidth'));
   }
 
   function expandNode(node) {
     console.log("expandNode", node);
     if (_.has(node, 'childrenNodes') && node.childrenNodes.length && node.type > 0) {
       var graphNode, sourceNodeID, sinkNodeID;
-      var flowEdgeStyle = {
-        style: "stroke: " + configuration.readSetting('cuColor') + "; stroke-width: 3px;",
-        arrowheadStyle: "fill: " + configuration.readSetting('cuColor') + "; stroke: " + configuration.readSetting('cuColor')
-      };
+
       // Add children nodes to graph
       _.each(node.childrenNodes, function(childNode) {
         if (childNode.type == 0) {
-          _.each(childNode.childrenNodes, function(functionNode) {
-            addNode(functionNode);
-            graph.setEdge(childNode.id, functionNode.id, {
-              style: "stroke: #000; stroke-width: 1px; stroke-dasharray: 5, 5;"
-            });
+          _.each(childNode.functionCall, function(functionCall){
+              addNode(functionCall.functionNode);
+              graph.setEdge(childNode.id, functionCall.funcId, {
+                label: '<span style="font-size: 20px">&#8618;</span>',
+                labelType: 'html',
+                labelId: functionCall.atLine,
+                labelClass: 'function-call-edge-label',
+                lineInterpolate: 'basis',
+                class: "function-call-edge",
+                style: "stroke: #000; stroke-width: 2px; stroke-dasharray: 5, 5;"
+              });
           });
         }
         addNode(childNode);
       });
 
       graphNode = graph.node(node.id);
-      graphNode.clusterLabelPos = 'top';
+      graphNode.clusterLabelPos = 'bottom';
       graphNode.collapsed = false;
+      graphNode.depsOn = false;
       graph.setNode(node.id, graphNode);
 
       // remove edges from expanded node
@@ -242,9 +317,12 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
         graph.setParent(childNode.id, node.id);
         _.each(childNode.successorCUs, function(successorCU) {
           sinkNodeID = graph.hasNode(successorCU.id) ? successorCU.id : successorCU.parentNodes[0].id;
+          if(!graph.hasNode(sinkNodeID)){
+            console.warn(sourceNodeID + ' has not been added to the graph (successor)');
+          }
           graph.setEdge(childNode.id, sinkNodeID, {
-            style: "stroke: " + configuration.readSetting('cuColor') + "; stroke-width: 2px;",
-            arrowheadStyle: "fill: " + configuration.readSetting('cuColor') + "; stroke: " + configuration.readSetting('cuColor')
+            lineInterpolate: 'basis',
+            class: 'flow-edge'
           });
         });
 
@@ -252,9 +330,13 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
           var fromNode;
           if (predecessorCU.parentNodes[0] != node.id) {
             sourceNodeID = graph.hasNode(predecessorCU.id) ? predecessorCU.id : predecessorCU.parentNodes[0].id;
+            // Correctness check
+            if(!graph.hasNode(sourceNodeID)){
+              console.warn(sourceNodeID + ' has not been added to the graph (predecessor)');
+            }
             graph.setEdge(sourceNodeID, childNode.id, {
-              style: "stroke: " + configuration.readSetting('cuColor') + "; stroke-width: 2px;",
-              arrowheadStyle: "fill: " + configuration.readSetting('cuColor') + "; stroke: " + configuration.readSetting('cuColor')
+              lineInterpolate: 'basis',
+              class: 'flow-edge'
             });
           }
         });
@@ -264,8 +346,18 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
         _.each(node.childrenNodes, function(childNode) {
           if (!graph.inEdges(childNode.id).length) {
             _.each(node.parentNodes, function(parentCU) {
-              graph.setEdge(parentCU.id, childNode.id, {
-                style: "stroke: #000; stroke-width: 1px; stroke-dasharray: 5, 5;"
+              _.each(parentCU.functionCall, function(functionCall){
+                if(functionCall.funcId == node.id){
+                  graph.setEdge(parentCU.id, childNode.id, {
+                    label: '<span style="font-size: 20px">&#8618;</span>',
+                    labelType: 'html',
+                    labelId: functionCall.atLine,
+                    labelClass: 'function-call-edge-label',
+                    lineInterpolate: 'basis',
+                    class: "function-call-edge",
+                    style: "stroke: #000; stroke-width: 2px; stroke-dasharray: 5, 5;"
+                  });
+                }
               });
             });
           }
@@ -350,12 +442,15 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
       var svgShape = svgNode.select('.node-shape');
       var svgLabel = svgNode.select('g.label');
       graphNode.class = graphNode.class + " selected-node";
+      svgNode.attr("class", svgNode.attr("class") + " selected-node");
       svgShape.style('fill', configuration.readSetting('selectedNodeColorFill'))
         .style('stroke-width', 5);
       svgLabel.style('fill', configuration.readSetting('selectedNodeColorLabel'))
         .style('stroke-width', 5);
       highlightedNodes.push(node);
+
       return true;
+
     }
     return false;
   }
@@ -408,14 +503,29 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
   function resetView() {
     console.log("resetView");
     svg.transition()
-      .duration(750)
+      .duration(0)
       .call(zoom.translate([0, 0]).scale(1).event);
+  }
+
+  function clearGraph() {
+    svg.selectAll('*').remove();
+  }
+
+  // Necessary for correct display of html labels
+  function resetViewAndChange(callback) {
+    console.log("resetViewAndChange");
+    svg.transition()
+      .duration(0)
+      .call(zoom.scale(1).event)
+      .each("end", callback);
+    console.log('DONE');
   }
 
 
 
   return {
     addNode: addNode,
+    addLegendNode: addLegendNode,
     collapseNode: collapseNode,
     expandNode: expandNode,
     expandAll: expandAll,
@@ -425,7 +535,8 @@ var Graph = function(svg, rootNodes/*, entryNode, exitNode*/) {
     unhighlightNodes: unhighlightNodes,
     panToNode: panToNode,
     resetView: resetView,
-    redraw: redraw
+    redraw: redraw,
+    resetViewAndChange: resetViewAndChange
   }
 };
 

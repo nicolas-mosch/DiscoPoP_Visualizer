@@ -12,6 +12,7 @@ function createEdgeLabels(selection, g) {
     .data(g.edges(), function(e) { return util.edgeToId(e); })
     .classed("update", true);
 
+
   svgEdgeLabels.selectAll("*").remove();
   svgEdgeLabels.enter()
     .append("g")
@@ -19,10 +20,11 @@ function createEdgeLabels(selection, g) {
       .style("opacity", 0);
   svgEdgeLabels.each(function(e) {
     var edge = g.edge(e),
-        label = addLabel(d3.select(this), g.edge(e), 0, 0).classed("label", true),
+        label = addLabel(d3.select(this), g.edge(e), 0).classed("label edge-label", true),
         bbox = label.node().getBBox();
 
     if (edge.labelId) { label.attr("id", edge.labelId); }
+    if (edge.labelClass) { label.classed(edge.labelClass, true); }
     if (!_.has(edge, "width")) { edge.width = bbox.width; }
     if (!_.has(edge, "height")) { edge.height = bbox.height; }
   });

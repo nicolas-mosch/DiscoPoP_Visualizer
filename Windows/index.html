@@ -1,21 +1,24 @@
 <html>
+
 <head>
   <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/index.css">
   <script src="../js/Windows/index.js"></script>
 
   <title>DiscoPoP Visualizer</title>
 
 </head>
+
 <body>
 
-<div class="container-fluid" style="background-color:#F44336;color:#fff;height:200px;">
-  <h1>DiscoPoP Visualizer</h1>
-  <h3>Click on Import to get started</h3>
-  <!--<p>Scroll this page to see how the navbar behaves with data-spy="affix".</p>
+  <div class="container-fluid" style="background-color:#F44336;color:#fff;height:200px;">
+    <h1>DiscoPoP Visualizer</h1>
+    <h3>Click on Import to get started</h3>
+    <!--<p>Scroll this page to see how the navbar behaves with data-spy="affix".</p>
   <p>The navbar is attached to the top of the page after you have scrolled a specified amount of pixels.</p>-->
-</div>
+  </div>
 
-<!--<nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="197">
+  <!--<nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="197">
   <ul class="nav navbar-nav">
     <li class="active"><a href="#">Basic Topnav</a></li>
     <li><a href="#">Page 1</a></li>
@@ -24,14 +27,58 @@
   </ul>
 </nav>-->
 
-<div class="container-fluid" style="height:1000px">
-  <div class="col-md-offset-4 col-md-2 col-md-offset-5">
-    <button id="import-button" class="btn btn-block">Import</button>
+  <div class="container-fluid" style="height:1000px">
+    <div class="col-md-offset-4 col-md-2 col-md-offset-5">
+      <button id="import-button" class="btn btn-block">Import</button>
+    </div>
+    <br><br>
+    <h1>Importing</h1>
+    <p>
+      Click on Import or press ctrl+I. Select the file-mapping file and then the data file output by DiscoPoP.
+    </p>
+    <h1>Graph</h1>
+    <p>
+      Move the graph by clicking on any point and dragging it
+    </p>
+    <p>
+      Zoom in or out from the graph with your mouse-wheel
+    </p>
+    <p>
+      Click on a node to select it. Doing so will highlight the lines of code it contains.
+    </p>
+    <p>
+      Double-click on a node to expand it
+    </p>
+    <p>
+      Right-click on a node to see all possible actions on it
+    </p>
+    <p>
+      Click on a dependency-edge's variable to highlight the accesses to the variable in the code
+    </p>
+    <p>
+      Legend:
+      <div id="legend-container">
+        <svg></svg>
+      </div>
+    </p>
+    <h1>Code</h1>
+    <p>
+      On the Files tab, select a file to open it. You may right-click on any line of code in the file to find the Computational-Unit that contains it.
+    </p>
+    <p>
+      A line-number marked with <span class="editor_write_decoration">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span> signifies a write on the variable
+    </p>
+    <p>
+      A line-number marked with <span class="editor_read_decoration">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span> signifies a read on the variable
+    </p>
+    <h1>Preferences</h1>
+    <p>
+      You may change some color-settings for the graph by clicking on Preferences and then Graph, or pressing ctrl+G.
+    </p>
+    <p>
+      You may change some styling-settings for the code-viewer by clicking on Preferences and then Code, or pressing ctrl+E.
+    </p>
   </div>
-</div>
-
-
-
-
 </body>
+
 </html>

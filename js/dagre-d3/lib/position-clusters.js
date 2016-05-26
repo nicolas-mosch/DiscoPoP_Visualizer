@@ -26,7 +26,7 @@ function positionClusters(selection, g) {
       return g.node(v).width;
     })
     .attr("height", function(v) {
-      return g.node(v).height;
+      return g.node(v).height + 20;
     })
     .attr("x", function(v) {
       var node = g.node(v);

@@ -19,16 +19,14 @@ body {
   overflow: auto;
   background-color: #707070;
 }
-#graph-container{
+#graph-container {
   height: 100%;
   width: 100%;
 }
-
-.tab-content{
+.tab-content {
   height: 100%;
   width: 100%;
 }
-
 svg {
   width: 100%;
   height: 100%;
@@ -49,7 +47,16 @@ text {
   height: 100%;
   overflow: hidden;
 }
-.node{
+
+#legend-container{
+  height: 100px;
+  display: none;
+}
+
+.node {
+  cursor: pointer;
+}
+.edge-label {
   cursor: pointer;
 }
 .arrowhead {
@@ -69,6 +76,18 @@ text {
   margin: 20px;
   max-height: 100%;
 }
+.editor_read_decoration {
+  border-radius: 30px 0px 0px 30px;
+  background-color: blue;
+}
+.editor_write_decoration {
+  border-radius: 0px 30px 30px 0px;
+  background-color: green;
+}
+.editor_read_write_decoration {
+  border-radius: 20px 20px 20px 20px;
+  background: linear-gradient(to left, green 0%, green 50%, blue 50%, blue 50%, blue 100%);
+}
 .ace_scrollbar {
   height: 5px !important;
 }
@@ -76,31 +95,29 @@ text {
   margin: 0 auto;
   height: 100%;
 }
-
 .label {
   font: 10px sans-serif;
   color: black;
 }
-
 .link {
   fill: none;
   stroke: #ccc;
   stroke-width: 1.5px;
 }
-
 .control.glyphicon {
   position: static;
 }
-
-#tooltip-container{
+#tooltip-container {
   position: absolute;
-  z-index: 1000000;
-  visibility: hidden;
-  background-color: white;
-  border: 2px solid black;
+  text-align: center;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 3px;
+  pointer-events: none;
 }
-
-#node-info-container{
+#node-info-container {
   z-index: 1000000;
   position: absolute;
   top: 40px;
@@ -108,16 +125,17 @@ text {
   display: none;
   background-color: #B0B0B0;
 }
-
-#node-info-table td{
+#node-info-table td {
   padding: 7px;
 }
-
-#code-view{
+#code-view {
   height: 100%;
   width: 100%;
 }
-
 #file-select option {
   font-size: 22px;
+}
+#flow-graph-container {
+  height: 100%;
+  width: 100%;
 }

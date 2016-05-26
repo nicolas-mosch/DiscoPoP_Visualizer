@@ -24,7 +24,7 @@
         <div id="code-view">
           <ul class="nav nav-pills">
             <li class="active col-sm-5">
-              <a data-toggle="pill" href="#code-container" id="code-container-tab">CU-Flow</a>
+              <a data-toggle="pill" href="#code-container" id="code-container-tab"></a>
             </li>
             <li class="col-sm-5">
               <a data-toggle="pill" href="#file-select-container" id="file-select-tab">Files</a>
@@ -41,56 +41,52 @@
         </div>
       </td>
       <td>
-        <div class="container" id="graph-container">
-          <ul class="nav nav-pills">
-            <li class="active">
-              <a data-toggle="pill" href="#flow-graph-container">CU-Flow</a>
-            </li>
-            <li>
-              <a data-toggle="pill" href="#dependency-graph-container">CU-Dependencies</a>
-            </li>
-            <button class="btn btn-primary pull-right btn-sm" type="button" id="node-info-button">
-              <span class="glyphicon glyphicon-info-sign" id="node-info-available-icon"></span> CU <span class="glyphicon glyphicon-collapse-down" id="node-info-collapse-icon"></span>
-            </button>
-            <button class="btn btn-primary pull-right btn-sm" type="button" id="reset-view-button">
-              Reset View
-            </button>
-          </ul>
-          <div class="tab-content">
-            <div id="flow-graph-container" style="height: 100%; width:100%;" class="tab-pane fade in active">
-              <svg>
-              </svg>
-            </div>
-            <div id="dependency-graph-container" style="height: 100%; width:100%;" class="tab-pane fade">
-              <svg>
-              </svg>
-            </div>
-            <div id="node-info-container"></div>
-            <script type="text/x-handlebars-template" id="cuInfoTableTemplate">
-              <table class="table-bordered" id="node-info-table">
-                {{#each cuData}}
-                <tr>
-                  <th>
-                    {{@key}}
-                  </th>
-                  <td>
-                    {{{this}}}
-                  </td>
-                </tr>
-                {{/each}}
-              </table>
-            </script>
-          </div>
-        </div>
-      </td>
-
-    </tr>
-    <tr>
-      <td colspan="2">
-        <div class="progress" id="progress" style="text-align:center;display:none;">
-          <div id="progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:0%;height:100%;">
-          </div>
-        </div>
+        <table style="width: 100%; height: 100%;" border="1">
+          <tr>
+            <td>
+              <div class="container" id="graph-container">
+                <button class="btn btn-primary pull-right btn-sm" type="button" id="show-legend-button">
+                  Legend
+                </button>
+                <button class="btn btn-primary pull-right btn-sm" type="button" id="node-info-button">
+                  <span class="glyphicon glyphicon-info-sign" id="node-info-available-icon"></span> CU <span class="glyphicon glyphicon-collapse-down" id="node-info-collapse-icon"></span>
+                </button>
+                <button class="btn btn-primary pull-right btn-sm" type="button" id="reset-view-button">
+                  Reset View
+                </button>
+                <div class="tab-content">
+                  <div id="flow-graph-container" class="tab-pane fade in active">
+                    <svg>
+                      <div id="tooltip-container"></div>
+                    </svg>
+                  </div>
+                  <div id="node-info-container"></div>
+                  <script type="text/x-handlebars-template" id="cuInfoTableTemplate">
+                    <table class="table-bordered" id="node-info-table">
+                      {{#each cuData}}
+                      <tr>
+                        <th>
+                          {{@key}}
+                        </th>
+                        <td>
+                          {{{this}}}
+                        </td>
+                      </tr>
+                      {{/each}}
+                    </table>
+                  </script>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div id="legend-container">
+                <svg></svg>
+              </div>
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
   </table>
@@ -103,6 +99,24 @@
   $("#index-table").colResizable();
 </script>
 
-<div id="tooltip-container"></div>
+<script type="text/x-handlebars-template" id="clusterLabelTemplate">
+  <table>
+    <tr>
+      <td>
+        {{name}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        {{file}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        {{lines}}
+      </td>
+    </tr>
+  </table>
+</script>
 
 </html>

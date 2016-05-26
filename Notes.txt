@@ -1,0 +1,62 @@
+Should loops/functions display their function calls without being expanded? (Display all functions from start?)
+What are instructionsLineNumbers for? start/end the same?
+What are read/writePhaseLineNumbers for?
+Are while-loops also loop-nodes?
+
+
+
+
+Assumptions:
+  successorCU can only contain ID's of CU-nodes
+  childrenNodes of CU-nodes can only contain Function-nodes
+  Two CUs that contain the same line in code, will be children of the same node
+  Nodes do not extend over several files
+  There is only one root node (main) which has no parent-nodes
+  * CUs only have dependencies on CUs in same (parent)function
+  CUs may only have one parentNode
+
+Problem:
+Weird nodes containing several loops (mergesort)
+
+
+TO-DO:
+        // Add file selector
+        // Reset-Graph position and scale button
+        // Interval-Tree for nodes (optimize search for node from code)
+        // Highlight selected nodesart
+        // Make button for CU-info toggle show whether CU-info is available
+        // Show and highlight CU from code on right click
+        // Separate file-selector files by folder (remove path portion common to all)
+        // Make dependencies edges go to parents if the CU is not visible
+        // Add icon to editor for read/write deps
+        // Button for toggling all dependencies in a cluster
+        // Display all root-nodes
+        // Legend
+        // Deselect node (on click again)
+        // Tooltip for parentCUs
+        // Toggle dependencies for clustered nodes (loops: add deps to node-object if they leave the parent)
+        // Index
+        // Show funcArguments in node-info for functions
+        // Fix coloring of function-call nodes
+        // Mark read/writePhaseLineNumbers in code (CUs)
+        // Click on functionCall edge to higlight line of call (functionCall in CU)
+
+
+        Fix recursive problem
+
+        *Fix labelColor of selected node
+        *Add more color customization (Edges)
+        *Higlight selected dependency-edge
+        *Highlight edges connected to highlighted node
+        *Max-visible parents (configuration variable, lower for better graph performance in very large graphs)
+        *Add editor customization (size, theme)
+        *Progress-bar for long-lasting actions
+        *Interpolated edges => more resources?
+
+Requests:
+  Full ChildNodeCount of subtree / or full childCuCount of subtree
+  predecessorCUs
+  parentNodes
+  read/write-datasize in loops and functions (aggregate of contained CUs)
+  Add read/write data-size to non-CU-nodes (sum of all descendants)
+  Add DepsOn to parentNodes (functions, loops)

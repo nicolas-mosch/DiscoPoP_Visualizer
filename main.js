@@ -32,6 +32,14 @@ var template = [{
     click: function(item, focusedWindow) {
       mainWindow.webContents.openDevTools();
     }
+  },
+  {
+    label: 'Exit',
+    accelerator: 'CmdOrCtrl+Esc',
+    role: 'close',
+    click: function(item, focusedWindow) {
+      mainWindow.close();
+    }
   }]
 }, {
   label: 'Preferences',
@@ -58,7 +66,7 @@ var template = [{
     }
   }, {
     label: 'Code',
-    accelerator: 'CmdOrCtrl+C',
+    accelerator: 'CmdOrCtrl+E',
     role: 'codeSettings',
     click: function(item, focusedWindow) {}
   }]
@@ -97,7 +105,7 @@ ipc.on('closeGraphSettingsWindow', function() {
 });
 
 ipc.on('saveGraphSettings', function() {
-  graphSettingsWindow.close();
+  //graphSettingsWindow.close();
   mainWindow.webContents.send('redrawGraph');
 });
 
@@ -123,7 +131,7 @@ app.on('ready', function() {
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/Windows/index.html');
   mainWindow.maximize();
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {

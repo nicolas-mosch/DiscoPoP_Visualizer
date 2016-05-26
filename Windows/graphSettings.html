@@ -13,14 +13,24 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#colorSettings">Colors</a>
+          <a data-toggle="collapse" data-parent="#accordion" href="#nodeColorSettings">Node Colors</a>
         </h4>
         </div>
-        <div id="colorSettings" class="panel-collapse collapse in">
-          <script type="text/x-handlebars-template" id="graphColorSettingsTableTemplate">
+        <div id="nodeColorSettings" class="panel-collapse collapse in">
+          <script type="text/x-handlebars-template" id="nodeColorSettingsTableTemplate">
           <div class="panel-body">
-            <h4>Node Colors</h4>
               <table class="table table-condensed">
+                <tr>
+                  <th>
+                    Node Type
+                  </th>
+                  <th>
+                    Fill Color
+                  </th>
+                  <th>
+                    Label Color
+                  </th>
+                </tr>
                 {{#each nodeColorSettings}}
                 <tr>
                   <th>
@@ -48,21 +58,53 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#shapeSettings">Shapes</a>
+          <a data-toggle="collapse" data-parent="#accordion" href="#edgeColorSettings">Edge Colors</a>
         </h4>
         </div>
-        <div id="shapeSettings" class="panel-collapse collapse">
-          <div class="panel-body">TODO</div>
+        <div id="edgeColorSettings" class="panel-collapse collapse">
+          <script type="text/x-handlebars-template" id="edgeColorSettingsTableTemplate">
+          <div class="panel-body">
+              <table class="table table-condensed">
+                <tr>
+                  <th>
+                    Edge Type
+                  </th>
+                  <th>
+                    Color
+                  </th>
+                  <th>
+                    Width
+                  </th>
+                </tr>
+                {{#each edgeColorSettings}}
+                <tr>
+                  <th>
+                    <label>{{this.name}}</label>
+                  </th>
+                  <td>
+                    <div id="{{this.id}}Fill_colorpicker" class="input-group colorpicker-component">
+                      <input type="text" data-key="{{this.id}}Fill" class="form-control settingInput" value="{{this.color}}" />
+                      <span class="input-group-addon"><i></i></span>
+                    </div>
+                  </td>
+                  <td>
+                    <input type="number" data-key="{{this.id}}Width" value="{{this.width}}" class="form-control settingInput">
+                  </td>
+                </tr>
+                {{/each}}
+              </table>
+          </div>
+          </script>
         </div>
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Collapsible Group 3</a>
+          <a data-toggle="collapse" data-parent="#accordion" href="#shapeSettings">Shape Settings</a>
         </h4>
         </div>
-        <div id="collapse3" class="panel-collapse collapse">
-          <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+        <div id="shapeSettings" class="panel-collapse collapse">
+          <div class="panel-body">TODO</div>
         </div>
       </div>
     </div>

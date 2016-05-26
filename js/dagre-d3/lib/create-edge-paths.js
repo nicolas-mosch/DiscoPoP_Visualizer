@@ -71,7 +71,7 @@ function calcPoints(g, e) {
       points = edge.points.slice(1, edge.points.length - 1);
   points.unshift(intersectNode(tail, points[0]));
   points.push(intersectNode(head, points[points.length - 1]));
-
+  edge.points = points;
   return createLine(edge, points);
 }
 
@@ -103,7 +103,14 @@ function getCoords(elem) {
 function enter(svgPaths, g) {
   var svgPathsEnter = svgPaths.enter()
     .append("g")
-      .attr("class", "edgePath")
+      .attr("class", function(e){
+        var edge = g.edge(e);
+        if(_.has(edge, 'class')){
+          return "edgePath " + edge.class
+        }else{
+          return "edgePath";
+        }
+      })
       .style("opacity", 0);
   svgPathsEnter.append("path")
     .attr("class", "path")
@@ -114,6 +121,7 @@ function enter(svgPaths, g) {
       return createLine(edge, points);
     });
   svgPathsEnter.append("defs");
+  console.log('svgPathsEnter', svgPathsEnter);
 }
 
 function exit(svgPaths, g) {
@@ -133,4 +141,5 @@ function exit(svgPaths, g) {
         return d3.select(this).attr("d");
       }
     });
+    console.log('svgPathExit', svgPathExit);
 }

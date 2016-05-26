@@ -30,7 +30,7 @@ function rect(parent, bbox, node) {
     return intersectRect(node, point);
   };
 
-  if (typeof node.heatFactor != undefined) {
+  /*if (typeof node.heatFactor != undefined) {
     r = Math.floor(255 * node.heatFactor);
     g = Math.floor(255 * (1 - node.heatFactor));
     parent.append("svg:foreignObject")
@@ -41,7 +41,7 @@ function rect(parent, bbox, node) {
       .append("xhtml:span")
       .attr("class", "control glyphicon glyphicon-fire")
       .attr("style", "color: rgb(" + r + ", " + g + ", 0); font-size: " + iconSize + "px");
-  }
+  }*/
 
   return shapeSvg;
 }
@@ -55,7 +55,7 @@ function ellipse(parent, bbox, node) {
     .attr("rx", rx)
     .attr("ry", ry)
     .attr("class", "node-shape");
-
+    /*
   if (typeof node.heatFactor != undefined) {
     r = Math.floor(255 * node.heatFactor);
     g = Math.floor(255 * (1 - node.heatFactor));
@@ -67,7 +67,7 @@ function ellipse(parent, bbox, node) {
       .append("xhtml:span")
       .attr("class", "control glyphicon glyphicon-fire")
       .attr("style", "color: rgb(" + r + ", " + g + ", 0); font-size: " + iconSize + "px");
-  }
+  }*/
 
   node.intersect = function(point) {
     return intersectEllipse(node, rx, ry, point);
@@ -112,23 +112,23 @@ function hexagon(parent, bbox, node) {
   var w = (bbox.width * Math.SQRT2) / 2,
     h = (bbox.height * Math.SQRT2) / 2,
     points = [{
-      x: 0,
+      x: w / 2,
+      y: -h
+    }, {
+      x: -w / 2,
       y: -h
     }, {
       x: -w,
-      y: -h / 2
+      y: 0
     }, {
-      x: -w,
-      y: h / 2
+      x: -w / 2,
+      y: h
     }, {
-      x: 0,
+      x: w / 2,
       y: h
     }, {
       x: w,
-      y: h / 2
-    }, {
-      x: w,
-      y: -h / 2
+      y: 0
     }],
     shapeSvg = parent.insert("polygon", ":first-child")
     .attr("points", points.map(function(p) {
@@ -136,7 +136,7 @@ function hexagon(parent, bbox, node) {
     }).join(" "))
     .attr("class", "node-shape");
 
-
+/*
   if (typeof node.heatFactor != undefined) {
     r = Math.floor(255 * node.heatFactor);
     g = Math.floor(255 * (1 - node.heatFactor));
@@ -149,7 +149,7 @@ function hexagon(parent, bbox, node) {
       .attr("class", "control glyphicon glyphicon-fire")
       .attr("style", "color: rgb(" + r + ", " + g + ", 0); font-size: " + iconSize + "px");
   }
-
+*/
   node.intersect = function(p) {
     return intersectPolygon(node, points, p);
   };
@@ -179,7 +179,7 @@ function diamond(parent, bbox, node) {
     }).join(" "))
     .attr("class", "node-shape");
 
-  if (typeof node.heatFactor != undefined) {
+  /*if (typeof node.heatFactor != undefined) {
     r = Math.floor(255 * node.heatFactor);
     g = Math.floor(255 * (1 - node.heatFactor));
     parent.append("svg:foreignObject")
@@ -190,7 +190,7 @@ function diamond(parent, bbox, node) {
       .append("xhtml:span")
       .attr("class", "control glyphicon glyphicon-fire")
       .attr("style", "color: rgb(" + r + ", " + g + ", 0); font-size: " + iconSize + "px");
-  }
+  }*/
 
   node.intersect = function(p) {
     return intersectPolygon(node, points, p);

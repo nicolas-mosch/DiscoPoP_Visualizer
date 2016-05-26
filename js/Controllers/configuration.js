@@ -11,7 +11,13 @@ nconf.defaults({
   libraryFunctionColorFill: '#FF0F33',
   libraryFunctionColorLabel: '#000000',
   defaultColorFill: '#FFFFFF',
-  defaultColorLabel: '#000000'
+  defaultColorLabel: '#000000',
+  flowEdgeFill: '#00FF00',
+  flowEdgeWidth: 3,
+  dependencyEdgeFill: '#000000',
+  dependencyEdgeWidth: 2,
+  functionCallEdgeFill: '#000000',
+  functionCallEdgeWidth: 1
 });
 
 function saveSetting(settingKey, settingValue) {

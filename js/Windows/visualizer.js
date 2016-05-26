@@ -16,6 +16,7 @@ var Handlebars = require('handlebars');
 
 var graphController;
 var editorController;
+var legendController;
 
 var nodeData;
 var fileMaps;
@@ -35,13 +36,25 @@ ipc.on('redrawGraph', function(event, message) {
 
 ipc.on('init', function(event, mappingPath, nodesPath) {
   var canvas = d3.select("#flow-graph-container svg");
+  var legendCanvas = d3.select("#legend-container svg");
   var data = DataImporter.buildFromFile(mappingPath, nodesPath);
   nodeData = data.nodeData;
   fileMaps = data.fileMapping;
   fileNodeIntervalTrees = data.fileNodeIntervalTrees;
 
-  canvas.selectAll('*').remove();
-  graphController = new GraphController(canvas, data.rootNodes/*, nodeData['entryNode'], nodeData['exitNode']*/);
+  graphController = new GraphController(canvas);
+  _.each(data.rootNodes, function(node) {
+    graphController.addNode(node);
+  });
+
+  legendController = new GraphController(legendCanvas);
+  legendController.addLegendNode(0, 0);
+  legendController.addLegendNode(1, 1);
+  legendController.addLegendNode(2, 2);
+  legendController.addLegendNode(3, 3);
+  legendController.redraw();
+
+
 
   editorController = new EditorController(data.fileMapping);
   $('#file-select-tab').trigger('click');
@@ -89,16 +102,25 @@ function initEventListeners() {
     graphController.resetView();
   });
 
+  // Legend
+  $("#show-legend-button").on('click', function() {
+    $("#legend-container").slideToggle("medium", function() {
+      legendController.resetView();
+      legendController.redraw();
+    });
+  });
+
 
   // File selector click behavior
   $('#file-select-container').on("changed.jstree", function(e, data) {
-    if(data.node.type == "file"){
+    if (data.node.type == "file") {
       editorController.displayFile(data.node.id);
       $('#code-container-tab').trigger('click');
       editorController.unhighlight();
     }
   });
 
+  // Unhighlight editor on click
   var editor = $('#ace-editor');
   editor.on('mousedown', function() {
     editorController.unhighlight();
@@ -107,11 +129,37 @@ function initEventListeners() {
   // Graph click behavior
   var graphContainer = $("#flow-graph-container");
 
-  graphContainer.delegate('g.node', 'click', function() {
-    $("#node-info-available-icon").css('color', '	#00FF00');
+  // Dependency edges
+  graphContainer.delegate('.dependency-edge-label', 'click', function() {
+    unhighlightNodes();
+    var parts = this.id.split('-');
+    var dependency = nodeData[parts[0]][parts[1]][parts[2]];
+    editorController.displayFile(parts[0].split(':')[0]);
+    editorController.highlightDependencyInCode(dependency, parts[1]);
+  });
+
+  // Function-call edges
+  graphContainer.delegate('.function-call-edge-label', 'click', function() {
+    var fileID = this.id.split(':')[0];
+    var lineNumber = this.id.split(':')[1];
+    editorController.displayFile(fileID);
+    editorController.unhighlight();
+    console.log('LINE NUMBER', lineNumber);
+    editorController.highlightLine(lineNumber);
+  });
+
+  // Node selection
+  graphContainer.delegate('g.node, g.cluster', 'click', function(e) {
+    e.stopImmediatePropagation();
     var node = nodeData[this.id];
+    if ($(this).hasClass('selected-node')) {
+      unhighlightNodes();
+      return;
+    }
     editorController.unhighlight();
     editorController.highlightNodeInCode(node);
+    graphController.unhighlightNodes();
+    graphController.highlightNode(node);
 
     var type;
     switch (node.type) {
@@ -123,6 +171,9 @@ function initEventListeners() {
         break;
       case 2:
         type = "Loop";
+        break;
+      case 3:
+        type = "Library-Function";
         break;
       default:
         type = "undefined";
@@ -138,51 +189,62 @@ function initEventListeners() {
     if (!node.type) {
       data.read = humanFileSize(node.readDataSize, true);
       data.write = humanFileSize(node.writeDataSize, true);
-      if(node.localVariableNames.length){
+      if (node.localVariableNames.length) {
         data.local_variables = "";
         _.each(node.localVariableNames, function(variable) {
           data.local_variables += variable.name + ' (' + variable.type + '), ';
         });
-      }else{
+      } else {
         data.local_variables = " - ";
       }
 
-      if(node.globalVariableNames.length){
+      if (node.globalVariableNames.length) {
         data.global_variables = "";
         _.each(node.globalVariableNames, function(variable) {
           data.global_variables += variable.name + ' (' + variable.type + '), ';
         });
-      }else{
+      } else {
         data.global_variables = " - ";
       }
 
       data.local_variables = data.local_variables.replace(/,(\s+)?$/, '');
       data.global_variables = data.global_variables.replace(/,(\s+)?$/, '');
     }
+    if (_.has(node, 'funcArguments')) {
+      data.arguments = "";
+      _.each(node.funcArguments, function(variable) {
+        data.arguments += variable.name + ' (' + variable.type + '), ';
+      });
+    }
 
+
+    // update node info table
+    $("#node-info-available-icon").css('color', '	#00FF00');
     var template = Handlebars.compile(document.getElementById('cuInfoTableTemplate').innerHTML);
     var cuDataTable = template({
       cuData: data
     });
     $("#node-info-container").html(cuDataTable);
-    graphController.unhighlightNodes();
-    graphController.highlightNode(node);
-
   });
 
+  // Double click events
   graphContainer.delegate('g.node', 'dblclick', function(event) {
     event.stopImmediatePropagation();
     var node = nodeData[this.id];
     var cuNodes, loopNodes, functionNodes;
 
     if (!node.type && (node.RAWDepsOn.length || node.WARDepsOn.length || node.WAWDepsOn.length)) {
-      graphController.toggleDependencyEdges(node);
-      graphController.redraw();
-      graphController.panToNode(node);
+      graphController.resetViewAndChange(function() {
+        graphController.toggleDependencyEdges(node);
+        graphController.redraw();
+        graphController.panToNode(node);
+      });
     } else if (node.childrenNodes.length) {
-      graphController.expandNode(node);
-      graphController.redraw();
-      graphController.panToNode(node);
+      graphController.resetViewAndChange(function() {
+        graphController.expandNode(node);
+        graphController.redraw();
+        graphController.panToNode(node);
+      });
     }
   });
 
@@ -194,20 +256,29 @@ function initEventListeners() {
 
 
 
-  /*
+
   // tooltip events
   var tooltip = d3.select('#tooltip-container');
-  graphContainer.delegate('g.cluster.function-node', 'mouseover', function() {
-    tooltip.text('Function (' + nodeData[this.id].name + ')');
+  var node, file;
+  graphContainer.delegate('g.cluster', 'mouseover', function() {
+    node = nodeData[this.id];
+    file = fileMaps[node.id.split(':')[0]].path.split('/').slice(-1)[0];
+    if (node.type == 1) {
+      $('#tooltip-container').html('&#8618; ' + node.name + '<br>' + file);
+    } else if (node.type == 2) {
+      $('#tooltip-container').html('&#8635; (' + node.start.split(':')[1] + '-' + node.end.split(':')[1] + ')<br>' + file);
+    } else {
+      return;
+    }
     return tooltip.style("visibility", "visible");
   });
-  graphContainer.delegate('g.cluster.function-node', 'mousemove', function() {
-    return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 50) + "px");
+  graphContainer.delegate('g.cluster', 'mousemove', function(event) {
+    return tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 20) + "px");
   });
-  graphContainer.delegate('g.cluster.function-node', 'mouseout', function() {
+  graphContainer.delegate('g.cluster', 'mouseout', function() {
     return tooltip.style("visibility", "hidden");
   });
-  */
+
 
 
   // Graph right-click behavior
@@ -229,8 +300,10 @@ function initEventListeners() {
       },
       iconClass: 'glyphicon glyphicon-retweet',
       onClick: function(node) {
-        graphController.toggleDependencyEdges(node);
-        graphController.redraw();
+        graphController.resetViewAndChange(function() {
+          graphController.toggleDependencyEdges(node);
+          graphController.redraw();
+        });
       },
       classNames: function(node) {
         var hasDependencies = node.type == 0 && (node.RAWDepsOn.length > 0 || node.WARDepsOn.length > 0 || node.WAWDepsOn.length > 0);
@@ -263,9 +336,11 @@ function initEventListeners() {
       },
       iconClass: 'glyphicon glyphicon-expand',
       onClick: function(node) {
-        graphController.expandNode(node);
-        graphController.redraw();
-        graphController.panToNode(node);
+        graphController.resetViewAndChange(function() {
+          graphController.expandNode(node);
+          graphController.redraw();
+          graphController.panToNode(node);
+        });
       },
       classNames: function(node) {
         return {
@@ -285,8 +360,10 @@ function initEventListeners() {
       },
       iconClass: 'glyphicon glyphicon-expand',
       onClick: function(node) {
-        graphController.expandAll(node);
-        graphController.redraw();
+        graphController.resetViewAndChange(function() {
+          graphController.expandAll(node);
+          graphController.redraw();
+        });
       },
       classNames: function(node) {
         return {
@@ -314,9 +391,36 @@ function initEventListeners() {
       name: 'Collapse',
       iconClass: 'glyphicon glyphicon-collapse-up',
       onClick: function(node) {
-        graphController.collapseNode(node);
-        graphController.redraw();
-        graphController.panToNode(node);
+        graphController.resetViewAndChange(function() {
+          graphController.collapseNode(node);
+          graphController.redraw();
+          graphController.panToNode(node);
+        });
+      }
+    }, {
+      name: 'Toggle Dependencies',
+      iconClass: 'glyphicon glyphicon-retweet',
+      onClick: function(node) {
+        graphController.resetViewAndChange(function() {
+          graphController.toggleDependencyEdges(node);
+          graphController.redraw();
+        });
+      },
+      classNames: function(node) {
+        var hasDependencies = node.type == 0 && (node.RAWDepsOn.length > 0 || node.WARDepsOn.length > 0 || node.WAWDepsOn.length > 0);
+        return {
+          'action-success': hasDependencies
+        };
+      },
+      isEnabled: function(node) {
+        var childNode;
+        for (var i = 0; i < node.childrenNodes.length; i++) {
+          childNode = node.childrenNodes[i];
+          if (childNode.type == 0 && childNode.RAWDepsOn.length > 0 || childNode.WARDepsOn.length > 0 || childNode.WAWDepsOn.length > 0) {
+            return true;
+          }
+        }
+        return false;
       }
     }, {
       name: 'Node-Info',
@@ -340,9 +444,11 @@ function initEventListeners() {
         return (node != null);
       },
       onClick: function(node) {
-        graphController.expandTo(node);
-        graphController.redraw();
-        graphController.panToNode(node);
+        graphController.resetViewAndChange(function() {
+          graphController.expandTo(node);
+          graphController.redraw();
+          graphController.panToNode(node);
+        });
         $('#' + node.id.replace(':', '\\:')).trigger('click');
       }
     }]
@@ -362,4 +468,11 @@ function humanFileSize(bytes, si) {
     ++u;
   } while (Math.abs(bytes) >= thresh && u < units.length - 1);
   return bytes.toFixed(1) + ' ' + units[u];
+}
+
+function unhighlightNodes() {
+  editorController.unhighlight();
+  graphController.unhighlightNodes();
+  $("#node-info-container").html('');
+  $("#node-info-available-icon").css('color', '	#FFFFFF');
 }

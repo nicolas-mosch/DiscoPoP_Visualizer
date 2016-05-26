@@ -3,6 +3,7 @@ var util = require("../util");
 module.exports = addHtmlLabel;
 
 function addHtmlLabel(root, node) {
+  var label = node.label;
   var fo = root
     .append("foreignObject")
       .attr("width", "100000");
@@ -11,7 +12,6 @@ function addHtmlLabel(root, node) {
     .append("xhtml:div");
   div.attr("xmlns", "http://www.w3.org/1999/xhtml");
 
-  var label = node.label;
   switch(typeof label) {
     case "function":
       div.insert(label);
@@ -31,7 +31,7 @@ function addHtmlLabel(root, node) {
   var client = div[0][0].getBoundingClientRect();
   fo
     .attr("width", client.width)
-    .attr("height", client.height); 
+    .attr("height", client.height);
 
   return fo;
 }

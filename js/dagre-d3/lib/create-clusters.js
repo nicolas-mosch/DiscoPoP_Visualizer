@@ -27,6 +27,10 @@ function createClusters(selection, g) {
       var node = g.node(v);
       return node.id;
     })
+    .attr('title', function(v){
+      var node = g.node(v);
+      return node.label;
+    })
     .style("opacity", 0);
 
 
@@ -36,15 +40,17 @@ function createClusters(selection, g) {
   svgClusters.each(function(v) {
     var node = g.node(v),
       thisGroup = d3.select(this);
-    d3.select(this).append("rect").attr("class", "node-shape");
-    var labelGroup = thisGroup.append("g").attr("class", "label");
-    addLabel(labelGroup, node, node.clusterLabelPos);
+    var svgRect = d3.select(this).append("rect").attr("class", "node-shape");
+
+    //var labelGroup = thisGroup.append("g").attr("class", "label");
+    //addLabel(labelGroup, node, node.label, node.clusterLabelPos);
   });
 
   svgClusters.selectAll("rect").each(function(c) {
     var node = g.node(c);
     var domCluster = d3.select(this);
     util.applyStyle(domCluster, node.style);
+
   });
 
   util.applyTransition(svgClusters.exit(), g)
