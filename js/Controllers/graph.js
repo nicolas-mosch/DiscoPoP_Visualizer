@@ -316,11 +316,10 @@ var Graph = function(svg, canZoom) {
       _.each(node.childrenNodes, function(childNode) {
         graph.setParent(childNode.id, node.id);
         _.each(childNode.successorCUs, function(successorCU) {
-          sinkNodeID = graph.hasNode(successorCU.id) ? successorCU.id : successorCU.parentNodes[0].id;
-          if(!graph.hasNode(sinkNodeID)){
-            console.warn(sourceNodeID + ' has not been added to the graph (successor)');
+          while(!graph.hasNode(successorCU.id)){
+            successorCU = successorCU.parentNodes[0];
           }
-          graph.setEdge(childNode.id, sinkNodeID, {
+          graph.setEdge(childNode.id, successorCU.id, {
             lineInterpolate: 'basis',
             class: 'flow-edge'
           });
@@ -329,12 +328,10 @@ var Graph = function(svg, canZoom) {
         _.each(childNode.predecessorCUs, function(predecessorCU) {
           var fromNode;
           if (predecessorCU.parentNodes[0] != node.id) {
-            sourceNodeID = graph.hasNode(predecessorCU.id) ? predecessorCU.id : predecessorCU.parentNodes[0].id;
-            // Correctness check
-            if(!graph.hasNode(sourceNodeID)){
-              console.warn(sourceNodeID + ' has not been added to the graph (predecessor)');
+            while(!graph.hasNode(predecessorCU.id)){
+              predecessorCU = predecessorCU.parentNodes[0];
             }
-            graph.setEdge(sourceNodeID, childNode.id, {
+            graph.setEdge(predecessorCU.id, childNode.id, {
               lineInterpolate: 'basis',
               class: 'flow-edge'
             });
