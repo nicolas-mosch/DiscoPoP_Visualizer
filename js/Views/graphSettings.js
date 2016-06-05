@@ -8,7 +8,6 @@ var configuration = require('../js/Controllers/configuration.js');
 var Handlebars = require('handlebars');
 
 $(document).ready(function() {
-  console.log("ready!");
 
   var nodeColorData = [{
     name: 'Computational Unit',
@@ -89,9 +88,9 @@ $(document).ready(function() {
     width: configuration.readSetting('functionCallEdgeWidth')
   }];
 
-
   var nodeColorTemplate = Handlebars.compile(document.getElementById('nodeColorSettingsTableTemplate').innerHTML);
   var edgeColorTemplate = Handlebars.compile(document.getElementById('edgeColorSettingsTableTemplate').innerHTML);
+  var otherTemplate = Handlebars.compile(document.getElementById('otherSettingsTableTemplate').innerHTML);
 
   var nodeColorSettingsTemplate = nodeColorTemplate({
     nodeColorSettings: nodeColorData
@@ -101,9 +100,13 @@ $(document).ready(function() {
     edgeColorSettings: edgeColorData
   });
 
+  var otherSettingsTemplate = otherTemplate({
+    visibleParents: configuration.readSetting('visibleParents')
+  });
+
   $("#nodeColorSettings").html(nodeColorSettingsTemplate);
   $("#edgeColorSettings").html(edgeColorSettingsTemplate);
-
+  $("#otherSettings").html(otherSettingsTemplate);
 
   $(".colorpicker-component").each(function() {
     $(this).colorpicker();

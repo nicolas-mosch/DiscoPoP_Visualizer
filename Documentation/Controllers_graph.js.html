@@ -1,4 +1,32 @@
-'use strict';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Controllers/graph.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Controllers/graph.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
 
 var d3 = require('d3');
 var dagreD3 = require('./../dagre-d3');
@@ -56,7 +84,7 @@ class ExpansionPath {
    */
   hasSiblings(node) {
     var pathNode = this._expandedPathNodes[node.id];
-    for (var i = 0; i < pathNode.parents.length; i++) {
+    for (var i = 0; i &lt; pathNode.parents.length; i++) {
       if (pathNode.parents[i].children.length > 1) {
         return true;
       }
@@ -165,7 +193,7 @@ class GraphController {
     this._render = dagreD3.render();
     this.clearGraph();
     if (typeof rootNodes !== "undefined") {
-      for (var i = 0; i < rootNodes.length; i++) {
+      for (var i = 0; i &lt; rootNodes.length; i++) {
         this.addNode(rootNodes[i]);
       }
     }
@@ -239,18 +267,18 @@ class GraphController {
     var label, shape, nodeClass, parentNodes, labelType;
     switch (node.type) {
       case 0:
-        label = '<span>Lines: ' + node.startLine + ' - ' + node.endLine + '</span>' + '<br><span>Data Read: ' + generalFunctions.humanFileSize(node.readDataSize, true) + '</span>' + '<br><span>Data Written: ' + generalFunctions.humanFileSize(node.writeDataSize, true) + '</span>' + ((node.children.length) ? '<br><span style="font-size: 20px">&#8618;</span>' : '');
+        label = '&lt;span>Lines: ' + node.startLine + ' - ' + node.endLine + '&lt;/span>' + '&lt;br>&lt;span>Data Read: ' + generalFunctions.humanFileSize(node.readDataSize, true) + '&lt;/span>' + '&lt;br>&lt;span>Data Written: ' + generalFunctions.humanFileSize(node.writeDataSize, true) + '&lt;/span>' + ((node.children.length) ? '&lt;br>&lt;span style="font-size: 20px">&amp;#8618;&lt;/span>' : '');
         shape = 'rect';
         nodeClass = 'cu-node';
         break;
       case 1:
-        label = '<span>' + node.name + '</span><br><span>Lines: ' + node.startLine + ' - ' + node.endLine + '</span><br>';
+        label = '&lt;span>' + node.name + '&lt;/span>&lt;br>&lt;span>Lines: ' + node.startLine + ' - ' + node.endLine + '&lt;/span>&lt;br>';
         labelType = 'html';
         shape = 'hexagon';
         nodeClass = 'function-node';
         break;
       case 2:
-        label = '<span>Loop</span><br><span>Lines: ' + node.startLine + ' - ' + node.endLine + '<span><br>';
+        label = '&lt;span>Loop&lt;/span>&lt;br>&lt;span>Lines: ' + node.startLine + ' - ' + node.endLine + '&lt;span>&lt;br>';
         shape = 'ellipse';
         nodeClass = 'loop-node';
         break;
@@ -269,10 +297,10 @@ class GraphController {
       parentNodes.push(value.id);
     });
 
-    if (node.type >= 0 && node.type <= 2) {
+    if (node.type >= 0 &amp;&amp; node.type &lt;= 2) {
       var r = Math.floor(255 * node.heatFactor);
       var b = Math.floor(255 * (1 - node.heatFactor));
-      label += '<br><span style="color: rgb(' + r + ', 0, ' + b + ');font-size: 26px; font-family: font-awesome">&#xf06d;</span>';
+      label += '&lt;br>&lt;span style="color: rgb(' + r + ', 0, ' + b + ');font-size: 26px; font-family: font-awesome">&amp;#xf06d;&lt;/span>';
     }
 
     var nodeObject = {
@@ -314,12 +342,12 @@ class GraphController {
     var graphNode = this._graph.node(node.id);
     var that = this;
     var visibleCuParent;
-    if (node.type == 0 && !graphNode.depsOn) {
+    if (node.type == 0 &amp;&amp; !graphNode.depsOn) {
       // Show dependency nodes
       var style = "stroke: #000; stroke-width: 1px;";
       var arrowheadStyle = "fill: #000; stroke: #000;";
       var i, dependency;
-      for (i = 0; i < node.dependencies.length; i++) {
+      for (i = 0; i &lt; node.dependencies.length; i++) {
         // Find the closest visible ancestor of the dependcy-cu (if not the CU itself)
         dependency = node.dependencies[i];
         visibleCuParent = dependency.cuNode;
@@ -331,16 +359,16 @@ class GraphController {
           labelType: 'html',
           class: 'dependency-edge',
           lineInterpolate: 'basis',
-          label: '<a class="link-to-line" data-file-line="' + dependency.sourceLine + '" data-file-id="' + node.fileId + '">' + (dependency.isRaW() ? '&#xf019;' : '&#xf093;') + '</a>' +
-            '<label style="font-weight: bold">&rarr; ' + dependency.variableName + ' &rarr;</label>' +
-            '<a class="link-to-line" data-file-line="' + dependency.sourceLine + '" data-file-id="' + dependency.cuNode.fileId + '">' + (dependency.isWaR() ? '&#xf019;' : '&#xf093;') + '</a>'
+          label: '&lt;a class="link-to-line" data-file-line="' + dependency.sourceLine + '" data-file-id="' + node.fileId + '">' + (dependency.isRaW() ? '&amp;#xf019;' : '&amp;#xf093;') + '&lt;/a>' +
+            '&lt;label style="font-weight: bold">&amp;rarr; ' + dependency.variableName + ' &amp;rarr;&lt;/label>' +
+            '&lt;a class="link-to-line" data-file-line="' + dependency.sourceLine + '" data-file-id="' + dependency.cuNode.fileId + '">' + (dependency.isWaR() ? '&amp;#xf019;' : '&amp;#xf093;') + '&lt;/a>'
         }, "DependencyEdge");
       }
       graphNode.depsOn = true;
     } else {
       // Hide dependency nodes
       _.each(this._graph.outEdges(node.id), function(edge) {
-        if (_.has(edge, 'name') && edge.name == "DependencyEdge") {
+        if (_.has(edge, 'name') &amp;&amp; edge.name == "DependencyEdge") {
           that._graph.removeEdge(edge);
         }
       });
@@ -357,7 +385,7 @@ class GraphController {
   redraw() {
     var start = new Date().getTime();
     // Set margins, if not present
-    if (!this._graph.graph().hasOwnProperty("marginx") &&
+    if (!this._graph.graph().hasOwnProperty("marginx") &amp;&amp;
       !this._graph.graph().hasOwnProperty("marginy")) {
       this._graph.graph().marginx = 20;
       this._graph.graph().marginy = 20;
@@ -432,8 +460,8 @@ class GraphController {
     });
 
     // Expand all of the found paths
-    for (i = 0; i < paths.length; i++) {
-      for (j = 0; j < paths[i].length; j++) {
+    for (i = 0; i &lt; paths.length; i++) {
+      for (j = 0; j &lt; paths[i].length; j++) {
         this.expandNode(paths[i][j]);
       }
     }
@@ -462,7 +490,7 @@ class GraphController {
    * @param  {Node} node  The node to be expanded
    */
   expandNode(node) {
-    if (node.type >= 0 && node.type <= 2 && node.children.length) {
+    if (node.type >= 0 &amp;&amp; node.type &lt;= 2 &amp;&amp; node.children.length) {
       var graphNode, sourceNodeID, sinkNodeID;
       var that = this;
 
@@ -478,7 +506,7 @@ class GraphController {
           }
           graphNode = that._graph.node(functionCall.functionNode.id);
           that._graph.setEdge(node.id, graphNode.collapsed ? functionCall.functionNode.id : graphNode.firstChild, {
-            label: '<a class="link-to-line" data-file-line="' + functionCall.lineNumber + '" data-file-id="' + node.fileId + '" style="font-size: 20px">&#8618;</a>',
+            label: '&lt;a class="link-to-line" data-file-line="' + functionCall.lineNumber + '" data-file-id="' + node.fileId + '" style="font-size: 20px">&amp;#8618;&lt;/a>',
             labelType: 'html',
             lineInterpolate: 'basis',
             class: "function-call-edge",
@@ -504,7 +532,7 @@ class GraphController {
                 that._graph.setEdge(edge.v, childNode.id, that._graph.edge(edge));
               });
               // Add entry/exit tags if it is a root-node
-              if (childNode.type == 0 && !childNode.predecessors.length) {
+              if (childNode.type == 0 &amp;&amp; !childNode.predecessors.length) {
                 that._graph.node(node.id).firstChild = childNode.id;
                 if (!node.parents.length) {
                   that._graph.setNode('entry-' + node.id, {
@@ -516,7 +544,7 @@ class GraphController {
                   that._graph.setEdge('entry-' + node.id, childNode.id);
                 }
               }
-              if (childNode.type == 0 && !childNode.successors.length) {
+              if (childNode.type == 0 &amp;&amp; !childNode.successors.length) {
                 that._graph.node(node.id).lastChild = childNode.id;
                 if (!node.parents.length) {
                   that._graph.setNode('exit-' + node.id, {
@@ -540,7 +568,7 @@ class GraphController {
           that._graph.setParent(childNode.id, node.id);
           // Find the first visible successor's ancestor (non-trivial if outside of the expanded node)
           _.each(childNode.successors, function(successorCU) {
-            while (!that._graph.hasNode(successorCU.id) && successorCU.parents.length) {
+            while (!that._graph.hasNode(successorCU.id) &amp;&amp; successorCU.parents.length) {
               successorCU = successorCU.parents[0];
             }
             if (!that._graph.hasNode(successorCU.id)) {
@@ -561,7 +589,7 @@ class GraphController {
             var fromNode;
             if (predecessorCU.parents[0] != node.id) {
               // Find the first visible predecessor's ancestor
-              while (!that._graph.hasNode(predecessorCU.id) && predecessorCU.parents.length) {
+              while (!that._graph.hasNode(predecessorCU.id) &amp;&amp; predecessorCU.parents.length) {
                 predecessorCU = predecessorCU.parents[0];
               }
               if (!that._graph.hasNode(predecessorCU.id)) {
@@ -595,7 +623,7 @@ class GraphController {
       graphNode.collapsed = true;
 
       _.each(node.children, function(childNode) {
-        if (node.type > 0 && node.type <= 2) {
+        if (node.type > 0 &amp;&amp; node.type &lt;= 2) {
           // Remove the collapsing node's children, and reset its edges
           _.each(that._graph.inEdges(childNode.id), function(edge) {
             graphNode = that._graph.node(edge.v);
@@ -621,7 +649,7 @@ class GraphController {
         } else {
           // For collapsing CU-nodes, only collapase and remove the function-call function-nodes if they are not being pointed at by other CU-nodes
           graphNode = that._graph.node(childNode.id);
-          if (!graphNode.collapsed && that._graph.inEdges(graphNode.firstChild).length == 1) {
+          if (!graphNode.collapsed &amp;&amp; that._graph.inEdges(graphNode.firstChild).length == 1) {
             that.collapseNode(childNode);
           }
           if (that._graph.inEdges(childNode.id).length == 1) {
@@ -696,7 +724,7 @@ class GraphController {
    */
   highlightNode(node) {
     console.log("highlightNode", node);
-    if (this._highlightedNodes.indexOf(node) == -1 && node.type >= 0 && node.type <= 2) {
+    if (this._highlightedNodes.indexOf(node) == -1 &amp;&amp; node.type >= 0 &amp;&amp; node.type &lt;= 2) {
       var graphNode = this._graph.node(node.id);
       var svgNode = this._inner.select('[data-id="' + node.id + '"]');
       var svgShape = svgNode.select('.node-shape');
@@ -810,3 +838,26 @@ class GraphController {
 }
 
 module.exports = GraphController;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-configuration.html">configuration</a></li><li><a href="module-data-initializer.html">data-initializer</a></li></ul><h3>Classes</h3><ul><li><a href="CuNode.html">CuNode</a></li><li><a href="Dependency.html">Dependency</a></li><li><a href="EditorController.html">EditorController</a></li><li><a href="ExpansionPath.html">ExpansionPath</a></li><li><a href="FunctionCall.html">FunctionCall</a></li><li><a href="FunctionNode.html">FunctionNode</a></li><li><a href="GraphController.html">GraphController</a></li><li><a href="IntervalTree.html">IntervalTree</a></li><li><a href="LibraryFunctionNode.html">LibraryFunctionNode</a></li><li><a href="LoopNode.html">LoopNode</a></li><li><a href="global.html#Node">Node</a></li><li><a href="NodeVariable.html">NodeVariable</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Jun 05 2016 21:34:47 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

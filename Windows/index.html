@@ -3,7 +3,7 @@
 <head>
   <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../css/index.css">
-  <script src="../js/Windows/index.js"></script>
+  <script src="../js/Views/index.js"></script>
 
   <title>DiscoPoP Visualizer</title>
 
@@ -11,9 +11,10 @@
 
 <body>
 
-  <div class="container-fluid" style="background-color:#F44336;color:#fff;height:200px;">
+  <div class="container-fluid" id="index-header">
     <h1>DiscoPoP Visualizer</h1>
     <h3>Click on Import to get started</h3>
+    <button id="import-button" class="col-md-offset-5 col-md-2 col-md-offset-5 btn">Import</button>
     <!--<p>Scroll this page to see how the navbar behaves with data-spy="affix".</p>
   <p>The navbar is attached to the top of the page after you have scrolled a specified amount of pixels.</p>-->
   </div>
@@ -27,11 +28,9 @@
   </ul>
 </nav>-->
 
-  <div class="container-fluid" style="height:1000px">
-    <div class="col-md-offset-4 col-md-2 col-md-offset-5">
-      <button id="import-button" class="btn btn-block">Import</button>
-    </div>
-    <br><br>
+  <div class="container-fluid" id="index-content">
+    <br>
+    <br>
     <h1>Importing</h1>
     <p>
       Click on Import or press ctrl+I. Select the file-mapping file and then the data file output by DiscoPoP.
@@ -60,6 +59,12 @@
       <div id="legend-container">
         <svg></svg>
       </div>
+    </p>
+    <p>
+      A <a style "font-family: font-awesome">&#xf019;</a> symbol signifies a write to a variable. Click on it to display the line on which that write occurs in the code.
+    </p>
+    <p>
+      A <a style "font-family: font-awesome">&#xf093;</a> symbol signifies a read from a variable. Click on it to display the line on which that read occurs in the code.
     </p>
     <h1>Code</h1>
     <p>

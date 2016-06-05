@@ -121,7 +121,6 @@ function enter(svgPaths, g) {
       return createLine(edge, points);
     });
   svgPathsEnter.append("defs");
-  console.log('svgPathsEnter', svgPathsEnter);
 }
 
 function exit(svgPaths, g) {
@@ -141,5 +140,4 @@ function exit(svgPaths, g) {
         return d3.select(this).attr("d");
       }
     });
-    console.log('svgPathExit', svgPathExit);
 }

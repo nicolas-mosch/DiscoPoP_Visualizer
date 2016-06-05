@@ -7,6 +7,14 @@ body {
   height: 100%;
   overflow: hidden;
 }
+@font-face {
+  font-family: quivira;
+  src: url("fonts/Quivira.otf") format("opentype");
+}
+@font-face {
+  font-family: 'font-awesome';
+  src: url("fonts/FontAwesome.ttf") format("opentype");
+}
 #index-table {
   height: 100%;
   width: 100%;
@@ -14,6 +22,21 @@ body {
 #index-table td {
   height: 100%;
 }
+#index-content {
+  width: 100%;
+  height: calc(100% - 210px);
+  overflow: auto;
+}
+#index-header {
+  background-color: #F44336;
+  color: #fff;
+  height: 200px;
+}
+#index-header button{
+  color: black;
+}
+
+
 #code-container {
   height: 100%;
   overflow: auto;
@@ -48,9 +71,20 @@ text {
   overflow: hidden;
 }
 
-#legend-container{
-  height: 100px;
+#legend-table {
+  width: 100%;
+  height: 220px;
   display: none;
+}
+
+#legend-container {
+  height: 220px;
+  width: 600px;
+}
+#help-container{
+  height: 100%;
+  width: 100%;
+  overflow: auto;
 }
 
 .node {
@@ -138,4 +172,20 @@ text {
 #flow-graph-container {
   height: 100%;
   width: 100%;
+}
+a {
+  cursor: pointer;
+}
+#dependency-container {
+  width: 100%;
+  max-height: 100px;
+  overflow: auto;
+  text-align: center;
+}
+
+.variable-container{
+  width: 100%;
+  max-height: 100px;
+  overflow: auto;
+  text-align: center;
 }

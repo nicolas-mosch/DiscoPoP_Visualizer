@@ -3,7 +3,7 @@
 <head>
   <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
-  <script src="../js/Windows/graphSettings.js" type="text/javascript"></script>
+  <script src="../js/Views/graphSettings.js" type="text/javascript"></script>
   <title>Graph Settings</title>
 </head>
 
@@ -18,7 +18,7 @@
         </div>
         <div id="nodeColorSettings" class="panel-collapse collapse in">
           <script type="text/x-handlebars-template" id="nodeColorSettingsTableTemplate">
-          <div class="panel-body">
+            <div class="panel-body">
               <table class="table table-condensed">
                 <tr>
                   <th>
@@ -51,7 +51,7 @@
                 </tr>
                 {{/each}}
               </table>
-          </div>
+            </div>
           </script>
         </div>
       </div>
@@ -63,7 +63,7 @@
         </div>
         <div id="edgeColorSettings" class="panel-collapse collapse">
           <script type="text/x-handlebars-template" id="edgeColorSettingsTableTemplate">
-          <div class="panel-body">
+            <div class="panel-body">
               <table class="table table-condensed">
                 <tr>
                   <th>
@@ -93,18 +93,20 @@
                 </tr>
                 {{/each}}
               </table>
-          </div>
+            </div>
           </script>
         </div>
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#shapeSettings">Shape Settings</a>
+          <a data-toggle="collapse" data-parent="#accordion" href="#otherSettings">Other Settings</a>
         </h4>
         </div>
-        <div id="shapeSettings" class="panel-collapse collapse">
-          <div class="panel-body">TODO</div>
+        <div id="otherSettings" class="panel-collapse collapse">
+          <script type="text/x-handlebars-template" id="otherSettingsTableTemplate">
+            <div class="panel-body">Max. Displayed Parent-Nodes<input type="number" value="{{visibleParents}}" class="settingInput" data-key="visibleParents"/></div>
+          </script>
         </div>
       </div>
     </div>

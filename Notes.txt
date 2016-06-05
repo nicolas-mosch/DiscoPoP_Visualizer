@@ -1,9 +1,6 @@
-Should loops/functions display their function calls without being expanded? (Display all functions from start?)
+
+Can dependencies be between different files?
 What are instructionsLineNumbers for? start/end the same?
-What are read/writePhaseLineNumbers for?
-Are while-loops also loop-nodes?
-
-
 
 
 Assumptions:
@@ -40,15 +37,23 @@ TO-DO:
         // Fix coloring of function-call nodes
         // Mark read/writePhaseLineNumbers in code (CUs)
         // Click on functionCall edge to higlight line of call (functionCall in CU)
+        // Fix recursive problem
+        // Collapsing should not remove function nodes that still have other edges
+        // Max-visible parents (configuration variable, lower for better graph performance in very large graphs)
 
 
-        Fix recursive problem
+        Documentation!
+        Fix index
+        Fix legend
 
+
+
+        *Add an inspect option: cut the rest of the graph and view only childNodes
+        *Display ALL info in node-info and make stuff clickable
         *Fix labelColor of selected node
         *Add more color customization (Edges)
         *Higlight selected dependency-edge
         *Highlight edges connected to highlighted node
-        *Max-visible parents (configuration variable, lower for better graph performance in very large graphs)
         *Add editor customization (size, theme)
         *Progress-bar for long-lasting actions
         *Interpolated edges => more resources?

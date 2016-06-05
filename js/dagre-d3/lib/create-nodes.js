@@ -33,7 +33,7 @@ function createNodes(selection, g, shapes) {
     node.labelBBox = bbox;
     node.elem = this;
 
-    if (node.id) {
+    if (_.has(node, 'id')) {
       thisGroup.attr("id", node.id);
     }
     if(node.data){
@@ -43,10 +43,6 @@ function createNodes(selection, g, shapes) {
     }
     if (node.labelId) {
       labelGroup.attr("id", node.labelId);
-    }
-    //Add given click behavior
-    if (node.click) {
-      thisGroup.on("click", node.click);
     }
 
     util.applyClass(thisGroup, node["class"], (thisGroup.classed("update") ? "update " : "") + "node");

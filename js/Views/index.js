@@ -15,10 +15,7 @@ $(document).ready(function() {
 
     var legendCanvas = d3.select("#legend-container svg");
     $('#legend-container').css('display', 'block');
-    legendController = new GraphController(legendCanvas);
-    legendController.addLegendNode(0, 0);
-    legendController.addLegendNode(1, 1);
-    legendController.addLegendNode(2, 2);
-    legendController.addLegendNode(3, 3);
+    legendController = new GraphController(legendCanvas, [], false);
+    legendController.createLegendGraph();
     legendController.redraw();
 });
