@@ -131,6 +131,82 @@
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="expandedNodesPerLevel"><span class="type-signature"></span>expandedNodesPerLevel<span class="type-signature"> :Array.&lt;Array.&lt;<a href="global.html#Node">Node</a>>></span></h4>
+
+
+
+
+<div class="description">
+    An array containing the nodes which were expanded at each level (in order)
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;Array.&lt;<a href="global.html#Node">Node</a>>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line102">line 102</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -240,7 +316,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line21">line 21</a>
+        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -271,14 +347,14 @@
 
     
 
-    <h4 class="name" id="findExpandPathFromLevel"><span class="type-signature"></span>findExpandPathFromLevel<span class="signature">(node)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="global.html#Node">Node</a>>}</span></h4>
+    <h4 class="name" id="getLevel"><span class="type-signature"></span>getLevel<span class="signature">(node)</span><span class="type-signature"> &rarr; {number}</span></h4>
 
     
 
 
 
 <div class="description">
-    Finds the path of expansions done by the user starting from a given node
+    Returns the expansion-level of the given node
 </div>
 
 
@@ -330,7 +406,7 @@
 
             
 
-            <td class="description last">The starting node</td>
+            <td class="description last">The node for which to get the level</td>
         </tr>
 
     
@@ -371,7 +447,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line81">line 81</a>
+        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -398,7 +474,7 @@
 
         
 <div class="param-desc">
-    The path of nodes which were expanded after the given node (in order)
+    The node's expansion-level
 </div>
 
 
@@ -409,183 +485,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Array.&lt;<a href="global.html#Node">Node</a>></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="findPathAncestorsAtLevel"><span class="type-signature"></span>findPathAncestorsAtLevel<span class="signature">(node, level)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="global.html#Node">Node</a>>}</span></h4>
-
-    
-
-
-
-<div class="description">
-    Finds all of the nodes at a given level of ancestry which have been expanded. The nodes will not necessarily be related to the given node.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>node</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="global.html#Node">Node</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The node to start looking for ancestors from</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>level</code></td>
-            
-
-            <td class="type">
-            
-                
 <span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The target level of ancestry</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line102">line 102</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The found nodes
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;<a href="global.html#Node">Node</a>></span>
 
 
     </dd>
@@ -700,7 +600,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line72">line 72</a>
+        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line85">line 85</a>
     </li></ul></dd>
     
 
@@ -853,7 +753,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line57">line 57</a>
+        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line75">line 75</a>
     </li></ul></dd>
     
 
@@ -1006,7 +906,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line43">line 43</a>
+        <a href="Controllers_graph.js.html">Controllers/graph.js</a>, <a href="Controllers_graph.js.html#line44">line 44</a>
     </li></ul></dd>
     
 
@@ -1048,13 +948,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-configuration.html">configuration</a></li><li><a href="module-data-initializer.html">data-initializer</a></li></ul><h3>Classes</h3><ul><li><a href="CuNode.html">CuNode</a></li><li><a href="Dependency.html">Dependency</a></li><li><a href="EditorController.html">EditorController</a></li><li><a href="ExpansionPath.html">ExpansionPath</a></li><li><a href="FunctionCall.html">FunctionCall</a></li><li><a href="FunctionNode.html">FunctionNode</a></li><li><a href="GraphController.html">GraphController</a></li><li><a href="IntervalTree.html">IntervalTree</a></li><li><a href="LibraryFunctionNode.html">LibraryFunctionNode</a></li><li><a href="LoopNode.html">LoopNode</a></li><li><a href="global.html#Node">Node</a></li><li><a href="NodeVariable.html">NodeVariable</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-configuration.html">configuration</a></li><li><a href="module-data-initializer.html">data-initializer</a></li><li><a href="module-data-reader.html">data-reader</a></li><li><a href="module-generalFunctions.html">generalFunctions</a></li></ul><h3>Classes</h3><ul><li><a href="CuNode.html">CuNode</a></li><li><a href="Dependency.html">Dependency</a></li><li><a href="EditorController.html">EditorController</a></li><li><a href="ExpansionPath.html">ExpansionPath</a></li><li><a href="FunctionCall.html">FunctionCall</a></li><li><a href="FunctionNode.html">FunctionNode</a></li><li><a href="GraphController.html">GraphController</a></li><li><a href="IntervalTree.html">IntervalTree</a></li><li><a href="LibraryFunctionNode.html">LibraryFunctionNode</a></li><li><a href="LoopNode.html">LoopNode</a></li><li><a href="global.html#Node">Node</a></li><li><a href="NodeVariable.html">NodeVariable</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Jun 05 2016 21:34:47 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jun 06 2016 11:02:53 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>

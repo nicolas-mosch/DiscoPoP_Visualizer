@@ -86,10 +86,19 @@ class ExpansionPath {
     return _.has(this._expansionLevelsPerNode, node.id);
   }
 
+  /**
+   * Returns the expansion-level of the given node
+   * @param  {Node} node The node for which to get the level
+   * @return {number}    The node's expansion-level
+   */
   getLevel(node) {
     return this._expansionLevelsPerNode[node.id];
   }
 
+  /**
+   * An array containing the nodes which were expanded at each level (in order)
+   * @type  {Node[][]}
+   */
   get expandedNodesPerLevel() {
     return this._expandedNodesPerLevel;
   }

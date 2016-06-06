@@ -100,199 +100,6 @@
 
         
                 
-<h4 class="name" id="CustomNode">CustomNode</h4>
-
-
-
-
-<div class="description">
-    An object for adding a node to the graph with custom settings
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Object</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>label</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The text that will be displayed in the node</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>nodeClass</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The class that will be given to the node's DOM-element</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>shape</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The shape that the node will be redered with (rect, ellipse, circle, hexagon and diamond are possible)</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The type of the node (always -1)</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line42">line 42</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-            
-                
 <h4 class="name" id="DiscoPopData">DiscoPopData</h4>
 
 
@@ -396,7 +203,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;number></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -445,79 +252,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line121">line 121</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-            
-                
-<h4 class="name" id="fileLine">fileLine</h4>
-
-
-
-
-<div class="description">
-    A line of a file: a string with the format "x:y", where x is the file-id and y is line-number
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line7">line 7</a>
+        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line114">line 114</a>
     </li></ul></dd>
     
 
@@ -592,7 +327,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#nodeId">nodeId</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -609,13 +344,36 @@
 
         <tr>
             
+                <td class="name"><code>fileId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">File-ID of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>type</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
             
@@ -632,13 +390,13 @@
 
         <tr>
             
-                <td class="name"><code>start</code></td>
+                <td class="name"><code>startLine</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#fileLine">fileLine</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -655,13 +413,13 @@
 
         <tr>
             
-                <td class="name"><code>end</code></td>
+                <td class="name"><code>endLine</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#fileLine">fileLine</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -684,7 +442,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="global.html#Node">Node</a>></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -707,7 +465,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="global.html#Node">Node</a>></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -730,7 +488,7 @@
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
             
@@ -753,7 +511,7 @@
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
             
@@ -776,7 +534,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="CuNode.html">CuNode</a>></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -799,7 +557,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="CuNode.html">CuNode</a>></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -822,7 +580,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -845,7 +603,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="global.html#fileLine">fileLine</a>></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -868,7 +626,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="global.html#fileLine">fileLine</a>></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -891,7 +649,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="global.html#fileLine">fileLine</a>></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -908,7 +666,7 @@
 
         <tr>
             
-                <td class="name"><code>localVariableNames</code></td>
+                <td class="name"><code>localVariables</code></td>
             
 
             <td class="type">
@@ -931,7 +689,7 @@
 
         <tr>
             
-                <td class="name"><code>globalVariableNames</code></td>
+                <td class="name"><code>globalVariables</code></td>
             
 
             <td class="type">
@@ -954,7 +712,7 @@
 
         <tr>
             
-                <td class="name"><code>functionCall</code></td>
+                <td class="name"><code>functionCalls</code></td>
             
 
             <td class="type">
@@ -1052,7 +810,7 @@
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
             
@@ -1101,7 +859,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line51">line 51</a>
+        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line30">line 30</a>
     </li></ul></dd>
     
 
@@ -1170,13 +928,13 @@
 
         <tr>
             
-                <td class="name"><code>CUid</code></td>
+                <td class="name"><code>cu</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#nodeId">nodeId</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -1199,7 +957,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#fileLine">fileLine</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -1222,7 +980,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#fileLine">fileLine</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -1245,7 +1003,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -1294,7 +1052,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line13">line 13</a>
+        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -1369,7 +1127,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -1392,7 +1150,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -1441,7 +1199,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line114">line 114</a>
+        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line107">line 107</a>
     </li></ul></dd>
     
 
@@ -1510,13 +1268,13 @@
 
         <tr>
             
-                <td class="name"><code>atLine</code></td>
+                <td class="name"><code>line</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#fileLine">fileLine</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -1533,13 +1291,13 @@
 
         <tr>
             
-                <td class="name"><code>funcId</code></td>
+                <td class="name"><code>function</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#nodeId">nodeId</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -1588,7 +1346,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line29">line 29</a>
+        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line17">line 17</a>
     </li></ul></dd>
     
 
@@ -1663,7 +1421,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#nodeId">nodeId</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -1680,13 +1438,36 @@
 
         <tr>
             
+                <td class="name"><code>fileId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">File-ID of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>type</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
             
@@ -1709,7 +1490,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#fileLine">fileLine</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -1732,7 +1513,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#fileLine">fileLine</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -1749,13 +1530,128 @@
 
         <tr>
             
+                <td class="name"><code>writePhaseLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines on which a write occurs within the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>readPhaseLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines on which a read occurs within the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>readDataSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of Bytes read in the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>writeDataSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of Bytes written in the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>descendantNodeCount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of nodes that are descendants of this one</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>name</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -1778,7 +1674,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="global.html#Node">Node</a>></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -1801,7 +1697,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="CuNode.html">CuNode</a>></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -1847,7 +1743,7 @@
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
             
@@ -1896,7 +1792,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line77">line 77</a>
+        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line57">line 57</a>
     </li></ul></dd>
     
 
@@ -1971,7 +1867,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#nodeId">nodeId</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -1988,13 +1884,36 @@
 
         <tr>
             
+                <td class="name"><code>fileId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">File-ID of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>type</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
             
@@ -2017,7 +1936,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -2040,7 +1959,7 @@
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="CuNode.html">CuNode</a>></span>
+<span class="param-type">Array.&lt;Number></span>
 
 
             
@@ -2050,7 +1969,7 @@
 
             
 
-            <td class="description last">The CU nodes that call the function</td>
+            <td class="description last">The id's of the nodes nodes that call the function (always CU's)</td>
         </tr>
 
     
@@ -2112,7 +2031,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line104">line 104</a>
+        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line96">line 96</a>
     </li></ul></dd>
     
 
@@ -2187,7 +2106,7 @@
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#nodeId">nodeId</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -2204,13 +2123,36 @@
 
         <tr>
             
+                <td class="name"><code>fileId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">File-ID of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>type</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
             
@@ -2227,13 +2169,13 @@
 
         <tr>
             
-                <td class="name"><code>start</code></td>
+                <td class="name"><code>startLine</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#fileLine">fileLine</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -2250,13 +2192,13 @@
 
         <tr>
             
-                <td class="name"><code>end</code></td>
+                <td class="name"><code>endLine</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#fileLine">fileLine</a></span>
+<span class="param-type">Number</span>
 
 
             
@@ -2267,6 +2209,121 @@
             
 
             <td class="description last">The last line of the loop's code-section</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>writePhaseLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines on which a write occurs within the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>readPhaseLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines on which a read occurs within the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>readDataSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of Bytes read in the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>writeDataSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of Bytes written in the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>descendantNodeCount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of nodes that are descendants of this one</td>
         </tr>
 
     
@@ -2325,7 +2382,7 @@
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
             
@@ -2348,7 +2405,7 @@
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Number</span>
 
 
             
@@ -2397,7 +2454,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line91">line 91</a>
+        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line77">line 77</a>
     </li></ul></dd>
     
 
@@ -2472,7 +2529,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -2495,7 +2552,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">String</span>
 
 
             
@@ -2544,7 +2601,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line22">line 22</a>
+        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line10">line 10</a>
     </li></ul></dd>
     
 
@@ -2587,9 +2644,6 @@
 |
 
 <span class="param-type"><a href="global.html#JsonLibraryFunctionNode">JsonLibraryFunctionNode</a></span>
-|
-
-<span class="param-type">JsonCustomNode</span>
 
 
         </li>
@@ -2628,79 +2682,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line36">line 36</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-            
-                
-<h4 class="name" id="nodeId">nodeId</h4>
-
-
-
-
-<div class="description">
-    The ID of a node: a string with the format "x:y", where x is the file-id and y is the node-id
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line1">line 1</a>
+        <a href="Documentation_typedefs.js.html">Documentation/typedefs.js</a>, <a href="Documentation_typedefs.js.html#line24">line 24</a>
     </li></ul></dd>
     
 
@@ -2730,13 +2712,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-configuration.html">configuration</a></li><li><a href="module-data-initializer.html">data-initializer</a></li></ul><h3>Classes</h3><ul><li><a href="CuNode.html">CuNode</a></li><li><a href="Dependency.html">Dependency</a></li><li><a href="EditorController.html">EditorController</a></li><li><a href="ExpansionPath.html">ExpansionPath</a></li><li><a href="FunctionCall.html">FunctionCall</a></li><li><a href="FunctionNode.html">FunctionNode</a></li><li><a href="GraphController.html">GraphController</a></li><li><a href="IntervalTree.html">IntervalTree</a></li><li><a href="LibraryFunctionNode.html">LibraryFunctionNode</a></li><li><a href="LoopNode.html">LoopNode</a></li><li><a href="global.html#Node">Node</a></li><li><a href="NodeVariable.html">NodeVariable</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-configuration.html">configuration</a></li><li><a href="module-data-initializer.html">data-initializer</a></li><li><a href="module-data-reader.html">data-reader</a></li><li><a href="module-generalFunctions.html">generalFunctions</a></li></ul><h3>Classes</h3><ul><li><a href="CuNode.html">CuNode</a></li><li><a href="Dependency.html">Dependency</a></li><li><a href="EditorController.html">EditorController</a></li><li><a href="ExpansionPath.html">ExpansionPath</a></li><li><a href="FunctionCall.html">FunctionCall</a></li><li><a href="FunctionNode.html">FunctionNode</a></li><li><a href="GraphController.html">GraphController</a></li><li><a href="IntervalTree.html">IntervalTree</a></li><li><a href="LibraryFunctionNode.html">LibraryFunctionNode</a></li><li><a href="LoopNode.html">LoopNode</a></li><li><a href="global.html#Node">Node</a></li><li><a href="NodeVariable.html">NodeVariable</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Jun 05 2016 21:34:47 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jun 06 2016 11:02:53 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>
