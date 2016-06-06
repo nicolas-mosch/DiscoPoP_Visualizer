@@ -209,3 +209,9 @@ a {
   overflow: auto;
   text-align: center;
 }
+
+#colorstrip{
+    height: 20px;
+    width: 250px;
+    background: linear-gradient(to right, blue , red);
+}

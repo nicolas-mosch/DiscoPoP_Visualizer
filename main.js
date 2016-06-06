@@ -73,6 +73,30 @@ var template = [{
   }]
 }];
 
+ipc.on('showCuInfo', function(event, cuData) {
+  if (!_.has(cuInfoWindows, cuData.id)) {
+    var cuInfoWindow = new BrowserWindow({
+      width: 400,
+      height: 400,
+      resizable: true,
+      title: 'CU: ' + cuData.id,
+      javascript: true
+    });
+    cuInfoWindow.setMenu(null);
+    cuInfoWindow.loadURL('file://' + __dirname + '/Windows/cuInfo.html');
+    cuInfoWindow.webContents.on('did-finish-load', function() {
+      cuInfoWindow.webContents.send('init', cuData);
+    });
+    cuInfoWindow.on('closed', function() {
+      delete cuInfoWindows[cuData.id];
+    });
+    //cuInfoWindow.webContents.openDevTools();
+    cuInfoWindows[cuData.id] = cuInfoWindow;
+  } else {
+    cuInfoWindows[cuData.id].focus();
+  }
+});
+
 ipc.on('import-files', function() {
   importFiles();
 });
