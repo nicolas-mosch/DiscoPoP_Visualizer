@@ -46,33 +46,40 @@ class EditorController {
         shortPath = value.path.replace(irrelevantPath, '');
         parts = shortPath.split('/');
         pathPartsLength = parts.length;
-
-        if (containedTreeNodes.indexOf('0_' + parts[0]) == -1) {
+        console.log('parts', parts);
+        if (parts.length > 1 && containedTreeNodes.indexOf('0_' + parts[0]) == -1) {
           fileTreeData.push({
             id: '0_' + parts[0],
             parent: '#',
             text: parts[0],
             type: 'folder'
           });
-        }
-        containedTreeNodes.push('0_' + parts[0]);
-        for (j = 1; j < pathPartsLength - 1; j++) {
-          if (containedTreeNodes.indexOf(j + '_' + parts[j]) == -1) {
-            fileTreeData.push({
-              id: j + '_' + parts[j],
-              parent: (j - 1) + '_' + parts[j - 1],
-              text: parts[j],
-              type: 'folder'
-            });
-            containedTreeNodes.push(j + '_' + parts[j]);
+          containedTreeNodes.push('0_' + parts[0]);
+          for (j = 1; j < pathPartsLength - 1; j++) {
+            if (containedTreeNodes.indexOf(j + '_' + parts[j]) == -1) {
+              fileTreeData.push({
+                id: j + '_' + parts[j],
+                parent: (j - 1) + '_' + parts[j - 1],
+                text: parts[j],
+                type: 'folder'
+              });
+              containedTreeNodes.push(j + '_' + parts[j]);
+            }
           }
+          fileTreeData.push({
+            id: key,
+            parent: (j - 1) + '_' + parts[j - 1],
+            text: parts[j],
+            type: 'file'
+          });
+        }else{
+          fileTreeData.push({
+            id: key,
+            parent: '#',
+            text: value.fileName,
+            type: 'file'
+          });
         }
-        fileTreeData.push({
-          id: key,
-          parent: (j - 1) + '_' + parts[j - 1],
-          text: parts[j],
-          type: 'file'
-        });
       });
     } else {
       // Create file-tree object (single file)
