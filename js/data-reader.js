@@ -14,6 +14,7 @@ module.exports = {
    * @return {DiscoPopData}           The complete data from DiscoPoP required by the visualizer
    */
   buildFromFile: function buildFromFile(mappingFilePath, nodeFilePath) {
+    var start = new Date().getTime();
     var startCU, endCU, nodeID, i, start, end, fileID;
     var rootNodes = [];
     var fileMaps = [];
@@ -225,9 +226,11 @@ module.exports = {
     _.each(fileContents, function(node) {
       node.heatFactor = ((node.readDataSize + node.writeDataSize) / 2) / midCuDataSize;
     });
+    var end = new Date().getTime();
+    var time = end - start;
     console.log('Resulting dataset size: ' + sizeof.sizeof(fileContents, true));
     console.log('#Nodes: ' + nodeCount + ', #CUs: ' + cuCount + ', #Functions: ' + functionCount + ', #Loops: ' + loopCount + ', #LibFuncs: ' + libraryFunctionCount);
-
+    console.log('Time elapsed: ', time);
     return {
       fileMapping: fileMaps,
       nodeData: fileContents,
