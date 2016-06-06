@@ -163,7 +163,7 @@ function initEventListeners() {
 
     var data = {
       file: fileMaps[node.fileId].fileName,
-      lines: node.startLine + ' - ' + node.endLine[1],
+      lines: node.startLine + ' - ' + node.endLine,
       type: type
     }
 
@@ -245,7 +245,8 @@ function initEventListeners() {
       });
     } else if (node.children.length) {
       graphController.resetViewAndChange(function() {
-        graphController.expandNodeAndHideAncestors(node);
+        graphController.expandNode(node);
+        graphController.hideAncestors();
         graphController.redraw();
         graphController.panToNode(node);
       });
@@ -361,7 +362,8 @@ function initEventListeners() {
       iconClass: 'glyphicon glyphicon-expand',
       onClick: function(node) {
         graphController.resetViewAndChange(function() {
-          graphController.expandNodeAndHideAncestors(node);
+          graphController.expandNode(node);
+          graphController.hideAncestors();
           graphController.redraw();
           graphController.panToNode(node);
         });
@@ -412,7 +414,8 @@ function initEventListeners() {
       iconClass: 'glyphicon glyphicon-collapse-up',
       onClick: function(node) {
         graphController.resetViewAndChange(function() {
-          graphController.collapseNodeAndHideAncestors(node, true);
+          graphController.collapseNode(node);
+          graphController.hideAncestors();
           graphController.redraw();
           graphController.panToNode(node);
         });

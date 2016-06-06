@@ -11,7 +11,8 @@ var generalFunctions = require('../generalFunctions.js');
  */
 class ExpansionPath {
   constructor() {
-    this._expandedPathNodes = {};
+    this._expandedNodesPerLevel = [];
+    this._expansionLevelsPerNode = {};
   }
 
   /**
@@ -19,20 +20,20 @@ class ExpansionPath {
    * @param {Node} node The node to be added
    */
   addNode(node) {
-    var pathNodes = this._expandedPathNodes;
-    if (!_.has(pathNodes, node.id)) {
-      var pathNode = {
-        node: node,
-        parents: [],
-        children: []
-      };
+    if (!_.has(this._expansionLevelsPerNode, node.id)) {
+      var that = this;
+      var parentLevel = -1;
       _.each(node.parents, function(parentNode) {
-        if (_.has(pathNodes, parentNode.id)) {
-          pathNodes[parentNode.id].children.push(pathNode);
-          pathNode.parents.push(pathNodes[parentNode.id]);
+        if (_.has(that._expansionLevelsPerNode, parentNode.id) && that._expansionLevelsPerNode[parentNode.id] > parentLevel) {
+          parentLevel = that._expansionLevelsPerNode[parentNode.id];
         }
       });
-      pathNodes[node.id] = pathNode;
+      parentLevel++;
+      if (this._expandedNodesPerLevel.length <= parentLevel) {
+        this._expandedNodesPerLevel[parentLevel] = [];
+      }
+      this._expandedNodesPerLevel[parentLevel].push(node);
+      this._expansionLevelsPerNode[node.id] = parentLevel;
     }
   }
 
@@ -41,12 +42,29 @@ class ExpansionPath {
    * @param  {Node} node The node to be removed
    */
   removeNode(node) {
-    var pathNodes = this._expandedPathNodes;
-    _.each(pathNodes[node.id].parents, function(parent) {
-      parent.children.splice(parent.children.indexOf(pathNodes[node.id]), 1);
-    });
-    delete pathNodes[node.id];
-
+    if (_.has(this._expansionLevelsPerNode, node.id)) {
+      console.log('removing', node.id);
+      var level = this._expansionLevelsPerNode[node.id];
+      console.log('level', level);
+      var levelNodes = this._expandedNodesPerLevel[level];
+      console.log('levelNodes', levelNodes);
+      var index = levelNodes.indexOf(node);
+      console.log('index', index);
+      this._expandedNodesPerLevel[level].splice(index, 1);
+      console.log('levelNodes', levelNodes);
+      if(!levelNodes.length){
+        console.log('A')
+        for(var i = this._expandedNodesPerLevel.length - 1; i >= level ; i--){
+          if(this._expandedNodesPerLevel[i].length){
+            break;
+          }else{
+            this._expandedNodesPerLevel.splice(i);
+          }
+        }
+      }
+      delete this._expansionLevelsPerNode[node.id];
+      console.log('this._expansionLevelsPerNode', this._expansionLevelsPerNode)
+    }
   }
 
   /**
@@ -55,13 +73,8 @@ class ExpansionPath {
    * @return {Boolean}      The result
    */
   hasSiblings(node) {
-    var pathNode = this._expandedPathNodes[node.id];
-    for (var i = 0; i < pathNode.parents.length; i++) {
-      if (pathNode.parents[i].children.length > 1) {
-        return true;
-      }
-    }
-    return false;
+    var level = this._expandedNodesPerLevel[this._expansionLevelsPerNode[node.id]];
+    return level.length > 1;
   }
 
   /**
@@ -70,51 +83,15 @@ class ExpansionPath {
    * @return {Boolean}    The result
    */
   hasNode(node) {
-    return _.has(this._expandedPathNodes, node.id);
+    return _.has(this._expansionLevelsPerNode, node.id);
   }
 
-  /**
-   * Finds the path of expansions done by the user starting from a given node
-   * @param  {Node}   node The starting node
-   * @return {Node[]}      The path of nodes which were expanded after the given node (in order)
-   */
-  findExpandPathFromLevel(node) {
-    var pathNode = this._expandedPathNodes[node.id];
-    var that = this;
-    if (!pathNode.children.length) {
-      return [pathNode.node];
-    } else {
-      var path = [];
-      _.each(pathNode.children, function(child) {
-        path = _.union(path, that.findExpandPathFromLevel(child.node));
-      });
-      path.unshift(pathNode.node);
-      return path;
-    }
+  getLevel(node) {
+    return this._expansionLevelsPerNode[node.id];
   }
 
-  /**
-   * Finds all of the nodes at a given level of ancestry which have been expanded. The nodes will not necessarily be related to the given node.
-   * @param  {Node}   node  The node to start looking for ancestors from
-   * @param  {number} level The target level of ancestry
-   * @return {Node[]}       The found nodes
-   */
-  findPathAncestorsAtLevel(node, level) {
-    var pathNode = this._expandedPathNodes[node.id];
-    var that = this;
-    var ancestors = [];
-    if (!pathNode.parents.length) {
-      _.each(this._expandedPathNodes, function(sibling) {
-        ancestors.push(sibling.node);
-      });
-    } else if (level == 0) {
-      ancestors.push(node);
-    } else {
-      _.each(pathNode.parents, function(parent) {
-        ancestors = _.union(ancestors, that.findPathAncestorsAtLevel(parent.node, level - 1));
-      });
-    }
-    return ancestors;
+  get expandedNodesPerLevel() {
+    return this._expandedNodesPerLevel;
   }
 }
 
@@ -406,55 +383,34 @@ class GraphController {
   }
 
   /**
-   * Expands the given node and hides its ancestors at a level higher than the maximum visibleParents setting set by the user
-   * @param  {Node}   node            The node to be expanded
-   * @param  {number} visibleParents  A manual amount of visibleParents that overrides the user-setting
+   * Hides the ancestor-nodes at a level higher than the maximum setting
    */
-  expandNodeAndHideAncestors(node, visibleParents) {
-    var start = new Date().getTime();
-    var that = this;
-    var i, j;
-    var eldest;
-    var paths = [];
+  hideAncestors() {
+    var i, j, startLevel, endLevel, levelNodes;
 
-    this._expansionPath.addNode(node);
+    var visibleParents = configuration.readSetting('visibleParents');
 
-    if (typeof visibleParents === "undefined") {
-      visibleParents = configuration.readSetting('visibleParents');
-    }
-
+    endLevel = this._expansionPath.expandedNodesPerLevel.length;
+    startLevel = endLevel - visibleParents;
     this.clearGraph();
-    // Get the first nodes to be added to the graph and from which to get their expansion-paths
-    eldest = this._expansionPath.findPathAncestorsAtLevel(node, visibleParents);
-    _.each(eldest, function(elder) {
-      that.addNode(elder);
-      paths.push(that._expansionPath.findExpandPathFromLevel(elder));
-    });
-
-    // Expand all of the found paths
-    for (i = 0; i < paths.length; i++) {
-      for (j = 0; j < paths[i].length; j++) {
-        this.expandNode(paths[i][j]);
+    if (startLevel <= 0) {
+      startLevel = 0;
+      for (i = 0; i < this._rootNodes.length; i++) {
+        this.addNode(this._rootNodes[i]);
+      }
+    } else {
+      levelNodes = this._expansionPath.expandedNodesPerLevel[startLevel];
+      for (i = 0; i < levelNodes.length; i++) {
+        this.addNode(levelNodes[i]);
       }
     }
-
-    var end = new Date().getTime();
-    var time = end - start;
-    console.log('Execution Expand: ' + time);
-  }
-
-  /**
-   * Collapses the given node and hides its ancestors at a level higher than the maximum visibleParents setting set by the user
-   * @param  {Node} node  The node to be expanded
-   */
-  collapseNodeAndHideAncestors(node) {
-    var visibleParents = configuration.readSetting('visibleParents');
-    if (this._expansionPath.hasSiblings(node)) {
-      visibleParents++;
+    // Expand all of the found paths
+    for (i = startLevel; i < endLevel; i++) {
+      levelNodes = this._expansionPath.expandedNodesPerLevel[i];
+      for (j = 0; j < levelNodes.length; j++) {
+        this.expandNode(levelNodes[j]);
+      }
     }
-    this.expandNodeAndHideAncestors(node, visibleParents);
-    this.collapseNode(node);
-    ('PathNodes', this._expansionPath._expandedPathNodes);
   }
 
   /**
@@ -462,6 +418,7 @@ class GraphController {
    * @param  {Node} node  The node to be expanded
    */
   expandNode(node) {
+    console.log('expandNode', node);
     if (node.type >= 0 && node.type <= 2 && node.children.length) {
       var graphNode, sourceNodeID, sinkNodeID;
       var that = this;

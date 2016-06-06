@@ -87,7 +87,8 @@ class EditorController {
     }
 
     // Initialize file-tree
-    $("#file-select-container").html('');
+    $("#file-select-container").jstree("destroy");
+    $("#file-select-container").empty();
     $("#file-select-container").jstree({
       "plugins": [
         "search",

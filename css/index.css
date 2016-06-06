@@ -27,6 +27,27 @@ body {
   height: calc(100% - 210px);
   overflow: auto;
 }
+
+#index-content p{
+  margin-left: 70px;
+}
+#index-content h1{
+  margin-left: 30px;
+}
+
+#colorstrip{
+    height: 20px;
+    width: 250px;
+    margin-left: 70px;
+    background: linear-gradient(to right, blue , red);
+}
+
+#tud-logo{
+  float:right;
+  height: 50px;
+}
+
+
 #index-header {
   background-color: #F44336;
   color: #fff;
@@ -35,7 +56,6 @@ body {
 #index-header button{
   color: black;
 }
-
 
 #code-container {
   height: 100%;
@@ -188,10 +208,4 @@ a {
   max-height: 100px;
   overflow: auto;
   text-align: center;
-}
-
-#colorstrip{
-    height: 20px;
-    width: 250px;
-    background: linear-gradient(to right, blue , red);
 }
