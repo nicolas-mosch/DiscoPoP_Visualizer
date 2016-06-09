@@ -43,27 +43,20 @@ class ExpansionPath {
    */
   removeNode(node) {
     if (_.has(this._expansionLevelsPerNode, node.id)) {
-      console.log('removing', node.id);
       var level = this._expansionLevelsPerNode[node.id];
-      console.log('level', level);
       var levelNodes = this._expandedNodesPerLevel[level];
-      console.log('levelNodes', levelNodes);
       var index = levelNodes.indexOf(node);
-      console.log('index', index);
       this._expandedNodesPerLevel[level].splice(index, 1);
-      console.log('levelNodes', levelNodes);
-      if(!levelNodes.length){
-        console.log('A')
-        for(var i = this._expandedNodesPerLevel.length - 1; i >= level ; i--){
-          if(this._expandedNodesPerLevel[i].length){
+      if (!levelNodes.length) {
+        for (var i = this._expandedNodesPerLevel.length - 1; i >= level; i--) {
+          if (this._expandedNodesPerLevel[i].length) {
             break;
-          }else{
+          } else {
             this._expandedNodesPerLevel.splice(i);
           }
         }
       }
       delete this._expansionLevelsPerNode[node.id];
-      console.log('this._expansionLevelsPerNode', this._expansionLevelsPerNode)
     }
   }
 
@@ -286,9 +279,9 @@ class GraphController {
    */
   toggleFunctionCalls(node) {
     if (this._graph.node(node.id).collapsed) {
-      this.expandNodeAndHideAncestors(node);
+      this.expandNode(node);
     } else {
-      this.collapseNodeAndHideAncestors(node);
+      this.collapseNode(node);
     }
   }
 
@@ -309,8 +302,13 @@ class GraphController {
         // Find the closest visible ancestor of the dependcy-cu (if not the CU itself)
         dependency = node.dependencies[i];
         visibleCuParent = dependency.cuNode;
-        while (!this._graph.hasNode(visibleCuParent.id)) {
-          visibleCuParent = visibleCuParent.parentNodes[0];
+        while (!this._graph.hasNode(visibleCuParent.id) && visibleCuParent.parents.length) {
+          visibleCuParent = visibleCuParent.parents[0];
+        }
+        if (!that._graph.hasNode(visibleCuParent.id)) {
+          visibleCuParent = {
+            id: "hidden-nodes"
+          };
         }
         this._graph.setEdge(node.id, visibleCuParent.id, {
           labelClass: 'dependency-edge-label',
@@ -435,7 +433,6 @@ class GraphController {
       // Add to expandedNodePaths
       this._expansionPath.addNode(node);
       this._graph.node(node.id).collapsed = false;
-
       if (node.type == 0) {
         // Add CU's function-call-edges and the function-nodes to graph
         _.each(node.functionCalls, function(functionCall) {
@@ -503,276 +500,287 @@ class GraphController {
         });
         // add flow-edges between the children of the expanded node, and from/to nodes outside of the expanded node
         _.each(node.children, function(childNode) {
-          that._graph.setParent(childNode.id, node.id);
-          // Find the first visible successor's ancestor (non-trivial if outside of the expanded node)
-          _.each(childNode.successors, function(successorCU) {
-            while (!that._graph.hasNode(successorCU.id) && successorCU.parents.length) {
-              successorCU = successorCU.parents[0];
-            }
-            if (!that._graph.hasNode(successorCU.id)) {
-              that.addNode({
-                id: successorCU.id,
-                name: "",
-                type: 4,
-                parents: []
-              });
-            }
-            that._graph.setEdge(childNode.id, successorCU.id, {
-              lineInterpolate: 'basis',
-              class: 'flow-edge'
-            });
-          });
-
-          _.each(childNode.predecessors, function(predecessorCU) {
-            var fromNode;
-            if (predecessorCU.parents[0] != node.id) {
-              // Find the first visible predecessor's ancestor
-              while (!that._graph.hasNode(predecessorCU.id) && predecessorCU.parents.length) {
-                predecessorCU = predecessorCU.parents[0];
-              }
-              if (!that._graph.hasNode(predecessorCU.id)) {
-                that.addNode({
-                  id: predecessorCU.id,
-                  name: "",
-                  type: 4,
-                  parents: []
+            that._graph.setParent(childNode.id, node.id);
+            // Find the first visible successor's ancestor (non-trivial if outside of the expanded node)
+            _.each(childNode.successors, function(successorCU) {
+                while (!that._graph.hasNode(successorCU.id) && successorCU.parents.length) {
+                  successorCU = successorCU.parents[0];
+                }
+                if (!that._graph.hasNode(successorCU.id)) {
+                  if (!that._graph.hasNode("hidden-nodes")) {
+                      that.addNode({
+                        id: "hidden-nodes",
+                        name: "",
+                        type: 4,
+                        parents: []
+                      });
+                    }
+                    successorCU = {
+                      id: "hidden-nodes"
+                    };
+                  }
+                  that._graph.setEdge(childNode.id, successorCU.id, {
+                    lineInterpolate: 'basis',
+                    class: 'flow-edge'
+                  });
                 });
+
+              _.each(childNode.predecessors, function(predecessorCU) {
+                var fromNode;
+                if (predecessorCU.parents[0] != node.id) {
+                  // Find the first visible predecessor's ancestor
+                  while (!that._graph.hasNode(predecessorCU.id) && predecessorCU.parents.length) {
+                    predecessorCU = predecessorCU.parents[0];
+                  }
+                  if (!that._graph.hasNode(predecessorCU.id)) {
+                    if (!that._graph.hasNode("hidden-nodes")) {
+                      that.addNode({
+                        id: "hidden-nodes",
+                        name: "",
+                        type: 4,
+                        parents: []
+                      });
+                    }
+                    predecessorCU = {
+                      id: "hidden-nodes"
+                    };
+                  }
+                  that._graph.setEdge(predecessorCU.id, childNode.id, {
+                    lineInterpolate: 'basis',
+                    class: 'flow-edge'
+                  });
+                }
+              });
+            });
+        }
+      }
+    }
+
+    /**
+     * Collapse a single node in the graph
+     * @param  {Node} node  The node to be collapsed
+     */
+    collapseNode(node) {
+      console.log("collapseNode", node);
+      if (this._expansionPath.hasNode(node)) {
+        var that = this;
+        var graphNode = this._graph.node(node.id);
+        this._expansionPath.removeNode(node);
+        graphNode.collapsed = true;
+
+        _.each(node.children, function(childNode) {
+          if (node.type > 0 && node.type <= 2) {
+            // Remove the collapsing node's children, and reset its edges
+            _.each(that._graph.inEdges(childNode.id), function(edge) {
+              graphNode = that._graph.node(edge.v);
+              if (graphNode.remove) {
+                that._graph.removeNode(edge.v);
+              } else if (graphNode.parentNodes.indexOf(node.id) == -1) {
+                that._graph.setEdge(edge.v, node.id, that._graph.edge(edge));
               }
-              that._graph.setEdge(predecessorCU.id, childNode.id, {
-                lineInterpolate: 'basis',
-                class: 'flow-edge'
+            });
+            if (childNode.type > 0) {
+              // Reset the collapsing-node's flow-edges
+              _.each(that._graph.outEdges(childNode.id), function(edge) {
+                if (that._graph.node(edge.w).parentNodes.indexOf(node.id) == -1) {
+                  that._graph.setEdge(node.id, edge.w, that._graph.edge(edge));
+                }
               });
             }
-          });
+            // Recursively collapse any expanded children
+            if (!that._graph.node(childNode.id).collapsed) {
+              that.collapseNode(childNode);
+            }
+            that._graph.removeNode(childNode.id);
+          } else {
+            // For collapsing CU-nodes, only collapase and remove the function-call function-nodes if they are not being pointed at by other CU-nodes
+            graphNode = that._graph.node(childNode.id);
+            if (!graphNode.collapsed && that._graph.inEdges(graphNode.firstChild).length == 1) {
+              that.collapseNode(childNode);
+            }
+            if (that._graph.inEdges(childNode.id).length == 1) {
+              that._graph.removeNode(childNode.id);
+            } else {
+              that._graph.removeEdge(node.id, childNode.id);
+            }
+          }
         });
       }
     }
-  }
 
-  /**
-   * Collapse a single node in the graph
-   * @param  {Node} node  The node to be collapsed
-   */
-  collapseNode(node) {
-    if (this._expansionPath.hasNode(node)) {
-      var that = this;
-      var graphNode = this._graph.node(node.id);
-      this._expansionPath.removeNode(node);
-      graphNode.collapsed = true;
-
-      _.each(node.children, function(childNode) {
-        if (node.type > 0 && node.type <= 2) {
-          // Remove the collapsing node's children, and reset its edges
-          _.each(that._graph.inEdges(childNode.id), function(edge) {
-            graphNode = that._graph.node(edge.v);
-            if (graphNode.remove) {
-              that._graph.removeNode(edge.v);
-            } else if (graphNode.parentNodes.indexOf(node.id) == -1) {
-              that._graph.setEdge(edge.v, node.id, that._graph.edge(edge));
-            }
-          });
-          if (childNode.type > 0) {
-            // Reset the collapsing-node's flow-edges
-            _.each(that._graph.outEdges(childNode.id), function(edge) {
-              if (that._graph.node(edge.w).parentNodes.indexOf(node.id) == -1) {
-                that._graph.setEdge(node.id, edge.w, that._graph.edge(edge));
-              }
-            });
+    /**
+     * Expand the given node and all of its descendants
+     * @param  {Node} node The node to be expanded
+     */
+    expandAll(node) {
+      var start = new Date().getTime();
+      var stack = [];
+      stack.push(node);
+      do {
+        node = stack.pop();
+        this.expandNode(node);
+        _.each(node.children, function(childNode) {
+          if (childNode.children.length) {
+            stack.push(childNode);
           }
-          // Recursively collapse any expanded children
-          if (!that._graph.node(childNode.id).collapsed) {
-            that.collapseNode(childNode);
-          }
-          that._graph.removeNode(childNode.id);
-        } else {
-          // For collapsing CU-nodes, only collapase and remove the function-call function-nodes if they are not being pointed at by other CU-nodes
-          graphNode = that._graph.node(childNode.id);
-          if (!graphNode.collapsed && that._graph.inEdges(graphNode.firstChild).length == 1) {
-            that.collapseNode(childNode);
-          }
-          if (that._graph.inEdges(childNode.id).length == 1) {
-            that._graph.removeNode(childNode.id);
-          } else {
-            that._graph.removeEdge(node.id, childNode.id);
-          }
-        }
-      });
+        });
+      }
+      while (stack.length);
+      var end = new Date().getTime();
+      var time = end - start;
+      console.log('Execution time ExpandAll: ' + time);
     }
-  }
 
-  /**
-   * Expand the given node and all of its descendants
-   * @param  {Node} node The node to be expanded
-   */
-  expandAll(node) {
-    var start = new Date().getTime();
-    var stack = [];
-    stack.push(node);
-    do {
-      node = stack.pop();
-      this.expandNode(node);
-      _.each(node.children, function(childNode) {
-        if (childNode.children.length) {
-          stack.push(childNode);
-        }
-      });
-    }
-    while (stack.length);
-    var end = new Date().getTime();
-    var time = end - start;
-    console.log('Execution time ExpandAll: ' + time);
-  }
-
-  /**
-   * Expands the graph's nodes until the given node is visible
-   * @param  {Node} node The node to be expanded to
-   */
-  expandTo(node) {
-    var currentNode = node;
-    var queue = [];
-    // Find nearest visible ancestor of the given node to start expanding from
-    while (!this._graph.hasNode(currentNode.id)) {
-      queue.push(currentnode.parents[0]);
-      currentNode = currentnode.parents[0];
-    }
-    while (queue.length) {
-      this.expandNode(queue.pop());
-    }
-  }
-
-  /**
-   * Pan the graphs view to the given node
-   * @param  {Node} node The node to be panned to
-   */
-  panToNode(node) {
-    var graphNode = this._graph.node(node.id);
-    var height = parseInt(this._svg.style("height"));
-    var width = parseInt(this._svg.style("width"));
-    var x = -(graphNode.x - width / 2);
-    var y = -(graphNode.y - height / 2);
-    this._svg.transition()
-      .duration(500)
-      .call(this._zoom.translate([x, y]).scale(1).event);
-  }
-
-  /**
-   * Highlight a node
-   * @param   {Node}    node The node to be highlighted
-   * @return  {Boolean} true if the node was highlighted, false otherwise
-   */
-  highlightNode(node) {
-    console.log("highlightNode", node);
-    if (this._highlightedNodes.indexOf(node) == -1 && node.type >= 0 && node.type <= 2) {
-      var graphNode = this._graph.node(node.id);
-      var svgNode = this._inner.select('[data-id="' + node.id + '"]');
-      var svgShape = svgNode.select('.node-shape');
-      var svgLabel = svgNode.select('g.label');
-      graphNode.class = graphNode.class + " selected-node";
-      svgNode.attr("class", svgNode.attr("class") + " selected-node");
-      svgShape.style('fill', configuration.readSetting('selectedNodeColorFill'))
-        .style('stroke-width', 5);
-      svgLabel.style('fill', configuration.readSetting('selectedNodeColorLabel'))
-        .style('stroke-width', 5);
-      this._highlightedNodes.push(node);
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Unhighlight all highlighted nodes
-   */
-  unhighlightNodes() {
-    var graphNode;
-    var svgNode;
-    var svgShape, svgLabel;
-    var fillColor, labelColor;
-    var node;
-    while (this._highlightedNodes.length) {
-      node = this._highlightedNodes.pop();
-      if (this._graph.hasNode(node.id)) {
-        switch (node.type) {
-          case 0:
-            fillColor = configuration.readSetting('cuColorFill');
-            labelColor = configuration.readSetting('cuColorLabel');
-            break;
-          case 1:
-            fillColor = configuration.readSetting('functionColorFill');
-            labelColor = configuration.readSetting('functionColorLabel');
-            break;
-          case 2:
-            fillColor = configuration.readSetting('loopColorFill');
-            labelColor = configuration.readSetting('loopColorLabel');
-            break;
-          case 3:
-            fillColor = configuration.readSetting('LibraryFunctionColorFill');
-            labelColor = configuration.readSetting('LibraryFunctionColorLabel');
-            break;
-          default:
-            console.error('Tried to unhighlight a special node', node);
-        }
-        graphNode = this._graph.node(node.id);
-        svgNode = this._inner.select('[data-id="' + node.id + '"]');
-        svgShape = svgNode.select('.node-shape');
-        svgLabel = svgNode.select('g.label');
-
-        graphNode.class = graphNode.class.replace(" selected-node", "");
-        svgNode.classed('selected-node', false);
-        svgShape.style('fill', fillColor)
-          .style('stroke-width', 3);
-        svgLabel.style('fill', labelColor)
-          .style('stroke-width', 3);
+    /**
+     * Expands the graph's nodes until the given node is visible
+     * @param  {Node} node The node to be expanded to
+     */
+    expandTo(node) {
+      var currentNode = node;
+      var queue = [];
+      // Find nearest visible ancestor of the given node to start expanding from
+      while (!this._graph.hasNode(currentNode.id)) {
+        queue.push(currentNode.parents[0]);
+        currentNode = currentNode.parents[0];
+      }
+      while (queue.length) {
+        this.expandNode(queue.pop());
       }
     }
+
+    /**
+     * Pan the graphs view to the given node
+     * @param  {Node} node The node to be panned to
+     */
+    panToNode(node) {
+      var graphNode = this._graph.node(node.id);
+      var height = parseInt(this._svg.style("height"));
+      var width = parseInt(this._svg.style("width"));
+      var x = -(graphNode.x - width / 2);
+      var y = -(graphNode.y - height / 2);
+      this._svg.transition()
+        .duration(500)
+        .call(this._zoom.translate([x, y]).scale(1).event);
+    }
+
+    /**
+     * Highlight a node
+     * @param   {Node}    node The node to be highlighted
+     * @return  {Boolean} true if the node was highlighted, false otherwise
+     */
+    highlightNode(node) {
+      console.log("highlightNode", node);
+      if (this._highlightedNodes.indexOf(node) == -1 && node.type >= 0 && node.type <= 2) {
+        var graphNode = this._graph.node(node.id);
+        var svgNode = this._inner.select('[data-id="' + node.id + '"]');
+        var svgShape = svgNode.select('.node-shape');
+        var svgLabel = svgNode.select('g.label');
+        graphNode.class = graphNode.class + " selected-node";
+        svgNode.attr("class", svgNode.attr("class") + " selected-node");
+        svgShape.style('fill', configuration.readSetting('selectedNodeColorFill'))
+          .style('stroke-width', 5);
+        svgLabel.style('fill', configuration.readSetting('selectedNodeColorLabel'))
+          .style('stroke-width', 5);
+        this._highlightedNodes.push(node);
+        return true;
+      }
+      return false;
+    }
+
+    /**
+     * Unhighlight all highlighted nodes
+     */
+    unhighlightNodes() {
+      var graphNode;
+      var svgNode;
+      var svgShape, svgLabel;
+      var fillColor, labelColor;
+      var node;
+      while (this._highlightedNodes.length) {
+        node = this._highlightedNodes.pop();
+        if (this._graph.hasNode(node.id)) {
+          switch (node.type) {
+            case 0:
+              fillColor = configuration.readSetting('cuColorFill');
+              labelColor = configuration.readSetting('cuColorLabel');
+              break;
+            case 1:
+              fillColor = configuration.readSetting('functionColorFill');
+              labelColor = configuration.readSetting('functionColorLabel');
+              break;
+            case 2:
+              fillColor = configuration.readSetting('loopColorFill');
+              labelColor = configuration.readSetting('loopColorLabel');
+              break;
+            case 3:
+              fillColor = configuration.readSetting('LibraryFunctionColorFill');
+              labelColor = configuration.readSetting('LibraryFunctionColorLabel');
+              break;
+            default:
+              console.error('Tried to unhighlight a special node', node);
+          }
+          graphNode = this._graph.node(node.id);
+          svgNode = this._inner.select('[data-id="' + node.id + '"]');
+          svgShape = svgNode.select('.node-shape');
+          svgLabel = svgNode.select('g.label');
+
+          graphNode.class = graphNode.class.replace(" selected-node", "");
+          svgNode.classed('selected-node', false);
+          svgShape.style('fill', fillColor)
+            .style('stroke-width', 3);
+          svgLabel.style('fill', labelColor)
+            .style('stroke-width', 3);
+        }
+      }
+    }
+
+    /**
+     * Resets the graph to its root-nodes
+     */
+    resetGraph() {
+      this.clearGraph();
+      var that = this;
+      _.each(this._rootNodes, function(root) {
+        that.addNode(root);
+      });
+      this.redraw();
+      this._svg.transition()
+        .duration(0)
+        .call(this._zoom.translate([0, 0]).scale(1).event);
+      this._expansionPath = new ExpansionPath();
+    }
+
+    /**
+     * Resets the pan and zoom of the graph
+     */
+    resetView() {
+      this._svg.transition()
+        .duration(0)
+        .call(this._zoom.translate([0, 0]).scale(1).event);
+    }
+
+    /**
+     * Clears the graph
+     */
+    clearGraph() {
+      this._inner.selectAll("*").remove();
+      var that = this;
+      _.each(this._graph.nodes(), function(graphNodeID) {
+        that._graph.removeNode(graphNodeID);
+      });
+
+    }
+
+    /**
+     * Resets the graph's zoom and pan before performing the given callback (Fix for problem when redrawing html-labels in Dagre-D3)
+     * @param {Callback} callback The function to be called after the zoom and pan of the graph has been reset
+     */
+    resetViewAndChange(callback) {
+      this._svg.transition()
+        .duration(0)
+        .call(this._zoom.scale(1).event)
+        .each("end", callback);
+    }
   }
 
-  /**
-   * Resets the graph to its root-nodes
-   */
-  resetGraph() {
-    this.clearGraph();
-    var that = this;
-    _.each(this._rootNodes, function(root) {
-      that.addNode(root);
-    });
-    this.redraw();
-    this._svg.transition()
-      .duration(0)
-      .call(this._zoom.translate([0, 0]).scale(1).event);
-    this._expansionPath = new ExpansionPath();
-  }
-
-  /**
-   * Resets the pan and zoom of the graph
-   */
-  resetView() {
-    this._svg.transition()
-      .duration(0)
-      .call(this._zoom.translate([0, 0]).scale(1).event);
-  }
-
-  /**
-   * Clears the graph
-   */
-  clearGraph() {
-    this._inner.selectAll("*").remove();
-    var that = this;
-    _.each(this._graph.nodes(), function(graphNodeID) {
-      that._graph.removeNode(graphNodeID);
-    });
-
-  }
-
-  /**
-   * Resets the graph's zoom and pan before performing the given callback (Fix for problem when redrawing html-labels in Dagre-D3)
-   * @param {Callback} callback The function to be called after the zoom and pan of the graph has been reset
-   */
-  resetViewAndChange(callback) {
-    this._svg.transition()
-      .duration(0)
-      .call(this._zoom.scale(1).event)
-      .each("end", callback);
-  }
-}
-
-module.exports = GraphController;
+  module.exports = GraphController;

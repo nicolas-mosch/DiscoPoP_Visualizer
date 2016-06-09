@@ -99,7 +99,7 @@ module.exports = {
           classNode.addDependency(new Dependency(nodes[dependency.cu], dependency.sinkLine, dependency.sourceLine, dependency.varName, 0));
         }
         try {
-          intervalTrees[node.fileId].insert([node.start, node.end], classNode);
+          intervalTrees[node.fileId].insert([node.startLine, node.endLine], classNode);
         } catch (error) {
           console.error(node.fileId, intervalTrees);
           throw error;

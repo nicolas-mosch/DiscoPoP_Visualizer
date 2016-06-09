@@ -19,7 +19,11 @@ class IntervalTree {
    * @param  {number[]} interval The interval-key
    * @param  {Object}   value    The value held by the interval
    */
+  constructor() {
+    this._root = null;
+  }
   insert(interval, value) {
+    console.log("Inserting", interval, value)
     var x = this._root;
     var y = null;
     var z = {
@@ -48,6 +52,7 @@ class IntervalTree {
       y.right = z;
     }
     this._insertFixup(z);
+    console.log("Result", this._root);
   }
 
   /**

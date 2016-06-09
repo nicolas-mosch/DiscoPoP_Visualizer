@@ -334,7 +334,7 @@ function initEventListeners() {
         graphController.resetViewAndChange(function() {
           graphController.toggleFunctionCalls(node);
           graphController.redraw();
-          graphController.panToNode(node);
+          //graphController.panToNode(node);
         });
       },
       classNames: function(node) {
@@ -441,8 +441,8 @@ function initEventListeners() {
           graphController.expandTo(node);
           graphController.redraw();
           graphController.panToNode(node);
+          $('#' + node.id).trigger('click');
         });
-        $('#' + node.id.replace(':', '\\:')).trigger('click');
       }
     }]
   });
