@@ -334,7 +334,7 @@ function initEventListeners() {
         graphController.resetViewAndChange(function() {
           graphController.toggleFunctionCalls(node);
           graphController.redraw();
-          //graphController.panToNode(node);
+          graphController.panToNode(node);
         });
       },
       classNames: function(node) {
