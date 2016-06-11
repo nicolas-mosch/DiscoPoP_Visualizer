@@ -4,7 +4,7 @@ global.jQuery = require('jquery');
 window.$ = require('jquery');
 require('bootstrap');
 var d3 = require('d3');
-var GraphController = require('../js/Controllers/graph.js');
+var GraphController = require('../js/Controllers/graph');
 
 
 var legendController;

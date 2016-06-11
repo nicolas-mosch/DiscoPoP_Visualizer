@@ -1,17 +1,17 @@
 const ipc = require("electron").ipcRenderer;
 var _ = require('lodash/core');
 var d3 = require('d3');
-var GraphController = require('../js/Controllers/graph.js');
-var EditorController = require('../js/Controllers/editor.js');
 var $ = require('jquery');
 global.jQuery = require('jquery');
 window.$ = require('jquery');
 require('bootstrap');
-var dataInitializer = require('../js/Controllers/data-initializer.js');
-var sizeof = require('sizeof');
 var BootstrapMenu = require('bootstrap-menu');
+var sizeof = require('sizeof');
 var Handlebars = require('handlebars');
-var generalFunctions = require('../js/generalFunctions.js');
+var GraphController = require('../js/Controllers/graph');
+var EditorController = require('../js/Controllers/editor');
+var dataInitializer = require('../js/General/data-initializer');
+var generalFunctions = require('../js/General/generalFunctions');
 
 
 var graphController;
@@ -116,14 +116,6 @@ function initEventListeners() {
       editorController.unhighlight();
     }
   });
-
-  // Unhighlight editor on click
-  /*
-  var editor = $('#ace-editor');
-  editor.on('mousedown', function() {
-    editorController.unhighlight();
-  });
-  */
 
   /**
    *  Graph click behavior
@@ -290,6 +282,13 @@ function initEventListeners() {
     return nodeData[nodeId];
   };
 
+  function toggleGraphDependencies(node) {
+    graphController.resetViewAndChange(function() {
+      graphController.toggleDependencyEdges(node);
+      graphController.redraw();
+    });
+  }
+
   // Contextmenu for CU-nodes
   var cuNodeMenu = new BootstrapMenu('.node.cu-node', {
     fetchElementData: fetchNodeData,
@@ -305,12 +304,7 @@ function initEventListeners() {
         }
       },
       iconClass: 'glyphicon glyphicon-retweet',
-      onClick: function(node) {
-        graphController.resetViewAndChange(function() {
-          graphController.toggleDependencyEdges(node);
-          graphController.redraw();
-        });
-      },
+      onClick: toggleGraphDependencies,
       classNames: function(node) {
         var hasDependencies = node.type == 0 && (node.dependencies.length > 0);
         return {
@@ -420,7 +414,11 @@ function initEventListeners() {
           graphController.panToNode(node);
         });
       }
-    }, ]
+    }, {
+      name: 'Toggle Dependencies',
+      iconClass: 'glyphicon glyphicon-retweet',
+      onClick: toggleGraphDependencies
+    }]
   });
 
   // Contextmenu for the code-viewer

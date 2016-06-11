@@ -5,8 +5,8 @@ var MenuItem = require('menu-item');
 var Handlebars = require('handlebars');
 const ipc = require("electron").ipcMain;
 var _ = require('lodash/core');
-var configuration = require('./js/Controllers/configuration.js');
-var dataReader = require('./js/data-reader.js');
+var configuration = require('./js/General/configuration.js');
+var dataReader = require('./js/General/data-reader.js');
 
 // Windows
 var mainWindow = null;

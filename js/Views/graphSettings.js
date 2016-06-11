@@ -4,7 +4,7 @@ global.jQuery = require('jquery');
 window.$ = $;
 require('bootstrap');
 var colorpicker = require('bootstrap-colorpicker');
-var configuration = require('../js/Controllers/configuration.js');
+var configuration = require('../js/General/configuration');
 var Handlebars = require('handlebars');
 
 $(document).ready(function() {

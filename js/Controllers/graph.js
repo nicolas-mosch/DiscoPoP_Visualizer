@@ -1,10 +1,10 @@
 'use strict';
 
 var d3 = require('d3');
-var dagreD3 = require('./../dagre-d3');
+var dagreD3 = require('../Models/dagre-d3');
 var _ = require('lodash');
-var configuration = require('./configuration.js');
-var generalFunctions = require('../generalFunctions.js');
+var configuration = require('../General/configuration');
+var generalFunctions = require('../General/generalFunctions');
 
 /**
  * Class for keeping track of the node-expansions done by the user.
@@ -290,11 +290,20 @@ class GraphController {
    * @param  {CuNode} node The CU node for which to toggle the dependencies
    */
   toggleDependencyEdges(node) {
+    if(node.type < 0 || node.type > 2){
+      return;
+    }
     var graphNode = this._graph.node(node.id);
     var that = this;
     var visibleCuParent;
-    if (node.type == 0 && !graphNode.depsOn) {
-      // Show dependency nodes
+    if(node.type > 0 && !graphNode.collapsed){
+      _.each(node.children, function(childNode){
+        that.toggleDependencyEdges(childNode);
+      });
+      return;
+    }
+    if (!graphNode.depsOn) {
+      // Show dependency edges
       var style = "stroke: #000; stroke-width: 1px;";
       var arrowheadStyle = "fill: #000; stroke: #000;";
       var i, dependency;
@@ -317,7 +326,7 @@ class GraphController {
           lineInterpolate: 'basis',
           label: '<a class="link-to-line" data-file-line="' + dependency.sourceLine + '" data-file-id="' + node.fileId + '">' + (dependency.isRaW() ? '&#xf019;' : '&#xf093;') + '</a>' +
             '<label style="font-weight: bold">&rarr; ' + dependency.variableName + ' &rarr;</label>' +
-            '<a class="link-to-line" data-file-line="' + dependency.sourceLine + '" data-file-id="' + dependency.cuNode.fileId + '">' + (dependency.isWaR() ? '&#xf019;' : '&#xf093;') + '</a>'
+            '<a class="link-to-line" data-file-line="' + dependency.sinkLine + '" data-file-id="' + dependency.cuNode.fileId + '">' + (dependency.isWaR() ? '&#xf019;' : '&#xf093;') + '</a>'
         }, "DependencyEdge");
       }
       graphNode.depsOn = true;
