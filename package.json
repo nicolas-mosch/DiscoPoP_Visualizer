@@ -1,14 +1,16 @@
 {
-  "name": "DiscoPoP",
-  "version": "0.0.0",
+  "name": "DiscoPoP_Visualizer",
+  "version": "1.0.0",
   "description": "",
   "main": "main",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-packager . DiscoPoP_Visualizer --platform=linux --arch=x64"
   },
   "author": "Nicolas Morew",
   "license": "MIT",
   "devDependencies": {
+    "electron-packager": "^7.0.3",
     "electron-prebuilt": "~0.36.2"
   },
   "dependencies": {

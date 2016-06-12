@@ -32,6 +32,7 @@ ipc.on('clearGraph', function(event, message) {
 
 ipc.on('redrawGraph', function(event, message) {
   graphController.resetViewAndChange(function() {
+    graphController.hideAncestors();
     graphController.redraw();
   });
 });
@@ -93,7 +94,9 @@ function initEventListeners() {
   });
   //  Reset-View
   $("#reset-graph-button").on('click', function() {
-    graphController.resetGraph();
+    graphController.resetViewAndChange(function() {
+      graphController.resetGraph();
+    });
   });
 
   // Legend

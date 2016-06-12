@@ -301,7 +301,10 @@ class GraphController {
         that.toggleDependencyEdges(childNode);
       });
       return;
+    }else if(node.type != 0){
+      return;
     }
+
     if (!graphNode.depsOn) {
       // Show dependency edges
       var style = "stroke: #000; stroke-width: 1px;";
@@ -440,8 +443,11 @@ class GraphController {
       var that = this;
 
       // Add to expandedNodePaths
+      graphNode = this._graph.node(node.id);
+
       this._expansionPath.addNode(node);
-      this._graph.node(node.id).collapsed = false;
+      graphNode.clusterLevel = this._expansionPath.getLevel(node);
+      graphNode.collapsed = false;
       if (node.type == 0) {
         // Add CU's function-call-edges and the function-nodes to graph
         _.each(node.functionCalls, function(functionCall) {

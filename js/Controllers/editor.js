@@ -46,7 +46,6 @@ class EditorController {
         shortPath = value.path.replace(irrelevantPath, '');
         parts = shortPath.split('/');
         pathPartsLength = parts.length;
-        console.log('parts', parts);
         if (parts.length > 1 && containedTreeNodes.indexOf('0_' + parts[0]) == -1) {
           fileTreeData.push({
             id: '0_' + parts[0],
