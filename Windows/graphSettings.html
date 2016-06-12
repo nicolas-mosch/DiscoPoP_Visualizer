@@ -13,10 +13,10 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#nodeColorSettings">Node Colors</a>
-        </h4>
+            <a data-toggle="collapse" data-parent="#accordion" href="#nodeColorSettings">Node Colors</a>
+          </h4>
         </div>
-        <div id="nodeColorSettings" class="panel-collapse collapse in">
+        <div id="nodeColorSettings" class="panel-collapse collapse">
           <script type="text/x-handlebars-template" id="nodeColorSettingsTableTemplate">
             <div class="panel-body">
               <table class="table table-condensed">
@@ -58,8 +58,8 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#edgeColorSettings">Edge Colors</a>
-        </h4>
+            <a data-toggle="collapse" data-parent="#accordion" href="#edgeColorSettings">Edge Colors</a>
+          </h4>
         </div>
         <div id="edgeColorSettings" class="panel-collapse collapse">
           <script type="text/x-handlebars-template" id="edgeColorSettingsTableTemplate">
@@ -100,12 +100,14 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#accordion" href="#otherSettings">Other Settings</a>
-        </h4>
+            <a data-toggle="collapse" data-parent="#accordion" href="#otherSettings">Other Settings</a>
+          </h4>
         </div>
         <div id="otherSettings" class="panel-collapse collapse">
           <script type="text/x-handlebars-template" id="otherSettingsTableTemplate">
-            <div class="panel-body">Max. Displayed Parent-Nodes<input type="number" value="{{visibleParents}}" class="settingInput" data-key="visibleParents"/></div>
+            <div class="panel-body">Max. Displayed Parent-Nodes
+              <input type="number" value="{{visibleParents}}" class="settingInput" data-key="visibleParents" />
+            </div>
           </script>
         </div>
       </div>

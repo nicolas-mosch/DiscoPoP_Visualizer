@@ -156,23 +156,26 @@ class GraphController {
    */
   createLegendGraph() {
     this._graph.setNode(0, {
-      label: "Computational-Unit",
+      label: '<label class="cu-node-label">Computational-Unit</label>',
+      labelType: 'html',
       shape: "rect",
-      class: "cu-node",
+      class: 'cu-node',
       rx: 5,
       ry: 5,
       style: "stroke: #000; stroke-width: 3px;"
     });
     this._graph.setNode(1, {
-      label: "Function",
+      label: '<label class="function-node-label">Function</label>',
+      labelType: 'html',
       shape: "hexagon",
-      class: "function-node",
+      class: 'function-node',
       rx: 5,
       ry: 5,
       style: "stroke: #000; stroke-width: 3px;"
     });
     this._graph.setNode(2, {
-      label: "Loop",
+      label: '<label class="loop-node-label">Loop</label>',
+      labelType: 'html',
       shape: "ellipse",
       class: "loop-node",
       rx: 5,
@@ -180,7 +183,8 @@ class GraphController {
       style: "stroke: #000; stroke-width: 3px;"
     });
     this._graph.setNode(3, {
-      label: "Library Function",
+      label: '<label class="library-function-node-label">Library Function</label>',
+      labelType: 'html',
       shape: "diamond",
       class: "library-function-node",
       rx: 5,
@@ -193,19 +197,22 @@ class GraphController {
       labelType: 'html',
       class: 'dependency-edge',
       lineInterpolate: 'basis',
-      label: 'Dependency'
+      label: 'Dependency',
+      arrowhead: 'vee'
     });
     this._graph.setEdge(0, 1, {
       label: 'Function-Call',
       labelType: 'html',
       lineInterpolate: 'basis',
       class: "function-call-edge",
-      style: "stroke: #000; stroke-width: 2px; stroke-dasharray: 5, 5;"
+      style: "stroke: #000; stroke-width: 2px; stroke-dasharray: 5, 5;",
+      arrowhead: 'vee'
     });
     this._graph.setEdge(0, 2, {
       lineInterpolate: 'basis',
       class: 'flow-edge',
-      label: 'Flow-Edge'
+      label: 'Flow-Edge',
+      arrowhead: 'vee'
     });
   }
 
@@ -257,7 +264,7 @@ class GraphController {
     var nodeObject = {
       id: node.id,
       parentNodes: parentNodes,
-      label: label,
+      label: '<div class="'+nodeClass+'-label">' + label + '</div>',
       labelType: 'html',
       style: "stroke: #000; stroke-width: 3px;",
       shape: shape,
@@ -329,7 +336,8 @@ class GraphController {
           lineInterpolate: 'basis',
           label: '<a class="link-to-line" data-file-line="' + dependency.sourceLine + '" data-file-id="' + node.fileId + '">' + (dependency.isRaW() ? '&#xf019;' : '&#xf093;') + '</a>' +
             '<label style="font-weight: bold">&rarr; ' + dependency.variableName + ' &rarr;</label>' +
-            '<a class="link-to-line" data-file-line="' + dependency.sinkLine + '" data-file-id="' + dependency.cuNode.fileId + '">' + (dependency.isWaR() ? '&#xf019;' : '&#xf093;') + '</a>'
+            '<a class="link-to-line" data-file-line="' + dependency.sinkLine + '" data-file-id="' + dependency.cuNode.fileId + '">' + (dependency.isWaR() ? '&#xf019;' : '&#xf093;') + '</a>',
+            arrowhead: 'vee'
         }, "DependencyEdge");
       }
       graphNode.depsOn = true;
@@ -369,22 +377,22 @@ class GraphController {
     // --- Set colors from settings ---
     //  Nodes
     this._inner.selectAll('g.cu-node:not(.selected-node)').style("fill", configuration.readSetting('cuColorFill'));
-    this._inner.selectAll('g.cu-node:not(.selected-node) g.label').style("fill", configuration.readSetting('cuColorLabel'));
+    $(".cu-node-label").css("color", configuration.readSetting('cuColorLabel'));
 
     this._inner.selectAll('g.function-node:not(.selected-node)').style("fill", configuration.readSetting('functionColorFill'));
-    this._inner.selectAll('g.function-node:not(.selected-node) g.label').style("fill", configuration.readSetting('functionColorLabel'));
+    $(".function-node-label").css("color", configuration.readSetting('functionColorLabel'));
 
     this._inner.selectAll('g.loop-node:not(.selected-node)').style("fill", configuration.readSetting('loopColorFill'));
-    this._inner.selectAll('g.loop-node:not(.selected-node) g.label').style("fill", configuration.readSetting('loopColorLabel'));
+    $(".loop-node-label").css("color", configuration.readSetting('loopColorLabel'));
 
     this._inner.selectAll('g.library-function-node:not(.selected-node)').style("fill", configuration.readSetting('libraryFunctionColorFill'));
-    this._inner.selectAll('g.library-function-node:not(.selected-node) g.label').style("fill", configuration.readSetting('libraryFunctionColorLabel'));
+    $(".library-function-node-label").css("color", configuration.readSetting('libraryFunctionColorLabel'));
 
     this._inner.selectAll('g.default-node:not(.selected-node)').style("fill", configuration.readSetting('defaultColorFill'));
-    this._inner.selectAll('g.default-node:not(.selected-node) g.label').style("fill", configuration.readSetting('defaultColorLabel'));
+    $(".default-node-label").css("color", configuration.readSetting('defaultColorLabel'));
 
     this._inner.selectAll('g.selected-node').style("fill", configuration.readSetting('selectedNodeColorFill'));
-    this._inner.selectAll('g.selected-node g.label').style("fill", configuration.readSetting('selectedNodeColorLabel'));
+    $(".selected-node-label").css("color", configuration.readSetting('selectedNodeColorLabel'));
 
     //  Edges
     this._inner.selectAll('g.flow-edge path')
@@ -396,6 +404,9 @@ class GraphController {
     this._inner.selectAll('g.function-call-edge path')
       .style("stroke", configuration.readSetting('functionCallEdgeFill'))
       .style("stroke-width", configuration.readSetting('functionCallEdgeWidth'));
+
+    // Labels
+
 
     var end = new Date().getTime();
     var time = end - start;
@@ -460,7 +471,8 @@ class GraphController {
             labelType: 'html',
             lineInterpolate: 'basis',
             class: "function-call-edge",
-            style: "stroke: #000; stroke-width: 2px; stroke-dasharray: 5, 5;"
+            style: "stroke: #000; stroke-width: 2px; stroke-dasharray: 5, 5;",
+            arrowhead: 'vee'
           });
         });
       } else {
@@ -491,7 +503,9 @@ class GraphController {
                     class: 'default-node',
                     remove: true
                   });
-                  that._graph.setEdge('entry-' + node.id, childNode.id);
+                  that._graph.setEdge('entry-' + node.id, childNode.id, {
+                    arrowhead: 'vee'
+                  });
                 }
               }
               if (childNode.type == 0 && !childNode.successors.length) {
@@ -503,7 +517,9 @@ class GraphController {
                     class: 'default-node',
                     remove: true
                   });
-                  that._graph.setEdge(childNode.id, 'exit-' + node.id);
+                  that._graph.setEdge(childNode.id, 'exit-' + node.id, {
+                    arrowhead: 'vee'
+                  });
                 }
               }
             }
@@ -536,7 +552,8 @@ class GraphController {
             }
             that._graph.setEdge(childNode.id, successorCU.id, {
               lineInterpolate: 'basis',
-              class: 'flow-edge'
+              class: 'flow-edge',
+              arrowhead: 'vee'
             });
           });
 
@@ -562,7 +579,8 @@ class GraphController {
               }
               that._graph.setEdge(predecessorCU.id, childNode.id, {
                 lineInterpolate: 'basis',
-                class: 'flow-edge'
+                class: 'flow-edge',
+                arrowhead: 'vee'
               });
             }
           });

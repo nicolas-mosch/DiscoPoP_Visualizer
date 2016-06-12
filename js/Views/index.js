@@ -5,9 +5,12 @@ window.$ = require('jquery');
 require('bootstrap');
 var d3 = require('d3');
 var GraphController = require('../js/Controllers/graph');
-
-
 var legendController;
+
+ipc.on('redrawGraph', function(event, message) {
+  legendController.redraw();
+});
+
 $(document).ready(function() {
     $("#import-button").on('click', function(){
       ipc.send('import-files');

@@ -2,7 +2,7 @@
 //  19_simple_pipeline_2.c
 //
 //
-//  Created by Zia Ul-Huda on 2/4/2013.
+//  A simple pipeline example program.
 //
 //
 
