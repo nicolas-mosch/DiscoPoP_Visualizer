@@ -35,7 +35,7 @@ ipc.on('redrawGraph', function(event, message) {
     graphController.hideAncestors();
     graphController.redraw();
   });
-  legendController.redraw();
+  //legendController.redraw();
 });
 
 ipc.on('init', function(event, data) {

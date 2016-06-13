@@ -499,7 +499,8 @@ class GraphController {
                 if (!node.parents.length) {
                   that._graph.setNode('entry-' + node.id, {
                     shape: 'circle',
-                    label: 'entry',
+                    label: '<label class="default-node-label">entry</label>',
+                    labelType: 'html',
                     class: 'default-node',
                     remove: true
                   });
@@ -513,7 +514,8 @@ class GraphController {
                 if (!node.parents.length) {
                   that._graph.setNode('exit-' + node.id, {
                     shape: 'circle',
-                    label: 'exit',
+                    label: '<label class="default-node-label">exit</label>',
+                    labelType: 'html',
                     class: 'default-node',
                     remove: true
                   });
