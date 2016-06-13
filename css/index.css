@@ -215,3 +215,13 @@ a {
     width: 250px;
     background: linear-gradient(to right, blue , red);
 }
+#file-select-container{
+  background-color: #b3b3cc;
+}
+.jstree-icon.glyphicon-folder-open{
+  color: #e6e600;
+}
+
+.jstree-icon.glyphicon-file{
+  color: white;
+}

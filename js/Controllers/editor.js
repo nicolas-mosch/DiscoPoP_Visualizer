@@ -46,32 +46,36 @@ class EditorController {
         shortPath = value.path.replace(irrelevantPath, '');
         parts = shortPath.split('/');
         pathPartsLength = parts.length;
-        if (parts.length > 1 && containedTreeNodes.indexOf('0_' + parts[0]) == -1) {
-          fileTreeData.push({
-            id: '0_' + parts[0],
-            parent: '#',
-            text: parts[0],
-            type: 'folder'
-          });
-          containedTreeNodes.push('0_' + parts[0]);
+        if (parts.length > 1) {
+          if (containedTreeNodes.indexOf(parts[0]) == -1) {
+            fileTreeData.push({
+              id: parts[0],
+              parent: '#',
+              text: parts[0],
+              type: 'folder'
+            });
+          }
+          containedTreeNodes.push(parts[0]);
+          shortPath = parts[0];
           for (j = 1; j < pathPartsLength - 1; j++) {
-            if (containedTreeNodes.indexOf(j + '_' + parts[j]) == -1) {
+            if (containedTreeNodes.indexOf(shortPath + "/" + parts[j]) == -1) {
               fileTreeData.push({
-                id: j + '_' + parts[j],
-                parent: (j - 1) + '_' + parts[j - 1],
+                id: shortPath + "/" + parts[j],
+                parent: shortPath,
                 text: parts[j],
                 type: 'folder'
               });
-              containedTreeNodes.push(j + '_' + parts[j]);
+              containedTreeNodes.push(shortPath + "/" + parts[j]);
             }
+            shortPath += "/" + parts[j];
           }
           fileTreeData.push({
             id: key,
-            parent: (j - 1) + '_' + parts[j - 1],
+            parent: shortPath,
             text: parts[j],
             type: 'file'
           });
-        }else{
+        } else {
           fileTreeData.push({
             id: key,
             parent: '#',
@@ -91,6 +95,7 @@ class EditorController {
         });
       });
     }
+    console.log("fileTreeData", fileTreeData);
 
     // Initialize file-tree
     $("#file-select-container").jstree("destroy");
@@ -106,11 +111,9 @@ class EditorController {
       "core": {
         "animation": 1,
         "themes": {
-          "stripes": true,
           'variant': 'large'
-
         },
-        "dblclick_toggle": false,
+        "dblclick_toggle": true,
         'data': fileTreeData
       },
       "types": {
