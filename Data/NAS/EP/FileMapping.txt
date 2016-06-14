@@ -1,2 +1,2 @@
-1	/home/nicolas/DiscoPoP_Frontend/Data/NAS/src/NPB3.3-SER-C/EP/ep.c
-2	/home/nicolas/DiscoPoP_Frontend/Data/NAS/src/NPB3.3-SER-C/EP/npbparams.h
+1	./Data/NAS/src/NPB3.3-SER-C/EP/ep.c
+2	./Data/NAS/src/NPB3.3-SER-C/EP/npbparams.h

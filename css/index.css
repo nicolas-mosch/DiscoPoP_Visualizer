@@ -110,9 +110,12 @@ text {
 .node {
   cursor: pointer;
 }
-.edge-label {
-  cursor: pointer;
+.dependency-label{
+  size: 20px;
 }
+
+
+
 .arrowhead {
   stroke: black;
   fill: black;
