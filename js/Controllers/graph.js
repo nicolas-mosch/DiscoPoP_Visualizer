@@ -674,7 +674,7 @@ class GraphController {
     var currentNode = node;
     var queue = [];
     // Find nearest visible ancestor of the given node to start expanding from
-    while (!this._graph.hasNode(currentNode.id)) {
+    while (!this._graph.hasNode(currentNode.id) && currentNode.parents.length) {
       queue.push(currentNode.parents[0]);
       currentNode = currentNode.parents[0];
     }
