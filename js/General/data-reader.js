@@ -51,8 +51,10 @@ module.exports = {
             setDescendantData(childNode, loopLevel);
             node.readDataSize += childNode.readDataSize;
             node.writeDataSize += childNode.writeDataSize;
-            node.readPhaseLineNumbers = _.union(node.readPhaseLineNumbers, childNode.readPhaseLineNumbers);
-            node.writePhaseLineNumbers = _.union(node.writePhaseLineNumbers, childNode.writePhaseLineNumbers);
+            if(childNode.type == 0){
+              node.readPhaseLineNumbers = _.union(node.readPhaseLineNumbers, childNode.readPhaseLineNumbers);
+              node.writePhaseLineNumbers = _.union(node.writePhaseLineNumbers, childNode.writePhaseLineNumbers);
+            }
             node.descendantNodeCount += childNode.descendantNodeCount;
           }
         });
