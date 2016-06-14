@@ -264,7 +264,7 @@ class GraphController {
     var nodeObject = {
       id: node.id,
       parentNodes: parentNodes,
-      label: '<div class="'+nodeClass+'-label">' + label + '</div>',
+      label: '<div class="' + nodeClass + '-label">' + label + '</div>',
       labelType: 'html',
       style: "stroke: #000; stroke-width: 3px;",
       shape: shape,
@@ -297,18 +297,18 @@ class GraphController {
    * @param  {CuNode} node The CU node for which to toggle the dependencies
    */
   toggleDependencyEdges(node) {
-    if(node.type < 0 || node.type > 2){
+    if (node.type < 0 || node.type > 2) {
       return;
     }
     var graphNode = this._graph.node(node.id);
     var that = this;
     var visibleCuParent;
-    if(node.type > 0 && !graphNode.collapsed){
-      _.each(node.children, function(childNode){
+    if (node.type > 0 && !graphNode.collapsed) {
+      _.each(node.children, function(childNode) {
         that.toggleDependencyEdges(childNode);
       });
       return;
-    }else if(node.type != 0){
+    } else if (node.type != 0) {
       return;
     }
 
@@ -337,7 +337,7 @@ class GraphController {
           label: '<div class"dependency-label"><a class="link-to-line" data-file-line="' + dependency.sourceLine + '" data-file-id="' + node.fileId + '">' + (dependency.isRaW() ? '&#xf019;' : '&#xf093;') + '</a>' +
             '<label style="font-weight: bold">&rarr; ' + dependency.variableName + ' &rarr;</label>' +
             '<a class="link-to-line" data-file-line="' + dependency.sinkLine + '" data-file-id="' + dependency.cuNode.fileId + '">' + (dependency.isWaR() ? '&#xf019;' : '&#xf093;') + '</a></div>',
-            arrowhead: 'vee'
+          arrowhead: 'vee'
         }, "DependencyEdge");
       }
       graphNode.depsOn = true;
@@ -629,7 +629,7 @@ class GraphController {
             that.collapseNode(childNode);
           }
           that._graph.removeNode(childNode.id);
-        } else {
+        } else if (that._graph.hasNode(childNode.id)) {
           // For collapsing CU-nodes, only collapase and remove the function-call function-nodes if they are not being pointed at by other CU-nodes
           graphNode = that._graph.node(childNode.id);
           if (!graphNode.collapsed && that._graph.inEdges(graphNode.firstChild).length == 1) {
@@ -652,15 +652,19 @@ class GraphController {
   expandAll(node) {
     var start = new Date().getTime();
     var stack = [];
+    var seen = [];
     stack.push(node);
     do {
       node = stack.pop();
-      this.expandNode(node);
-      _.each(node.children, function(childNode) {
-        if (childNode.children.length) {
-          stack.push(childNode);
-        }
-      });
+      if (seen.indexOf(node.id) == -1) {
+        seen.push(node.id);
+        this.expandNode(node);
+        _.each(node.children, function(childNode) {
+          if (childNode.children.length) {
+            stack.push(childNode);
+          }
+        });
+      }
     }
     while (stack.length);
     var end = new Date().getTime();

@@ -233,13 +233,7 @@ function initEventListeners() {
     var node = nodeData[this.id];
     var cuNodes, loopNodes, functionNodes;
 
-    if (!node.type && node.dependencies.length) {
-      graphController.resetViewAndChange(function() {
-        graphController.toggleDependencyEdges(node);
-        graphController.redraw();
-        graphController.panToNode(node);
-      });
-    } else if (node.children.length) {
+    if (node.children.length) {
       graphController.resetViewAndChange(function() {
         graphController.expandNode(node);
         graphController.hideAncestors();
