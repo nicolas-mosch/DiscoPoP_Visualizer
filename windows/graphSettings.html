@@ -1,0 +1,120 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+  <script src="../js/views/graphSettings.js" type="text/javascript"></script>
+  <title>Graph Settings</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="panel-group" id="accordion">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#nodeColorSettings">Node Colors</a>
+          </h4>
+        </div>
+        <div id="nodeColorSettings" class="panel-collapse collapse">
+          <script type="text/x-handlebars-template" id="nodeColorSettingsTableTemplate">
+            <div class="panel-body">
+              <table class="table table-condensed">
+                <tr>
+                  <th>
+                    Node Type
+                  </th>
+                  <th>
+                    Fill Color
+                  </th>
+                  <th>
+                    Label Color
+                  </th>
+                </tr>
+                {{#each nodeColorSettings}}
+                <tr>
+                  <th>
+                    <label>{{this.name}}</label>
+                  </th>
+                  <td>
+                    <div id="{{this.fillColor.id}}_colorpicker" class="input-group colorpicker-component">
+                      <input type="text" data-key="{{this.fillColor.id}}" class="form-control settingInput" value="{{this.fillColor.color}}" />
+                      <span class="input-group-addon"><i></i></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div id="{{this.labelColor.id}}_colorpicker" class="input-group colorpicker-component">
+                      <input type="text" data-key="{{this.labelColor.id}}" class="form-control settingInput" value="{{this.labelColor.color}}" />
+                      <span class="input-group-addon"><i></i></span>
+                    </div>
+                  </td>
+                </tr>
+                {{/each}}
+              </table>
+            </div>
+          </script>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#edgeColorSettings">Edge Colors</a>
+          </h4>
+        </div>
+        <div id="edgeColorSettings" class="panel-collapse collapse">
+          <script type="text/x-handlebars-template" id="edgeColorSettingsTableTemplate">
+            <div class="panel-body">
+              <table class="table table-condensed">
+                <tr>
+                  <th>
+                    Edge Type
+                  </th>
+                  <th>
+                    Color
+                  </th>
+                  <th>
+                    Width
+                  </th>
+                </tr>
+                {{#each edgeColorSettings}}
+                <tr>
+                  <th>
+                    <label>{{this.name}}</label>
+                  </th>
+                  <td>
+                    <div id="{{this.id}}Fill_colorpicker" class="input-group colorpicker-component">
+                      <input type="text" data-key="{{this.id}}Fill" class="form-control settingInput" value="{{this.color}}" />
+                      <span class="input-group-addon"><i></i></span>
+                    </div>
+                  </td>
+                  <td>
+                    <input type="number" data-key="{{this.id}}Width" value="{{this.width}}" class="form-control settingInput">
+                  </td>
+                </tr>
+                {{/each}}
+              </table>
+            </div>
+          </script>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#otherSettings">Other Settings</a>
+          </h4>
+        </div>
+        <div id="otherSettings" class="panel-collapse collapse">
+          <script type="text/x-handlebars-template" id="otherSettingsTableTemplate">
+            <div class="panel-body">Max. Displayed Parent-Nodes
+              <input type="number" value="{{visibleParents}}" class="settingInput" data-key="visibleParents" />
+            </div>
+          </script>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary" id="restoreDefaultSettings">Restore default settings</button>
+    <button type="button" class="btn btn-primary" id="saveSettings">Save settings</button>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../node_modules/jstree/dist/themes/default/style.min.css" />
+
+
+  <script src="../js/models/ace/ace.js" type="text/javascript"></script>
+  <script src="../js/models/ace/ext-beautify.js" type="text/javascript"></script>
+  <script src="../js/views/visualizer.js"></script>
+  <script src="../node_modules/colresizable/colResizable-1.6.min.js"></script>
+
+  <title>DiscoPoP Visualizer</title>
+</head>
+
+<body>
+  <table id="index-table" border="1">
+    <tr>
+      <td>
+        <div id="code-view">
+          <ul class="nav nav-pills">
+            <li class="active col-sm-5">
+              <a data-toggle="pill" href="#code-container" id="code-container-tab"></a>
+            </li>
+            <li class="col-sm-5">
+              <a data-toggle="pill" href="#file-select-container" id="file-select-tab">Files</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div id="code-container" class="tab-pane fade in active">
+              <div id="ace-editor"></div>
+            </div>
+            <div id="file-select-container" class="tab-pane fade">
+
+            </div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <table style="width: 100%; height: 100%;" border="1">
+          <tr>
+            <td>
+              <div class="container" id="graph-container">
+                <button class="btn btn-primary pull-right btn-sm" type="button" id="show-legend-button">
+                  Legend
+                </button>
+                <button class="btn btn-primary pull-right btn-sm" type="button" id="node-info-button">
+                  <span class="glyphicon glyphicon-info-sign" id="node-info-available-icon"></span> Node <span class="glyphicon glyphicon-collapse-down" id="node-info-collapse-icon"></span>
+                </button>
+                <button class="btn btn-primary pull-right btn-sm" type="button" id="reset-graph-button">
+                  Reset Graph
+                </button>
+                <div class="tab-content">
+                  <div id="flow-graph-container" class="tab-pane fade in active">
+                    <svg>
+                      <div id="tooltip-container"></div>
+                    </svg>
+                  </div>
+                  <div id="node-info-container"></div>
+                  <script type="text/x-handlebars-template" id="cuInfoTableTemplate">
+                    <table class="table-bordered" id="node-info-table">
+                      {{#each nodeData}}
+                      <tr>
+                        <th>
+                          {{@key}}
+                        </th>
+                        <td>
+                          {{{this}}}
+                        </td>
+                      </tr>
+                      {{/each}}
+                      {{#if hasVariables}}
+                      <tr>
+                        <td style="width:50%; vertical-align: baseline;">
+                          <p>
+                            Local Variables
+                          </p>
+                          <div class="variable-container">
+                            {{#each localVariables}}
+                            <label style="font-weight: bold">{{this.name}} ({{this.type}})</label>
+                            <br> {{/each}}
+                          </div>
+                        </td>
+                        <td style="width:50%; vertical-align: baseline;">
+                          <p>
+                            Global Variables
+                          </p>
+                          <div class="variable-container">
+                            {{#each globalVariables}}
+                            <label style="font-weight: bold">{{this.name}} ({{this.type}})</label>
+                            <br> {{/each}}
+                          </div>
+                        </td>
+                      </tr>
+                      {{/if}}
+                      {{#if dependencies}}
+                      <tr>
+                        <td colspan="2">
+                          <p>
+                            Dependencies
+                          </p>
+                          <div id="dependency-container">
+                            {{#each dependencies}}
+                            <a class="link-to-line" data-file-line="{{this.sourceLine}}" data-file-id="{{this.sourceFile}}"><span class="glyphicon glyphicon-{{#if this.sourceRead}}open{{else}}save{{/if}}"></span></a>
+                            <label style="font-weight: bold">&rarr; {{this.varName}} &rarr;</label>
+                            <a class="link-to-line" data-file-line="{{this.sinkLine}}" data-file-id="{{this.sinkFile}}"><span class="glyphicon glyphicon-{{#if this.sinkRead}}open{{else}}save{{/if}}"></span></a>
+                            <br /> {{/each}}
+                          </div>
+                        </td>
+                      </tr>
+                      {{/if}}
+                    </table>
+                  </script>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table id="legend-table">
+                <tr>
+                  <td>
+                    <div id="legend-container">
+                      <svg></svg>
+                    </div>
+                  </td>
+                  <td>
+                    <div id="help-container">
+                      <h4>Importing</h4>
+                      <ul <li>
+                        Click on Import or press ctrl+I. Select the file-mapping file and then the data file output by DiscoPoP.
+                        </li>
+                      </ul>
+                      <h4>Graph</h4>
+                      <ul>
+                        <li>
+                          Move the graph by clicking on any point and dragging it
+                        </li>
+                        <li>
+                          Zoom in or out from the graph with your mouse-wheel
+                        </li>
+                        <li>
+                          Click on a node to select it. Doing so will highlight the lines of code it contains.
+                        </li>
+                        <li>
+                          Double-click on a node to expand it
+                        </li>
+                        <li>
+                          Right-click on a node to see all possible actions on it
+                        </li>
+                        <li>
+                          Click on a dependency-edge's variable to highlight the accesses to the variable in the code
+                        </li>
+                        <li>
+                          A <a style "font-family: font-awesome">&#xf019;</a> symbol signifies a write to a variable. Click on it to display the line on which that write occurs in the code.
+                        </li>
+                        <li>
+                          A <a style "font-family: font-awesome">&#xf093;</a> symbol signifies a read from a variable. Click on it to display the line on which that read occurs in the code.
+                        </li>
+                      </ul>
+                      <h4>Code</h4>
+                      <ul>
+                        <li>
+                          On the Files tab, select a file to open it. You may right-click on any line of code in the file to find the Computational-Unit that contains it.
+                        </li>
+                        <li>
+                          A line-number marked with <span class="editor_write_decoration">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span> signifies a write on the variable
+                        </li>
+                        <li>
+                          A line-number marked with <span class="editor_read_decoration">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span> signifies a read on the variable
+                        </li>
+                      </ul>
+                      <h4>Preferences</h4>
+                      <ul>
+                        <li>
+                          You may change the maximum level of ancestry visible in the graph, as well as some color-settings for the graph by clicking on Preferences and then Graph, or pressing ctrl+G.
+                        </li>
+                        <li>
+                          You may change some styling-settings for the code-viewer by clicking on Preferences and then Code, or pressing ctrl+E.
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+
+<script>
+  var onSampleResized = function(e) {
+    var columns = $(e.currentTarget).find("td");
+  };
+  $("#index-table").colResizable();
+</script>
+
+<script type="text/x-handlebars-template" id="clusterLabelTemplate">
+  <table>
+    <tr>
+      <td>
+        {{name}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        {{file}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        {{lines}}
+      </td>
+    </tr>
+  </table>
+</script>
+
+</html>

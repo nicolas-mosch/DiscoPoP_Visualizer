@@ -127,7 +127,6 @@ text {
   z-index: 20
 }
 #ace-editor {
-  width: calc(100% - 40px);
   border-radius: 4px;
   margin: 0 auto;
   margin: 20px;

@@ -1,0 +1,1460 @@
+[
+    {
+        "id": "1:31",
+        "type": 1,
+        "start": "1:5",
+        "end": "1:30",
+        "name": "_Z5mergePiiii",
+        "childrenNodes": [
+            "1:1",
+            "1:2",
+            "1:3",
+            "1:5",
+            "1:6",
+            "1:9",
+            "1:10",
+            "1:11",
+            "1:14",
+            "1:15",
+            "1:16",
+            "1:22"
+        ],
+        "funcArguments": [
+            {
+                "type": "i32*",
+                "name": "A"
+            },
+            {
+                "type": "i32",
+                "name": "p"
+            },
+            {
+                "type": "i32",
+                "name": "q"
+            },
+            {
+                "type": "i32",
+                "name": "r"
+            }
+        ]
+    },
+    {
+        "id": "1:1",
+        "type": 0,
+        "start": "1:5",
+        "end": "1:5",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:2"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:5"
+        ],
+        "readPhaseLineNumbers": [],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32**",
+                "name": "A.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "p.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "q.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "r.addr"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:10",
+        "type": 2,
+        "start": "1:15",
+        "end": "1:17",
+        "name": "",
+        "childrenNodes": [
+            "1:12",
+            "1:13"
+        ]
+    },
+    {
+        "id": "1:11",
+        "type": 0,
+        "start": "1:15",
+        "end": "1:15",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:12",
+            "1:14"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:15"
+        ],
+        "readPhaseLineNumbers": [
+            "1:15"
+        ],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "q.addr"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:12",
+        "type": 0,
+        "start": "1:16",
+        "end": "1:17",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:13"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:16",
+            "1:17"
+        ],
+        "readPhaseLineNumbers": [
+            "1:16"
+        ],
+        "writePhaseLineNumbers": [
+            "1:16"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32**",
+                "name": "A.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "j"
+            },
+            {
+                "type": "i32*",
+                "name": "vla4"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [
+            {
+                "CUid": "1:18",
+                "sinkLine": "1:16",
+                "sourceLine": "1:23",
+                "varName": "A.addr"
+            },
+            {
+                "CUid": "1:3",
+                "sinkLine": "1:16",
+                "sourceLine": "1:11",
+                "varName": "j"
+            }
+        ],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:13",
+        "type": 0,
+        "start": "1:15",
+        "end": "1:15",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:11"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:15"
+        ],
+        "readPhaseLineNumbers": [
+            "1:15"
+        ],
+        "writePhaseLineNumbers": [
+            "1:15"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "n1"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:14",
+        "type": 0,
+        "start": "1:18",
+        "end": "1:21",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:16"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:18",
+            "1:19",
+            "1:20",
+            "1:21"
+        ],
+        "readPhaseLineNumbers": [
+            "1:18",
+            "1:19",
+            "1:21"
+        ],
+        "writePhaseLineNumbers": [
+            "1:18",
+            "1:19",
+            "1:20",
+            "1:21"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "i"
+            },
+            {
+                "type": "i32*",
+                "name": "j"
+            },
+            {
+                "type": "i32*",
+                "name": "k"
+            },
+            {
+                "type": "i32*",
+                "name": "n2"
+            },
+            {
+                "type": "i32*",
+                "name": "p.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "r.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "vla"
+            },
+            {
+                "type": "i32*",
+                "name": "vla4"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [
+            {
+                "CUid": "1:14",
+                "sinkLine": "1:21",
+                "sourceLine": "1:21",
+                "varName": "k"
+            },
+            {
+                "CUid": "1:2",
+                "sinkLine": "1:19",
+                "sourceLine": "1:7",
+                "varName": "n2"
+            }
+        ],
+        "WARDepsOn": [
+            {
+                "CUid": "1:17",
+                "sinkLine": "1:18",
+                "sourceLine": "1:22",
+                "varName": "vla"
+            },
+            {
+                "CUid": "1:17",
+                "sinkLine": "1:19",
+                "sourceLine": "1:22",
+                "varName": "vla4"
+            },
+            {
+                "CUid": "1:18",
+                "sinkLine": "1:18",
+                "sourceLine": "1:23",
+                "varName": "vla"
+            }
+        ],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:15",
+        "type": 2,
+        "start": "1:21",
+        "end": "1:29",
+        "name": "",
+        "childrenNodes": [
+            "1:17",
+            "1:18",
+            "1:19",
+            "1:20",
+            "1:21"
+        ]
+    },
+    {
+        "id": "1:16",
+        "type": 0,
+        "start": "1:21",
+        "end": "1:21",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:17",
+            "1:22"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:21"
+        ],
+        "readPhaseLineNumbers": [
+            "1:21"
+        ],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "i"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:17",
+        "type": 0,
+        "start": "1:22",
+        "end": "1:22",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:18",
+            "1:21"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:22"
+        ],
+        "readPhaseLineNumbers": [
+            "1:22"
+        ],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "j"
+            },
+            {
+                "type": "i32*",
+                "name": "vla"
+            },
+            {
+                "type": "i32*",
+                "name": "vla4"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [
+            {
+                "CUid": "1:14",
+                "sinkLine": "1:22",
+                "sourceLine": "1:20",
+                "varName": "j"
+            },
+            {
+                "CUid": "1:7",
+                "sinkLine": "1:22",
+                "sourceLine": "1:13",
+                "varName": "vla"
+            },
+            {
+                "CUid": "1:14",
+                "sinkLine": "1:22",
+                "sourceLine": "1:18",
+                "varName": "vla"
+            },
+            {
+                "CUid": "1:12",
+                "sinkLine": "1:22",
+                "sourceLine": "1:16",
+                "varName": "vla4"
+            },
+            {
+                "CUid": "1:14",
+                "sinkLine": "1:22",
+                "sourceLine": "1:19",
+                "varName": "vla4"
+            }
+        ],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:18",
+        "type": 0,
+        "start": "1:23",
+        "end": "1:25",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:19"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:23",
+            "1:24",
+            "1:25"
+        ],
+        "readPhaseLineNumbers": [
+            "1:23",
+            "1:24"
+        ],
+        "writePhaseLineNumbers": [
+            "1:23",
+            "1:24"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32**",
+                "name": "A.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "i"
+            },
+            {
+                "type": "i32*",
+                "name": "k"
+            },
+            {
+                "type": "i32*",
+                "name": "vla"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [
+            {
+                "CUid": "1:14",
+                "sinkLine": "1:23",
+                "sourceLine": "1:20",
+                "varName": "i"
+            },
+            {
+                "CUid": "1:18",
+                "sinkLine": "1:23",
+                "sourceLine": "1:24",
+                "varName": "i"
+            },
+            {
+                "CUid": "1:14",
+                "sinkLine": "1:23",
+                "sourceLine": "1:21",
+                "varName": "k"
+            },
+            {
+                "CUid": "1:7",
+                "sinkLine": "1:23",
+                "sourceLine": "1:13",
+                "varName": "vla"
+            },
+            {
+                "CUid": "1:14",
+                "sinkLine": "1:24",
+                "sourceLine": "1:20",
+                "varName": "i"
+            },
+            {
+                "CUid": "1:18",
+                "sinkLine": "1:24",
+                "sourceLine": "1:24",
+                "varName": "i"
+            }
+        ],
+        "WARDepsOn": [
+            {
+                "CUid": "1:7",
+                "sinkLine": "1:23",
+                "sourceLine": "1:13",
+                "varName": "A.addr"
+            },
+            {
+                "CUid": "1:12",
+                "sinkLine": "1:23",
+                "sourceLine": "1:16",
+                "varName": "A.addr"
+            }
+        ],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:19",
+        "type": 0,
+        "start": "1:29",
+        "end": "1:29",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:20"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:29"
+        ],
+        "readPhaseLineNumbers": [],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32**",
+                "name": "A.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "j"
+            },
+            {
+                "type": "i32*",
+                "name": "k"
+            },
+            {
+                "type": "i32*",
+                "name": "vla4"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:2",
+        "type": 0,
+        "start": "1:6",
+        "end": "1:7",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:3"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:6",
+            "1:7"
+        ],
+        "readPhaseLineNumbers": [
+            "1:6",
+            "1:7"
+        ],
+        "writePhaseLineNumbers": [
+            "1:6",
+            "1:7"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "n1"
+            },
+            {
+                "type": "i32*",
+                "name": "n2"
+            },
+            {
+                "type": "i32*",
+                "name": "p.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "q.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "r.addr"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [
+            {
+                "CUid": "1:14",
+                "sinkLine": "1:7",
+                "sourceLine": "1:19",
+                "varName": "n2"
+            }
+        ],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:20",
+        "type": 0,
+        "start": "1:21",
+        "end": "1:21",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:16"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:21"
+        ],
+        "readPhaseLineNumbers": [
+            "1:21"
+        ],
+        "writePhaseLineNumbers": [
+            "1:21"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i8**",
+                "name": "saved_stack"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:21",
+        "type": 0,
+        "start": "1:26",
+        "end": "1:27",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:19"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:26",
+            "1:27"
+        ],
+        "readPhaseLineNumbers": [
+            "1:26",
+            "1:27"
+        ],
+        "writePhaseLineNumbers": [
+            "1:26",
+            "1:27"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:22",
+        "type": 0,
+        "start": "1:30",
+        "end": "1:30",
+        "name": "",
+        "childrenNodes": [
+            "1:23"
+        ],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:30"
+        ],
+        "readPhaseLineNumbers": [
+            "1:30"
+        ],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [],
+        "functionCall": [
+            {
+                "atLine": "1:30",
+                "funcId": "1:23"
+            }
+        ],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:24",
+        "type": 1,
+        "start": "1:32",
+        "end": "1:39",
+        "name": "_Z4sortPiii",
+        "childrenNodes": [
+            "1:25",
+            "1:26",
+            "1:27",
+            "1:32"
+        ],
+        "funcArguments": [
+            {
+                "type": "i32*",
+                "name": "A"
+            },
+            {
+                "type": "i32",
+                "name": "p"
+            },
+            {
+                "type": "i32",
+                "name": "r"
+            }
+        ]
+    },
+    {
+        "id": "1:25",
+        "type": 0,
+        "start": "1:32",
+        "end": "1:32",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:26"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:32"
+        ],
+        "readPhaseLineNumbers": [],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32**",
+                "name": "A.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "p.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "r.addr"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:26",
+        "type": 0,
+        "start": "1:33",
+        "end": "1:33",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:27",
+            "1:32"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:33"
+        ],
+        "readPhaseLineNumbers": [
+            "1:33"
+        ],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "p.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "r.addr"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:27",
+        "type": 0,
+        "start": "1:34",
+        "end": "1:38",
+        "name": "",
+        "childrenNodes": [
+            "1:28",
+            "1:24",
+            "1:24",
+            "1:31"
+        ],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:32"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:34",
+            "1:35",
+            "1:36",
+            "1:37",
+            "1:38"
+        ],
+        "readPhaseLineNumbers": [
+            "1:34",
+            "1:35",
+            "1:36",
+            "1:37"
+        ],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [
+            {
+                "type": "i32*",
+                "name": "q"
+            }
+        ],
+        "globalVariableNames": [
+            {
+                "type": "i32**",
+                "name": "A.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "p.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "r.addr"
+            }
+        ],
+        "functionCall": [
+            {
+                "atLine": "1:34",
+                "funcId": "1:28"
+            },
+            {
+                "atLine": "1:35",
+                "funcId": "1:24"
+            },
+            {
+                "atLine": "1:36",
+                "funcId": "1:24"
+            },
+            {
+                "atLine": "1:37",
+                "funcId": "1:31"
+            }
+        ],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:28",
+        "type": 3,
+        "start": "-1:-1",
+        "end": "-1:-1",
+        "name": "floor",
+        "childrenNodes": [],
+        "funcArguments": [
+            {
+                "type": "double",
+                "name": ""
+            }
+        ]
+    },
+    {
+        "id": "1:3",
+        "type": 0,
+        "start": "1:8",
+        "end": "1:12",
+        "name": "",
+        "childrenNodes": [
+            "1:4"
+        ],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:6"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:8",
+            "1:9",
+            "1:10",
+            "1:11",
+            "1:12"
+        ],
+        "readPhaseLineNumbers": [
+            "1:8",
+            "1:9"
+        ],
+        "writePhaseLineNumbers": [
+            "1:8",
+            "1:10",
+            "1:11"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "i"
+            },
+            {
+                "type": "i32*",
+                "name": "j"
+            },
+            {
+                "type": "i32*",
+                "name": "n1"
+            },
+            {
+                "type": "i32*",
+                "name": "n2"
+            },
+            {
+                "type": "i8**",
+                "name": "saved_stack"
+            }
+        ],
+        "functionCall": [
+            {
+                "atLine": "1:8",
+                "funcId": "1:4"
+            }
+        ],
+        "RAWDepsOn": [
+            {
+                "CUid": "1:2",
+                "sinkLine": "1:8",
+                "sourceLine": "1:6",
+                "varName": "n1"
+            },
+            {
+                "CUid": "1:2",
+                "sinkLine": "1:9",
+                "sourceLine": "1:7",
+                "varName": "n2"
+            }
+        ],
+        "WARDepsOn": [
+            {
+                "CUid": "1:17",
+                "sinkLine": "1:11",
+                "sourceLine": "1:22",
+                "varName": "j"
+            }
+        ],
+        "WAWDepsOn": [
+            {
+                "CUid": "1:18",
+                "sinkLine": "1:10",
+                "sourceLine": "1:24",
+                "varName": "i"
+            }
+        ]
+    },
+    {
+        "id": "1:32",
+        "type": 0,
+        "start": "1:39",
+        "end": "1:39",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:39"
+        ],
+        "readPhaseLineNumbers": [],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:33",
+        "type": 1,
+        "start": "1:42",
+        "end": "1:47",
+        "name": "main",
+        "childrenNodes": [
+            "1:34",
+            "1:37",
+            "1:38",
+            "1:42"
+        ]
+    },
+    {
+        "id": "1:34",
+        "type": 0,
+        "start": "1:42",
+        "end": "1:44",
+        "name": "",
+        "childrenNodes": [
+            "1:35",
+            "1:24"
+        ],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:38"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:42",
+            "1:43",
+            "1:44"
+        ],
+        "readPhaseLineNumbers": [],
+        "writePhaseLineNumbers": [
+            "1:44"
+        ],
+        "localVariableNames": [
+            {
+                "type": "i32*",
+                "name": "retval"
+            }
+        ],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "i"
+            }
+        ],
+        "functionCall": [
+            {
+                "atLine": "1:42",
+                "funcId": "1:35"
+            },
+            {
+                "atLine": "1:43",
+                "funcId": "1:24"
+            }
+        ],
+        "RAWDepsOn": [],
+        "WARDepsOn": [
+            {
+                "CUid": "1:38",
+                "sinkLine": "1:44",
+                "sourceLine": "1:44",
+                "varName": "i"
+            }
+        ],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:37",
+        "type": 2,
+        "start": "1:44",
+        "end": "1:46",
+        "name": "",
+        "childrenNodes": [
+            "1:39",
+            "1:41"
+        ]
+    },
+    {
+        "id": "1:38",
+        "type": 0,
+        "start": "1:44",
+        "end": "1:44",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:39",
+            "1:42"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:44"
+        ],
+        "readPhaseLineNumbers": [
+            "1:44"
+        ],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "i"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [
+            {
+                "CUid": "1:34",
+                "sinkLine": "1:44",
+                "sourceLine": "1:44",
+                "varName": "i"
+            }
+        ],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:39",
+        "type": 0,
+        "start": "1:45",
+        "end": "1:46",
+        "name": "",
+        "childrenNodes": [
+            "1:40"
+        ],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:41"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:45",
+            "1:46"
+        ],
+        "readPhaseLineNumbers": [
+            "1:45"
+        ],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [
+            {
+                "type": "i32*",
+                "name": "array"
+            }
+        ],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "i"
+            }
+        ],
+        "functionCall": [
+            {
+                "atLine": "1:45",
+                "funcId": "1:40"
+            }
+        ],
+        "RAWDepsOn": [
+            {
+                "CUid": "1:34",
+                "sinkLine": "1:45",
+                "sourceLine": "1:44",
+                "varName": "i"
+            }
+        ],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:40",
+        "type": 3,
+        "start": "-1:-1",
+        "end": "-1:-1",
+        "name": "printf",
+        "childrenNodes": [],
+        "funcArguments": [
+            {
+                "type": "i8*",
+                "name": ""
+            }
+        ]
+    },
+    {
+        "id": "1:41",
+        "type": 0,
+        "start": "1:44",
+        "end": "1:44",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:38"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:44"
+        ],
+        "readPhaseLineNumbers": [
+            "1:44"
+        ],
+        "writePhaseLineNumbers": [
+            "1:44"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:42",
+        "type": 0,
+        "start": "1:47",
+        "end": "1:47",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:47"
+        ],
+        "readPhaseLineNumbers": [],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:5",
+        "type": 2,
+        "start": "1:12",
+        "end": "1:14",
+        "name": "",
+        "childrenNodes": [
+            "1:7",
+            "1:8"
+        ]
+    },
+    {
+        "id": "1:6",
+        "type": 0,
+        "start": "1:12",
+        "end": "1:12",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:7",
+            "1:9"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:12"
+        ],
+        "readPhaseLineNumbers": [
+            "1:12"
+        ],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "p.addr"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:7",
+        "type": 0,
+        "start": "1:13",
+        "end": "1:14",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:8"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:13",
+            "1:14"
+        ],
+        "readPhaseLineNumbers": [
+            "1:13"
+        ],
+        "writePhaseLineNumbers": [
+            "1:13"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32**",
+                "name": "A.addr"
+            },
+            {
+                "type": "i32*",
+                "name": "i"
+            },
+            {
+                "type": "i32*",
+                "name": "vla"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [
+            {
+                "CUid": "1:18",
+                "sinkLine": "1:13",
+                "sourceLine": "1:23",
+                "varName": "A.addr"
+            },
+            {
+                "CUid": "1:3",
+                "sinkLine": "1:13",
+                "sourceLine": "1:10",
+                "varName": "i"
+            }
+        ],
+        "WARDepsOn": [
+            {
+                "CUid": "1:18",
+                "sinkLine": "1:13",
+                "sourceLine": "1:23",
+                "varName": "vla"
+            }
+        ],
+        "WAWDepsOn": [
+            {
+                "CUid": "1:14",
+                "sinkLine": "1:13",
+                "sourceLine": "1:18",
+                "varName": "vla"
+            }
+        ]
+    },
+    {
+        "id": "1:8",
+        "type": 0,
+        "start": "1:12",
+        "end": "1:12",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:6"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:12"
+        ],
+        "readPhaseLineNumbers": [
+            "1:12"
+        ],
+        "writePhaseLineNumbers": [
+            "1:12"
+        ],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "j"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    },
+    {
+        "id": "1:9",
+        "type": 0,
+        "start": "1:15",
+        "end": "1:15",
+        "name": "",
+        "childrenNodes": [],
+        "readDataSize": 3,
+        "writeDataSize": 0,
+        "successorCUs": [
+            "1:11"
+        ],
+        "basicBlockName": "",
+        "instructionsLineNumbers": [
+            "1:15"
+        ],
+        "readPhaseLineNumbers": [],
+        "writePhaseLineNumbers": [],
+        "localVariableNames": [],
+        "globalVariableNames": [
+            {
+                "type": "i32*",
+                "name": "n2"
+            }
+        ],
+        "functionCall": [],
+        "RAWDepsOn": [],
+        "WARDepsOn": [],
+        "WAWDepsOn": []
+    }
+]

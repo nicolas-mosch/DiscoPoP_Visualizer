@@ -1,0 +1,1 @@
+1	./data/simple_pipeline/simple_pipeline.c
