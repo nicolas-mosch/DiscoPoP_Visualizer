@@ -126,7 +126,8 @@ class EditorController {
       }
     });
 
-
+    var containerHeight = $("#code-container").height();
+    $("#code-container").height(containerHeight - 30);
     // Initialize ace editor block
     this._editor = ace.edit(document.getElementById('ace-editor'));
     this._editor.setTheme("ace/theme/monokai");
@@ -134,7 +135,6 @@ class EditorController {
     this._editor.setReadOnly(true);
     this._editor.setHighlightActiveLine(false);
     this._editor.setOptions({
-      maxLines: 50,
       fontSize: "14pt",
       wrapBehavioursEnabled: true,
       animatedScroll: true
