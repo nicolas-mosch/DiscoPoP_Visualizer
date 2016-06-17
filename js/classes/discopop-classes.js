@@ -374,6 +374,34 @@ class FunctionNode extends Node {
   }
 
   /**
+   * The entry CU of the function
+   * @type {CuNode}
+   */
+  get entry() {
+    for (var i = 0; i < this._children.length; i++) {
+      if (this._children[i] instanceof CuNode && !this._children[i].predecessors.length) {
+        return this._children[i];
+      }
+    }
+    console.error("Function-Node did not contain an entry-CU", this);
+    return null;
+  }
+
+  /**
+   * The exit CU of the function
+   * @type {CuNode}
+   */
+   get exit() {
+     for (var i = 0; i < this._children.length; i++) {
+       if (this._children[i] instanceof CuNode && !this._children[i].successors.length) {
+         return this._children[i];
+       }
+     }
+     console.error("Function-Node did not contain an exit-CU", this);
+     return null;
+   }
+
+  /**
    * The arguments of the function
    * @type {NodeVariable[]}
    */

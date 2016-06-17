@@ -539,41 +539,38 @@ class GraphController {
         });
 
         if (node.type == 1) {
-          // If expanding a function, change the incoming/outgoing edges to the first/last child-CU
-          _.each(node.children, function(childNode) {
-            if (!that._graph.inEdges(childNode.id).length) {
-              _.each(that._graph.inEdges(node.id), function(edge) {
-                that._graph.setEdge(edge.v, childNode.id, that._graph.edge(edge));
-              });
-              // Add entry/exit tags if it is a root-node
-              if (childNode.type == 0 && !childNode.predecessors.length) {
-                that._graph.node(node.id).firstChild = childNode.id;
-                if (!node.parents.length) {
-                  that._graph.setNode('entry-' + node.id, {
-                    shape: 'circle',
-                    label: '<label class="default-node-label">entry</label>',
-                    labelType: 'html',
-                    class: 'default-node'
-                  });
-                  that._graph.setEdge('entry-' + node.id, childNode.id, {
-                    arrowhead: 'vee'
-                  });
-                }
-              }
-            }
-            if (childNode.type == 0 && !childNode.successors.length) {
-              that._graph.node(node.id).lastChild = childNode.id;
-              that._graph.setNode('exit-' + node.id, {
-                shape: 'circle',
-                label: '<label class="default-node-label">exit</label>',
-                labelType: 'html',
-                class: 'default-node'
-              });
-              that._graph.setEdge(childNode.id, 'exit-' + node.id, {
-                arrowhead: 'vee'
-              });
-            }
+          // Set entry-node
+          _.each(that._graph.inEdges(node.id), function(edge) {
+            that._graph.setEdge(edge.v, node.entry.id, that._graph.edge(edge));
           });
+
+          // Add entry/exit tags if it is a root-node
+          if (!node.parents.length) {
+            that._graph.setNode('entry-' + node.id, {
+              shape: 'circle',
+              label: '<label class="default-node-label">entry</label>',
+              labelType: 'html',
+              class: 'default-node',
+              remove: true
+            });
+            that._graph.setEdge('entry-' + node.id, node.entry.id, {
+              arrowhead: 'vee'
+            });
+          }
+          try {
+            // Set exit-node
+            that._graph.setNode('exit-' + node.id, {
+              shape: 'circle',
+              label: '<label class="default-node-label">exit</label>',
+              labelType: 'html',
+              class: 'default-node',
+              remove: true
+            });
+            that._graph.setEdge(node.exit.id, 'exit-' + node.id, {
+              arrowhead: 'vee'
+            });
+          }catch(e){
+          }
         }
         // remove edges from expanded node
         _.each(this._graph.nodeEdges(node.id), function(edge) {
