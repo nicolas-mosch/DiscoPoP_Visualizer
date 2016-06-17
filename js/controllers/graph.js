@@ -216,6 +216,7 @@ class GraphController {
    * @param {Node} node The node to be added
    */
   addNode(node) {
+    console.log('addNode', node);
     var label, shape, nodeClass, parentNodes, labelType;
     switch (node.type) {
       case 0:
@@ -252,7 +253,7 @@ class GraphController {
     if (node.type >= 0 && node.type <= 2) {
       var r = Math.floor(255 * node.heatFactor);
       var b = Math.floor(255 * (1 - node.heatFactor));
-      label += '<br><span style="color: rgb(' + r + ', 0, ' + b + ');font-size: 26px; font-family: font-awesome">&#xf06d;</span>';
+      label += '<br><span style="color: rgb(' + r + ', 0, ' + b + ');font-size: 30px; font-family: quivira">&#x1f525;</span>';
     }
 
     var nodeObject = {
@@ -461,7 +462,7 @@ class GraphController {
             that.addNode(functionCall.functionNode);
           }
           graphNode = that._graph.node(functionCall.functionNode.id);
-          that._graph.setEdge(node.id, graphNode.collapsed ? functionCall.functionNode.id : graphNode.firstChild, {
+          that._graph.setEdge(node.id, graphNode.collapsed ? functionCall.functionNode.id : functionCall.functionNode.entry.id, {
             label: '<a class="link-to-line" data-file-line="' + functionCall.lineNumber + '" data-file-id="' + node.fileId + '" style="font-size: 20px">&#8618;</a>',
             labelType: 'html',
             lineInterpolate: 'basis',
@@ -576,7 +577,6 @@ class GraphController {
         _.each(this._graph.nodeEdges(node.id), function(edge) {
           that._graph.removeEdge(edge);
         });
-
       }
     }
   }
@@ -617,7 +617,7 @@ class GraphController {
         } else if (that._graph.hasNode(childNode.id)) {
           // For collapsing CU-nodes, only collapase and remove the function-call function-nodes if they are not being pointed at by other CU-nodes
           graphNode = that._graph.node(childNode.id);
-          if (!graphNode.collapsed && that._graph.inEdges(graphNode.firstChild).length == 1) {
+          if (!graphNode.collapsed && that._graph.inEdges(childNode.entry).length == 1) {
             that.collapseNode(childNode);
           }
           if (that._graph.inEdges(childNode.id).length == 1) {

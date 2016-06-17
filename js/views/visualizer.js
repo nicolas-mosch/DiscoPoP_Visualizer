@@ -255,7 +255,7 @@ function initEventListeners() {
     node = nodeData[this.id];
     file = fileMaps[node.fileId].fileName;
     if (node.type == 1) {
-      $('#tooltip-container').html('&#8618; ' + node.name + '<br>' + file);
+      $('#tooltip-container').html('&#8618; <label style="font-weight: bold;>"' + node.name + '</label><br>' + file);
     } else if (node.type == 2) {
       $('#tooltip-container').html('&#8635; (' + node.startLine + '-' + node.endLine + ')<br>' + file + '<br>Level: ' + node.level);
     } else {
