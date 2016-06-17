@@ -219,7 +219,7 @@ class GraphController {
     var label, shape, nodeClass, parentNodes, labelType;
     switch (node.type) {
       case 0:
-        label = '<span>Lines: ' + node.startLine + ' - ' + node.endLine + '</span>' + '<br><span>Data Read: ' + generalFunctions.humanFileSize(node.readDataSize, true) + '</span>' + '<br><span>Data Written: ' + generalFunctions.humanFileSize(node.writeDataSize, true) + '</span>' + ((node.children.length) ? '<br><span style="font-size: 20px">&#8618;</span>' : '');
+        label = '<span>Lines: ' + node.startLine + ' - ' + node.endLine + '</span>' + '<br><span>Data Read: ' + generalFunctions.humanFileSize(node.readDataSize, true) + '</span>' + '<br><span>Data Written: ' + generalFunctions.humanFileSize(node.writeDataSize, true) + '</span>' + ((node.children.length) ? '<br><span style="font-size: 20px">&#8618;</span>' : '') + ((node.dependencies.length) ? '<br><span>Deps: </span><span class="badge">' + node.dependencies.length + '</span>' : '');
         shape = 'rect';
         nodeClass = 'cu-node';
         break;
