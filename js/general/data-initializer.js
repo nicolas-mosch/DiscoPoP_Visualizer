@@ -107,13 +107,10 @@ module.exports = {
       }
     }
     data.nodeData = nodes;
-
     // --- Root Nodes ---
     for (i = 0; i < data.rootNodes.length; i++) {
       data.rootNodes[i] = nodes[data.rootNodes[i]];
     }
-
-    console.log('Sizeof, ', sizeof.sizeof(nodes, true));
     return intervalTrees;
   }
 };

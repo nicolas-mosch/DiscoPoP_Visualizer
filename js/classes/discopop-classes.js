@@ -31,6 +31,8 @@ class Node {
     this._parents = [];
     this._children = [];
     this._heatFactor = heatFactor
+    this._collapsed = true;
+    this._depsOn = false;
   }
 
   /**
@@ -144,6 +146,24 @@ class Node {
    */
   get heatFactor() {
     return this._heatFactor;
+  }
+
+  get collapsed() {
+    return this._collapsed;
+  }
+
+  get expanded() {
+    return !this._collapsed;
+  }
+
+  expand() {
+    if (this._children.length) {
+      this._collapsed = false;
+    }
+  }
+
+  collapse() {
+    this._collapsed = true;
   }
 }
 
@@ -267,8 +287,16 @@ class CuNode extends Node {
    * The function-calls of the CU
    * @type {FunctionCall[]}
    */
-  get functionCalls(){
+  get functionCalls() {
     return this._functionCalls;
+  }
+
+  get dependenciesVisible() {
+    return this._depsOn;
+  }
+
+  toggleDependencyVisibility() {
+    this._depsOn = !this._depsOn;
   }
 }
 
@@ -288,7 +316,7 @@ class LoopNode extends Node {
    * @param  {!number[]}        readLines             The lines on which a read occurs within the loop
    * @param  {!number[]}        writeLines            The lines on which a read occurs within the loop
    * @param  {!number}          level                 The nested-level of the referenced loop
-   * @param  {!number}          descendantNodeCount   The amount of nodes that are descendants of this one.
+   * @param  {!number}          descendantNodeCount   The amount of nodes that are descendants of this one
    * @param  {number}           heatFactor            The factor of heat of this node in relation to other nodes in the graph
    */
   constructor(id, fileId, startLine, endLine, readDataSize, writeDataSize, readLines, writeLines, heatFactor, level, descendantNodeCount) {
@@ -306,12 +334,13 @@ class LoopNode extends Node {
   }
 
   /**
-   * The amount of nodes that are descendants of this one.
+   * The amount of nodes that are descendants of this one
    * @type {number}
    */
-  get descendantNodeCount(){
+  get descendantNodeCount() {
     return this._descendantNodeCount;
   }
+
 }
 
 /**
@@ -355,7 +384,7 @@ class FunctionNode extends Node {
    * @param  {!number[]}        readLines             The lines on which a read occurs within the function
    * @param  {!number[]}        writeLines            The lines on which a read occurs within the function
    * @param  {!string}          name                  The name of the function
-   * @param  {!number}          descendantNodeCount   The amount of nodes that are descendants of this one.
+   * @param  {!number}          descendantNodeCount   The amount of nodes that are descendants of this one
    * @param  {number}           heatFactor            The factor of heat of this node in relation to other nodes in the graph
    */
   constructor(id, fileId, startLine, endLine, readDataSize, writeDataSize, readLines, writeLines, heatFactor, name, descendantNodeCount) {
@@ -391,15 +420,15 @@ class FunctionNode extends Node {
    * The exit CU of the function
    * @type {CuNode}
    */
-   get exit() {
-     for (var i = 0; i < this._children.length; i++) {
-       if (this._children[i] instanceof CuNode && !this._children[i].successors.length) {
-         return this._children[i];
-       }
-     }
-     console.error("Function-Node did not contain an exit-CU", this);
-     return null;
-   }
+  get exit() {
+    for (var i = 0; i < this._children.length; i++) {
+      if (this._children[i] instanceof CuNode && !this._children[i].successors.length) {
+        return this._children[i];
+      }
+    }
+    console.error("Function-Node did not contain an exit-CU", this);
+    return null;
+  }
 
   /**
    * The arguments of the function
@@ -413,7 +442,7 @@ class FunctionNode extends Node {
    * The amount of nodes that are descendants of this one.
    * @type {number}
    */
-  get descendantNodeCount(){
+  get descendantNodeCount() {
     return this._descendantNodeCount;
   }
 
@@ -436,20 +465,20 @@ class NodeVariable {
    * @param  {string} type The type of the variable
    */
   constructor(name, type) {
-    this._name = name;
-    this._type = type;
-  }
-  /**
-   * The name of the variable
-   * @type {string}
-   */
+      this._name = name;
+      this._type = type;
+    }
+    /**
+     * The name of the variable
+     * @type {string}
+     */
   get name() {
-    return this._name;
-  }
-  /**
-   * The type of the variable
-   * @type {string}
-   */
+      return this._name;
+    }
+    /**
+     * The type of the variable
+     * @type {string}
+     */
   get type() {
     return this._type;
   }
@@ -466,20 +495,20 @@ class FunctionCall {
    * @param  {(FunctionNode|LibraryFunctionNode)} functionNode    The node of the called function
    */
   constructor(lineNumber, functionNode) {
-    this._lineNumber = lineNumber;
-    this._functionNode = functionNode;
-  }
-  /**
-   * The line-number on which the function is called
-   * @type {number}
-   */
+      this._lineNumber = lineNumber;
+      this._functionNode = functionNode;
+    }
+    /**
+     * The line-number on which the function is called
+     * @type {number}
+     */
   get lineNumber() {
-    return this._lineNumber;
-  }
-  /**
-   * The node of the called function
-   * @type {FunctionNode}
-   */
+      return this._lineNumber;
+    }
+    /**
+     * The node of the called function
+     * @type {FunctionNode}
+     */
   get functionNode() {
     return this._functionNode;
   }
@@ -541,7 +570,7 @@ class Dependency {
    * Returns whether or not this is a read-after-write dependency
    * @return {Boolean}
    */
-  isRaW(){
+  isRaW() {
     return this._type == 0;
   }
 
@@ -549,7 +578,7 @@ class Dependency {
    * Returns whether or not this is a write-after-read dependency
    * @return {Boolean}
    */
-  isWaR(){
+  isWaR() {
     return this._type == 1;
   }
 
@@ -557,13 +586,13 @@ class Dependency {
    * Returns whether or not this is a write-after-write dependency
    * @return {Boolean}
    */
-  isWaW(){
+  isWaW() {
     return this._type == 2;
   }
 }
 
-class FileMap{
-  constructor(path, content){
+class FileMap {
+  constructor(path, content) {
     this._path = path;
     this._content = content;
   }
@@ -572,7 +601,7 @@ class FileMap{
    * The file-path to the file
    * @type {string}
    */
-  get path(){
+  get path() {
     return this._path;
   }
 
@@ -580,7 +609,7 @@ class FileMap{
    * The contents of the file
    * @type {string}
    */
-  get fileContent(){
+  get fileContent() {
     console.log('sup');
     return this._content;
   }
@@ -589,7 +618,7 @@ class FileMap{
    * The name of the file
    * @type {string}
    */
-  get fileName(){
+  get fileName() {
     return this._path.split('/').slice(-1)[0];
   }
 }

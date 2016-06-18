@@ -24,7 +24,11 @@ function render() {
         edgeLabels = createEdgeLabels(createOrSelectGroup(outputGroup, "edgeLabels"), g),
         nodes = createNodes(createOrSelectGroup(outputGroup, "nodes"), g, shapes);
 
+    var start = new Date().getTime();
     layout(g);
+    var end = new Date().getTime();
+    var time = end - start;
+    console.log('Calculation of Dagre-D3 layout took: ' + time + 'ms');
 
     positionNodes(nodes, g);
     positionEdgeLabels(edgeLabels, g);

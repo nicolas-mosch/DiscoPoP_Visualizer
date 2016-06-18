@@ -21,5 +21,20 @@ module.exports = {
       ++u;
     } while (Math.abs(bytes) >= thresh && u < units.length - 1);
     return bytes.toFixed(1) + ' ' + units[u];
+  },
+
+  /**
+   * [rbgToHex description]
+   * @param  {[type]} r [description]
+   * @param  {[type]} g [description]
+   * @param  {[type]} b [description]
+   * @return {[type]}   [description]
+   */
+  rgbToHex: function rgbToHex(r, g, b) {
+    function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+      return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
   }
 }

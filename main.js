@@ -1,19 +1,24 @@
+// Requires
 var app = require('app'); // Module to control application life.
 var BrowserWindow = require('browser-window'); // Module to create native browser window.
 var Menu = require('menu');
 var MenuItem = require('menu-item');
-var Handlebars = require('handlebars');
 const ipc = require("electron").ipcMain;
 var _ = require('lodash/core');
 var configuration = require('./js/general/configuration.js');
 var dataReader = require('./js/general/data-reader.js');
+var vizWriter = require('./js/general/vizWriter.js');
+var dataInitializer = require('./js/general/data-initializer.js');
+var GraphController = require('./js/controllers/graph.js');
 
 // Windows
 var mainWindow = null;
 var graphSettingsWindow = null;
 var codeSettingsWindow = null;
-var cuInfoWindows = {};
-var nodeData = null;
+var nodes;
+var fileMaps;
+var fileNodeIntervalTrees;
+var graphController;
 
 const dialog = require('electron').dialog;
 
@@ -86,7 +91,9 @@ ipc.on('saveGraphSettings', function() {
   mainWindow.webContents.send('redrawGraph');
 });
 
-
+ipc.on('viz-test', function(message, dot){
+  vizWriter.write(dot);
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -116,8 +123,6 @@ app.on('ready', function() {
     mainWindow = null;
   });
 });
-
-
 
 
 function importFiles() {
@@ -152,13 +157,18 @@ function importFiles() {
   if (filePaths == null)
     return;
   mainWindow.setProgressBar(0.5);
-  var data = dataReader.buildFromFile(mappingPath, filePaths[0]);
+
 
   mainWindow.webContents.on('did-finish-load', function() {
-    mainWindow.webContents.send('init', data);
+    var data = dataReader.buildFromFile(mappingPath, filePaths[0]);
+    mainWindow.webContents.send('load-data', data.nodeData);
+
+    fileNodeIntervalTrees = dataInitializer.prepareData(data);
+    fileMaps = data.fileMapping;
+
+    graphController = new GraphController.controller(data.nodeData, data.rootNodes);
+    mainWindow.webContents.send('init-listeners');
+    mainWindow.webContents.send('update-graph', graphController.generateSvgGraph());
   });
   mainWindow.loadURL('file://' + __dirname + '/windows/visualizer.html');
-
-
-
 }

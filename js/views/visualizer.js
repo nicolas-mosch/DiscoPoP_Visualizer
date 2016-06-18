@@ -12,15 +12,14 @@ var GraphController = require('../js/controllers/graph');
 var EditorController = require('../js/controllers/editor');
 var dataInitializer = require('../js/general/data-initializer');
 var generalFunctions = require('../js/general/generalFunctions');
-
-
-var graphController;
-var editorController;
-var legendController;
+var dotGenerator = require('../js/general/dotGenerator');
+var Viz = require('../node_modules/viz.js/viz.js');
+var configuration = require('../js/general/configuration');
 
 var nodeData;
-var fileMaps;
-var fileNodeIntervalTrees;
+var highlightedNode;
+var editorController;
+var legendController;
 
 ipc.on('alert', function(event, message) {
   alert(message);
@@ -30,53 +29,70 @@ ipc.on('clearGraph', function(event, message) {
   clearGraph();
 });
 
-ipc.on('redrawGraph', function(event, message) {
-  graphController.resetViewAndChange(function() {
-    graphController.hideAncestors();
-    graphController.redraw();
+ipc.on('load-data', function(event, data) {
+  nodeData = data;
+  console.log(nodeData);
+});
+
+ipc.on('update-graph', function(event, svg) {
+  $("#flow-graph-container").html(svg);
+  var svg = d3.select("#flow-graph-container svg");
+  var inner = d3.select("#graph0");
+
+  var zoom = d3.behavior.zoom().on("zoom", function() {
+    inner.attr(
+      "transform",
+      "translate(" + d3.event.translate + ")" + "scale(" + d3.event.scale + ")"
+    );
   });
-  //legendController.redraw();
+  svg.call(zoom);
+  // Remove native doubleclick zoom
+  svg.on("dblclick.zoom", null);
+
+  colorGraph();
 });
 
-ipc.on('init', function(event, data) {
-  var canvas = d3.select("#flow-graph-container svg");
-  canvas.selectAll("*").remove();
-  fileNodeIntervalTrees = dataInitializer.prepareData(data);
 
-  nodeData = data.nodeData;
-  fileMaps = data.fileMapping;
+function colorGraph() {
+  var inner = d3.select("#graph0");
 
-  graphController = new GraphController(canvas, data.rootNodes, true);
+  inner.selectAll('g.cu-node:not(.selected-node) polygon').style("fill", configuration.readSetting('cuColorFill'));
+    $(".cu-node-label").css("color", configuration.readSetting('cuColorLabel'));
 
-  editorController = new EditorController(data.fileMapping);
-  $('#file-select-tab').trigger('click');
-  initEventListeners();
-  graphController.redraw();
-  //Graph
-});
+    inner.selectAll('g.function-node:not(.selected-node) polygon').style("fill", configuration.readSetting('functionColorFill'));
+    $(".function-node-label").css("color", configuration.readSetting('functionColorLabel'));
 
-function testProgressBar() {
-  var elem = document.getElementById("progress-bar");
+    inner.selectAll('g.loop-node:not(.selected-node) ellipse').style("fill", configuration.readSetting('loopColorFill'));
+    inner.selectAll('g.loop-node:not(.selected-node) polygon').style("fill", configuration.readSetting('loopColorFill'));
+    $(".loop-node-label").css("color", configuration.readSetting('loopColorLabel'));
 
-  var width = 0;
-  var id = setInterval(frame, 70);
+    inner.selectAll('g.library-function-node:not(.selected-node) polygon').style("fill", configuration.readSetting('libraryFunctionColorFill'));
+    $(".library-function-node-label").css("color", configuration.readSetting('libraryFunctionColorLabel'));
 
-  function frame() {
-    if (width == 100) {
-      clearInterval(id);
-      elem.style.display = "none";
-    } else {
-      width++;
-      elem.style.width = width + '%';
-      elem.innerHTML = width + "%";
-    }
-  }
-  //$('#progress-bar').css("display", "none");
+    inner.selectAll('g.default-node:not(.selected-node) polygon').style("fill", configuration.readSetting('defaultColorFill'));
+    $(".default-node-label").css("color", configuration.readSetting('defaultColorLabel'));
+
+    inner.selectAll('g.selected-node polygon').style("fill", configuration.readSetting('selectedNodeColorFill'));
+    $(".selected-node-label").css("color", configuration.readSetting('selectedNodeColorLabel'));
+
+    //  Edges
+    inner.selectAll('g.flow-edge path')
+      .style("stroke", configuration.readSetting('flowEdgeFill'))
+      .style("stroke-width", configuration.readSetting('flowEdgeWidth'));
+    inner.selectAll('g.dependency-edge path')
+      .style("stroke", configuration.readSetting('dependencyEdgeFill'))
+      .style("stroke-width", configuration.readSetting('dependencyEdgeWidth'));
+    inner.selectAll('g.function-call-edge path')
+      .style("stroke", configuration.readSetting('functionCallEdgeFill'))
+      .style("stroke-width", configuration.readSetting('functionCallEdgeWidth'));
+
+
 }
 
-// initialize the event-listeners
-function initEventListeners() {
 
+
+// initialize the event-listeners
+ipc.on('init-listeners', function(event) {
   /**
    * Misc click behavior
    */
@@ -91,13 +107,10 @@ function initEventListeners() {
         $('#node-info-collapse-icon').addClass('glyphicon-collapse-up');
       }
     });
-
   });
   //  Reset-View
   $("#reset-graph-button").on('click', function() {
-    graphController.resetViewAndChange(function() {
-      graphController.resetGraph();
-    });
+    ipc.send('resetGraph');
   });
 
   // Legend
@@ -131,13 +144,12 @@ function initEventListeners() {
     e.stopImmediatePropagation();
     var node = nodeData[this.id];
     if ($(this).hasClass('selected-node')) {
-      unhighlightNodes();
+      highlightedNodeId = null;
       return;
     }
     editorController.unhighlight();
     editorController.highlightNodeInCode(node);
-    graphController.unhighlightNodes();
-    graphController.highlightNode(node);
+    highlightedNodeId = node.id;
 
     var type;
     switch (node.type) {
@@ -433,21 +445,19 @@ function initEventListeners() {
         return (node != null);
       },
       onClick: function(node) {
-        graphController.resetViewAndChange(function() {
-          graphController.expandTo(node);
-          graphController.redraw();
-          graphController.panToNode(node);
-          $('#' + node.id).trigger('click');
+          ipc.send('expandTo', node.id);
+          $('g.node#' + node.id).trigger('click');
         });
       }
     }]
   });
+});
+
+function unhighlightNode(){
+
+  highlightedNode = null;
 }
 
-// Helper-function: unhighlights nodes and lines in the code-viewer.
-function unhighlightNodes() {
-  editorController.unhighlight();
-  graphController.unhighlightNodes();
-  $("#node-info-container").html('');
-  $("#node-info-available-icon").css('color', '	#FFFFFF');
+function highlightNode(){
+
 }
