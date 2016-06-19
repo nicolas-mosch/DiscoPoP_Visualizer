@@ -2,9 +2,10 @@ var _ = require('lodash');
 var graphlib = require('graphlib');
 var configuration = require('../general/configuration');
 var generalFunctions = require('../general/generalFunctions');
-var Viz = require('../../node_modules/viz.js/viz.js');
+var sizeof = require('sizeof');
 const ipc = require("electron").ipcMain;
-
+var fs = require('fs');
+var Viz = require('../../node_modules/viz.js/viz.js');
 /**
  * Module for interacting with the graph and updating the displayed one.
  * @module graphController
@@ -59,6 +60,7 @@ module.exports = {
     });
 
     ipc.on('expandNode', function(event, nodeId) {
+      console.log('expandOne', nodeId);
       var node = nodes[nodeId];
       if (node.type >= 0 && node.type < 3) {
         node.expand();
@@ -72,10 +74,34 @@ module.exports = {
     });
 
     ipc.on('expandAll', function(event, nodeId) {
+      console.log('expandAll', nodeId);
       var node = nodes[nodeId];
       var stack = [];
       var seen = [];
       stack.push(node);
+      do {
+        node = stack.pop();
+        if (seen.indexOf(node.id) == -1) {
+          seen.push(node.id);
+          node.expand();
+          _.each(node.children, function(childNode) {
+            if (childNode.children.length) {
+              stack.push(childNode);
+            }
+          });
+        }
+      }
+      while (stack.length);
+      event.sender.send('update-graph', generateSvgGraph());
+    });
+
+    ipc.on('fullGraph', function(event) {
+      var node;
+      var stack = [];
+      var seen = [];
+      _.each(rootNodes, function(root) {
+        stack.push(root);
+      });
       do {
         node = stack.pop();
         if (seen.indexOf(node.id) == -1) {
@@ -185,12 +211,17 @@ module.exports = {
               // (adding them at the end, renders the called-function outside of this function)
               if (child.expanded) {
                 _.each(child.children, function(functionCall) {
-                  if (functionCall.expanded) {
-                    edge = child.id + ' -> ' + functionCall.entry.id;
-                    functionCallEdges.push(edge);
-                  } else {
+                  if (functionCall.type == 1) {
+                    if (functionCall.expanded) {
+                      edge = child.id + ' -> ' + functionCall.entry.id;
+                      functionCallEdges.push(edge);
+                    } else {
+                      edge = child.id + ' -> ' + functionCall.id;
+                      functionCallEdges.push(edge);
+                    }
+                  }else{
                     edge = child.id + ' -> ' + functionCall.id;
-                    functionCallEdges.push(edge);
+                    digraph += '\n' + edge + ' [style=dotted, id="' + edge.replace(' -> ', 't') + '"];';
                   }
                   functionNodes.push(functionCall);
                 });
@@ -246,52 +277,57 @@ module.exports = {
         });
         var end = new Date().getTime();
         console.log('Execution-Time of Layout-Calculation: ', end - start);
+        // Hack for adding classes to svg nodes (not supported by graphviz)
+        var node, nodeClass;
+        _.each(checkedNodes, function(nodeId) {
+          node = nodes[nodeId];
+          switch (node.type) {
+            case 0:
+              nodeClass = 'cu-node';
+              break;
+            case 1:
+              nodeClass = 'function-node';
+              break;
+            case 2:
+              nodeClass = 'loop-node';
+              break;
+            case 3:
+              nodeClass = 'function-call-node';
+              break;
+            default:
+              nodeClass = "default-node";
+          }
+
+          svg = svg.replace('<g id="' + nodeId + '" class="node"', '<g id="' + nodeId + '" class="node ' + nodeClass + '"');
+          svg = svg.replace('<g id="' + nodeId + '" class="cluster"', '<g id="' + nodeId + '" class="cluster ' + nodeClass + '"');
+        });
+        // Hack for adding classes to svg edges (not supported by graphviz)
+        _.each(addedFlowEdges, function(edge) {
+          svg = svg.replace('<g id="' + edge.replace(' -> ', 't') + '" class="edge"', '<g id="' + edge + '" class="edge flow-edge"');
+        });
+
+        _.each(functionCallEdges, function(edge) {
+          svg = svg.replace('<g id="' + edge.replace(' -> ', 't') + '" class="edge"', '<g id="' + edge + '" class="edge function-call-edge"');
+        });
+
+        _.each(dependencyEdges, function(edge) {
+          svg = svg.replace('<g id="' + edge.replace(' -> ', 't') + '" class="edge"', '<g id="' + edge + '" class="edge dependency-edge"');
+        });
+
+        // Hack for removing title tooltip from elements (not supported by graphviz)
+        svg = svg.replace(/<title>.*<\/title>/g, '');
       } catch (err) {
         console.error(err);
-        console.log('\n---------------------------\n' + digraph + '\n---------------------------\n');
+        fs.writeFile('error_dot.txt', digraph, function(err) {
+          if (err) {
+            return console.log('Unable to write file ' + err);
+          }
+          console.log('DOT-File was saved');
+        });
       }
+      console.log('Resulting DOT-String size: ', sizeof.sizeof(digraph, true), digraph.length);
 
-      // Hack for adding classes to svg nodes (not supported by graphviz)
-      var node, nodeClass;
-      _.each(checkedNodes, function(nodeId) {
-        node = nodes[nodeId];
-        switch (node.type) {
-          case 0:
-            nodeClass = 'cu-node';
-            break;
-          case 1:
-            nodeClass = 'function-node';
-            break;
-          case 2:
-            nodeClass = 'loop-node';
-            break;
-          case 3:
-            nodeClass = 'function-call-node';
-            break;
-          default:
-            nodeClass = "default-node";
-        }
 
-        svg = svg.replace('<g id="' + nodeId + '" class="node"', '<g id="' + nodeId + '" class="node ' + nodeClass + '"');
-        svg = svg.replace('<g id="' + nodeId + '" class="cluster"', '<g id="' + nodeId + '" class="cluster ' + nodeClass + '"');
-      });
-      // Hack for adding classes to svg edges (not supported by graphviz)
-      _.each(addedFlowEdges, function(edge) {
-        console.log('Replacing ' + 'id="' + edge.replace(' -> ', 't') + '" class="edge"', svg.indexOf('id="' + edge + '" class="edge"'));
-
-        svg = svg.replace('<g id="' + edge.replace(' -> ', 't') + '" class="edge"', '<g id="' + edge + '" class="edge flow-edge"');
-      });
-
-      _.each(functionCallEdges, function(edge) {
-        svg = svg.replace('<g id="' + edge.replace(' -> ', 't') + '" class="edge"', '<g id="' + edge + '" class="edge function-call-edge"');
-      });
-
-      _.each(dependencyEdges, function(edge) {
-        svg = svg.replace('<g id="' + edge.replace(' -> ', 't') + '" class="edge"', '<g id="' + edge + '" class="edge dependency-edge"');
-      });
-
-      // Hack for removing title tooltip from elements (not supported by graphviz)
-      svg = svg.replace(/<title>.*<\/title>/g, '');
 
       return svg;
     }
