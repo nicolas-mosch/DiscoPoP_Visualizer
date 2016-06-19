@@ -148,20 +148,34 @@ class Node {
     return this._heatFactor;
   }
 
+  /**
+   * Gives whether the node is collapsed or not
+   * @return {Boolean}  True iff node is collapsed
+   */
   get collapsed() {
     return this._collapsed;
   }
 
+  /**
+   * Gives whether the node is expanded or not
+   * @return {Boolean}  True iff node is expanded
+   */
   get expanded() {
     return !this._collapsed;
   }
 
+  /**
+   * Sets the node to be expanded
+   */
   expand() {
     if (this._children.length) {
       this._collapsed = false;
     }
   }
 
+  /**
+   * Sets the node to be collapsed
+   */
   collapse() {
     this._collapsed = true;
   }
@@ -292,10 +306,17 @@ class CuNode extends Node {
     return this._functionCalls;
   }
 
+  /**
+   * Gives whether the dependencies for this node are visible or not
+   * @return {Boolean} True iff the dependency-edges are visible
+   */
   get dependenciesVisible() {
     return this._depsOn;
   }
 
+  /**
+   * Toggles the visibility of the dependencies of this node
+   */
   toggleDependencyVisibility() {
     this._depsOn = !this._depsOn;
   }

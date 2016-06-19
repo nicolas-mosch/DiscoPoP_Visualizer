@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: configuration</title>
+    <title>JSDoc: Module: data-reader</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: configuration</h1>
+    <h1 class="page-title">Module: data-reader</h1>
 
     
 
@@ -38,7 +38,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Module for saving and reading configuration settings to the config file</div>
+            <div class="description">Module for reading DiscoPoP's output-files and adding the necessary information to the generated JSON objects</div>
         
 
         
@@ -87,7 +87,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="general_configuration.js.html">general/configuration.js</a>, <a href="general_configuration.js.html#line31">line 31</a>
+        <a href="general_data-reader.js.html">general/data-reader.js</a>, <a href="general_data-reader.js.html#line5">line 5</a>
     </li></ul></dd>
     
 
@@ -137,14 +137,14 @@
 
     
 
-    <h4 class="name" id=".readSetting"><span class="type-signature">(static) </span>readSetting<span class="signature">(settingKey)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id=".buildFromFile"><span class="type-signature">(static) </span>buildFromFile<span class="signature">(mappingFilePath, nodeFilePath)</span><span class="type-signature"> &rarr; {<a href="global.html#DiscoPopData">DiscoPopData</a>}</span></h4>
 
     
 
 
 
 <div class="description">
-    Read the saved value for the given setting key
+    Reads the files output by DiscoPoP and from them makes the necessary changes and creates the objects for the visualizer.
 </div>
 
 
@@ -180,7 +180,7 @@
 
         <tr>
             
-                <td class="name"><code>settingKey</code></td>
+                <td class="name"><code>mappingFilePath</code></td>
             
 
             <td class="type">
@@ -196,7 +196,30 @@
 
             
 
-            <td class="description last">The key for which to get its value</td>
+            <td class="description last">The path to the FileMapping file</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>nodeFilePath</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The path to the Node-Data file</td>
         </tr>
 
     
@@ -237,7 +260,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="general_configuration.js.html">general/configuration.js</a>, <a href="general_configuration.js.html#line51">line 51</a>
+        <a href="general_data-reader.js.html">general/data-reader.js</a>, <a href="general_data-reader.js.html#line16">line 16</a>
     </li></ul></dd>
     
 
@@ -264,7 +287,7 @@
 
         
 <div class="param-desc">
-    The value for the given setting-key
+    The complete data from DiscoPoP required by the visualizer
 </div>
 
 
@@ -275,167 +298,13 @@
     </dt>
     <dd>
         
-<span class="param-type">string</span>
+<span class="param-type"><a href="global.html#DiscoPopData">DiscoPopData</a></span>
 
 
     </dd>
 </dl>
 
     
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".saveSetting"><span class="type-signature">(static) </span>saveSetting<span class="signature">(settingKey, settingValue)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Save the setting to the settings file
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>settingKey</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The key of the setting</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>settingValue</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The value to be set for the setting</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="general_configuration.js.html">general/configuration.js</a>, <a href="general_configuration.js.html#line41">line 41</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

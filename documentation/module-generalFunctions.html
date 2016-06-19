@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: configuration</title>
+    <title>JSDoc: Module: generalFunctions</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: configuration</h1>
+    <h1 class="page-title">Module: generalFunctions</h1>
 
     
 
@@ -38,7 +38,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Module for saving and reading configuration settings to the config file</div>
+            <div class="description">A module containing some general, independent functions</div>
         
 
         
@@ -87,7 +87,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="general_configuration.js.html">general/configuration.js</a>, <a href="general_configuration.js.html#line31">line 31</a>
+        <a href="general_generalFunctions.js.html">general/generalFunctions.js</a>, <a href="general_generalFunctions.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -137,14 +137,14 @@
 
     
 
-    <h4 class="name" id=".readSetting"><span class="type-signature">(static) </span>readSetting<span class="signature">(settingKey)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id=".humanFileSize"><span class="type-signature">(static) </span>humanFileSize<span class="signature">(bytes, si)</span><span class="type-signature"> &rarr; {string}</span></h4>
 
     
 
 
 
 <div class="description">
-    Read the saved value for the given setting key
+    Makes a more readable data-number
 </div>
 
 
@@ -180,13 +180,13 @@
 
         <tr>
             
-                <td class="name"><code>settingKey</code></td>
+                <td class="name"><code>bytes</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">number</span>
 
 
             
@@ -196,7 +196,30 @@
 
             
 
-            <td class="description last">The key for which to get its value</td>
+            <td class="description last">The number to be changed</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>si</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Defines whether the given number shall be considered as bytes (true) or bits (false)</td>
         </tr>
 
     
@@ -237,7 +260,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="general_configuration.js.html">general/configuration.js</a>, <a href="general_configuration.js.html#line51">line 51</a>
+        <a href="general_generalFunctions.js.html">general/generalFunctions.js</a>, <a href="general_generalFunctions.js.html#line12">line 12</a>
     </li></ul></dd>
     
 
@@ -264,7 +287,7 @@
 
         
 <div class="param-desc">
-    The value for the given setting-key
+    A more readable representation of the given number
 </div>
 
 
@@ -290,14 +313,14 @@
 
     
 
-    <h4 class="name" id=".saveSetting"><span class="type-signature">(static) </span>saveSetting<span class="signature">(settingKey, settingValue)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".rgbToHex"><span class="type-signature">(static) </span>rgbToHex<span class="signature">(r, g, b)</span><span class="type-signature"> &rarr; {String}</span></h4>
 
     
 
 
 
 <div class="description">
-    Save the setting to the settings file
+    Converts values for red green and blue to a hex representation
 </div>
 
 
@@ -333,13 +356,13 @@
 
         <tr>
             
-                <td class="name"><code>settingKey</code></td>
+                <td class="name"><code>r</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Number</span>
 
 
             
@@ -349,20 +372,20 @@
 
             
 
-            <td class="description last">The key of the setting</td>
+            <td class="description last">The value for red ([0-255])</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>settingValue</code></td>
+                <td class="name"><code>g</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Number</span>
 
 
             
@@ -372,7 +395,30 @@
 
             
 
-            <td class="description last">The value to be set for the setting</td>
+            <td class="description last">The value for green ([0-255])</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The value for blue ([0-255])</td>
         </tr>
 
     
@@ -413,7 +459,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="general_configuration.js.html">general/configuration.js</a>, <a href="general_configuration.js.html#line41">line 41</a>
+        <a href="general_generalFunctions.js.html">general/generalFunctions.js</a>, <a href="general_generalFunctions.js.html#line33">line 33</a>
     </li></ul></dd>
     
 
@@ -436,6 +482,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The hex representation of the input color-values
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">String</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
