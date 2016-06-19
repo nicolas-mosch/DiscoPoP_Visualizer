@@ -227,6 +227,9 @@ module.exports = {
     // get compute and set heatFactor
     _.each(fileContents, function(node) {
       node.heatFactor = ((node.readDataSize + node.writeDataSize) / 2) / midCuDataSize;
+      if(node.heatFactor > 1){
+        node.heatFactor = 1;
+      }
     });
     var end = new Date().getTime();
     var time = end - start;

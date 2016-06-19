@@ -7,7 +7,6 @@ const ipc = require("electron").ipcMain;
 var _ = require('lodash/core');
 var configuration = require('./js/general/configuration.js');
 var dataReader = require('./js/general/data-reader.js');
-var vizWriter = require('./js/general/vizWriter.js');
 var dataInitializer = require('./js/general/data-initializer.js');
 var GraphController = require('./js/controllers/graph.js');
 
@@ -33,7 +32,7 @@ var template = [{
     }
   }, {
     label: 'Open DevTools',
-    accelerator: 'CmdOrCtrl+T',
+    accelerator: 'F12',
     role: 'import',
     click: function(item, focusedWindow) {
       mainWindow.webContents.openDevTools();
@@ -161,7 +160,7 @@ function importFiles() {
 
   mainWindow.webContents.on('did-finish-load', function() {
     var data = dataReader.buildFromFile(mappingPath, filePaths[0]);
-    mainWindow.webContents.send('load-data', data.nodeData);
+    mainWindow.webContents.send('load-data', data);
 
     fileNodeIntervalTrees = dataInitializer.prepareData(data);
     fileMaps = data.fileMapping;

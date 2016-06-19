@@ -193,6 +193,7 @@ class CuNode extends Node {
       this._functionCalls = [];
       this._successors = [];
       this._predecessors = [];
+      this._depsOn = false;
     }
     /**
      * Add a successor CU to this node, and add this node to the predecessors of the added CU

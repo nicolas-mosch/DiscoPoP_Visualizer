@@ -6,20 +6,14 @@ global.jQuery = require('jquery');
 window.$ = require('jquery');
 require('bootstrap');
 var BootstrapMenu = require('bootstrap-menu');
-var sizeof = require('sizeof');
 var Handlebars = require('handlebars');
-var GraphController = require('../js/controllers/graph');
 var EditorController = require('../js/controllers/editor');
 var dataInitializer = require('../js/general/data-initializer');
 var generalFunctions = require('../js/general/generalFunctions');
-var dotGenerator = require('../js/general/dotGenerator');
-var Viz = require('../node_modules/viz.js/viz.js');
 var configuration = require('../js/general/configuration');
 
-var nodeData;
-var highlightedNode;
+var nodeData, fileMaps, fileNodeIntervalTrees;
 var editorController;
-var legendController;
 
 ipc.on('alert', function(event, message) {
   alert(message);
@@ -29,17 +23,28 @@ ipc.on('clearGraph', function(event, message) {
   clearGraph();
 });
 
+/**
+ * Loads the required data
+ * TODO: test without loading data client-side (fetch everything from backend)
+ */
 ipc.on('load-data', function(event, data) {
-  nodeData = data;
-  console.log(nodeData);
+  fileNodeIntervalTrees = dataInitializer.prepareData(data,  true);
+  nodeData = data.nodeData;
+  fileMaps = data.fileMapping;
+  editorController = new EditorController(fileMaps);
 });
 
+/**
+ * Receives a string containing the html-markup (as svg) of the new graph to be rendered
+ */
 ipc.on('update-graph', function(event, svg) {
   $("#flow-graph-container").html(svg);
   var svg = d3.select("#flow-graph-container svg");
   var inner = d3.select("#graph0");
 
-  var zoom = d3.behavior.zoom().on("zoom", function() {
+  // set zoom
+  // TODO: Keep previous scale. Implement Pan-To-Node option
+  var zoom = d3.behavior.zoom().on("zoom", function(panToNode) {
     inner.attr(
       "transform",
       "translate(" + d3.event.translate + ")" + "scale(" + d3.event.scale + ")"
@@ -52,39 +57,51 @@ ipc.on('update-graph', function(event, svg) {
   colorGraph();
 });
 
-
+/**
+ * Set the colors of the graph's elements
+ */
 function colorGraph() {
   var inner = d3.select("#graph0");
 
   inner.selectAll('g.cu-node:not(.selected-node) polygon').style("fill", configuration.readSetting('cuColorFill'));
-    $(".cu-node-label").css("color", configuration.readSetting('cuColorLabel'));
+  $(".cu-node-label").css("color", configuration.readSetting('cuColorLabel'));
 
-    inner.selectAll('g.function-node:not(.selected-node) polygon').style("fill", configuration.readSetting('functionColorFill'));
-    $(".function-node-label").css("color", configuration.readSetting('functionColorLabel'));
+  inner.selectAll('g.function-node:not(.selected-node) polygon').style("fill", configuration.readSetting('functionColorFill'));
+  $(".function-node-label").css("color", configuration.readSetting('functionColorLabel'));
 
-    inner.selectAll('g.loop-node:not(.selected-node) ellipse').style("fill", configuration.readSetting('loopColorFill'));
-    inner.selectAll('g.loop-node:not(.selected-node) polygon').style("fill", configuration.readSetting('loopColorFill'));
-    $(".loop-node-label").css("color", configuration.readSetting('loopColorLabel'));
+  inner.selectAll('g.loop-node:not(.selected-node) polygon').style("fill", configuration.readSetting('loopColorFill'));
+  inner.selectAll('g.loop-node:not(.selected-node) ellipse').style("fill", configuration.readSetting('loopColorFill'));
+  $(".loop-node-label").css("color", configuration.readSetting('loopColorLabel'));
 
-    inner.selectAll('g.library-function-node:not(.selected-node) polygon').style("fill", configuration.readSetting('libraryFunctionColorFill'));
-    $(".library-function-node-label").css("color", configuration.readSetting('libraryFunctionColorLabel'));
+  inner.selectAll('g.library-function-node:not(.selected-node) polygon').style("fill", configuration.readSetting('libraryFunctionColorFill'));
+  $(".library-function-node-label").css("color", configuration.readSetting('libraryFunctionColorLabel'));
 
-    inner.selectAll('g.default-node:not(.selected-node) polygon').style("fill", configuration.readSetting('defaultColorFill'));
-    $(".default-node-label").css("color", configuration.readSetting('defaultColorLabel'));
+  inner.selectAll('g.default-node:not(.selected-node) polygon').style("fill", configuration.readSetting('defaultColorFill'));
+  $(".default-node-label").css("color", configuration.readSetting('defaultColorLabel'));
 
-    inner.selectAll('g.selected-node polygon').style("fill", configuration.readSetting('selectedNodeColorFill'));
-    $(".selected-node-label").css("color", configuration.readSetting('selectedNodeColorLabel'));
+  inner.selectAll('g.selected-node polygon').style("fill", configuration.readSetting('selectedNodeColorFill'));
+  inner.selectAll('g.selected-node ellipse').style("fill", configuration.readSetting('selectedNodeColorFill'));
+  $(".selected-node-label").css("color", configuration.readSetting('selectedNodeColorLabel'));
 
-    //  Edges
-    inner.selectAll('g.flow-edge path')
-      .style("stroke", configuration.readSetting('flowEdgeFill'))
-      .style("stroke-width", configuration.readSetting('flowEdgeWidth'));
-    inner.selectAll('g.dependency-edge path')
-      .style("stroke", configuration.readSetting('dependencyEdgeFill'))
-      .style("stroke-width", configuration.readSetting('dependencyEdgeWidth'));
-    inner.selectAll('g.function-call-edge path')
-      .style("stroke", configuration.readSetting('functionCallEdgeFill'))
-      .style("stroke-width", configuration.readSetting('functionCallEdgeWidth'));
+  //  Edges
+  inner.selectAll('g.flow-edge path')
+    .style("stroke", configuration.readSetting('flowEdgeFill'))
+    .style("stroke-width", configuration.readSetting('flowEdgeWidth'));
+  inner.selectAll('g.flow-edge polygon')
+    .style("stroke", configuration.readSetting('flowEdgeFill'))
+    .style("fill", configuration.readSetting('flowEdgeWidth'));
+  inner.selectAll('g.dependency-edge path')
+    .style("stroke", configuration.readSetting('dependencyEdgeFill'))
+    .style("stroke-width", configuration.readSetting('dependencyEdgeWidth'));
+  inner.selectAll('g.dependency-edge polygon')
+    .style("stroke", configuration.readSetting('dependencyEdgeFill'))
+    .style("fill", configuration.readSetting('dependencyEdgeWidth'));
+  inner.selectAll('g.function-call-edge path')
+    .style("stroke", configuration.readSetting('functionCallEdgeFill'))
+    .style("stroke-width", configuration.readSetting('functionCallEdgeWidth'));
+  inner.selectAll('g.function-call-edge polygon')
+    .style("stroke", configuration.readSetting('functionCallEdgeFill'))
+    .style("fill", configuration.readSetting('functionCallEdgeWidth'));
 
 
 }
@@ -143,14 +160,20 @@ ipc.on('init-listeners', function(event) {
   graphContainer.delegate('g.node, g.cluster', 'click', function(e) {
     e.stopImmediatePropagation();
     var node = nodeData[this.id];
+
+    // Highlight/Unhighlight
     if ($(this).hasClass('selected-node')) {
-      highlightedNodeId = null;
+      $('g.selected-node').removeClass('selected-node');
+      colorGraph();
       return;
     }
+    $('g.selected-node').removeClass('selected-node');
     editorController.unhighlight();
     editorController.highlightNodeInCode(node);
-    highlightedNodeId = node.id;
+    $(this).addClass('selected-node');
+    colorGraph();
 
+    // Create Node-Info Table
     var type;
     switch (node.type) {
       case 0:
@@ -168,19 +191,17 @@ ipc.on('init-listeners', function(event) {
       default:
         type = "undefined";
     }
-
     var data = {
       file: fileMaps[node.fileId].fileName,
       lines: node.startLine + ' - ' + node.endLine,
       type: type
     }
 
+    // Create Dependencies-Table
     var cuDependencies = [];
-
     if (!node.type) {
       data.read = generalFunctions.humanFileSize(node.readDataSize, true);
       data.write = generalFunctions.humanFileSize(node.writeDataSize, true);
-
       // add dependencies to template (true: read, false: write)
       _.each(node.dependencies, function(dependency) {
         cuDependencies.push({
@@ -201,17 +222,15 @@ ipc.on('init-listeners', function(event) {
         data.arguments += variable.name + ' (' + variable.type + '), ';
       });
     }
-
     if (node.type == 1 || node.type == 3) {
       data.name = node.name;
     }
-
     if (node.type == 2) {
       data.Loop_Level = node.level;
     }
 
 
-    // update node info table
+    // Update node info table
     $("#node-info-available-icon").css('color', '	#00FF00');
     var template = Handlebars.compile(document.getElementById('cuInfoTableTemplate').innerHTML);
     var nodeInfoData = {
@@ -246,12 +265,7 @@ ipc.on('init-listeners', function(event) {
     var cuNodes, loopNodes, functionNodes;
 
     if (node.children.length) {
-      graphController.resetViewAndChange(function() {
-        graphController.expandNode(node);
-        graphController.hideAncestors();
-        graphController.redraw();
-        graphController.panToNode(node);
-      });
+      ipc.send('expandNode', node.id);
     }
   });
 
@@ -267,13 +281,13 @@ ipc.on('init-listeners', function(event) {
     node = nodeData[this.id];
     file = fileMaps[node.fileId].fileName;
     if (node.type == 1) {
-      $('#tooltip-container').html('&#8618; <label style="font-weight: bold;>"' + node.name + '</label><br>' + file);
+      $('#tooltip-container').html('&#8618; <label style="font-weight: bold;">' + node.name + '</label><br>' + file);
     } else if (node.type == 2) {
       $('#tooltip-container').html('&#8635; (' + node.startLine + '-' + node.endLine + ')<br>' + file + '<br>Level: ' + node.level);
     } else {
       return;
     }
-    return tooltip.style("visibility", "visible");
+    tooltip.style("visibility", "visible");
   });
   graphContainer.delegate('g.cluster', 'mousemove', function(event) {
     return tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 20) + "px");
@@ -293,10 +307,7 @@ ipc.on('init-listeners', function(event) {
   };
 
   function toggleGraphDependencies(node) {
-    graphController.resetViewAndChange(function() {
-      graphController.toggleDependencyEdges(node);
-      graphController.redraw();
-    });
+    ipc.send('toggleDependencyEdges', node.id);
   }
 
   // Contextmenu for CU-nodes
@@ -335,11 +346,7 @@ ipc.on('init-listeners', function(event) {
       },
       iconClass: 'glyphicon glyphicon-expand',
       onClick: function(node) {
-        graphController.resetViewAndChange(function() {
-          graphController.toggleFunctionCalls(node);
-          graphController.redraw();
-          graphController.panToNode(node);
-        });
+        ipc.send('toggleFunctionCalls', node.id);
       },
       classNames: function(node) {
         return {
@@ -365,12 +372,7 @@ ipc.on('init-listeners', function(event) {
       },
       iconClass: 'glyphicon glyphicon-expand',
       onClick: function(node) {
-        graphController.resetViewAndChange(function() {
-          graphController.expandNode(node);
-          graphController.hideAncestors();
-          graphController.redraw();
-          graphController.panToNode(node);
-        });
+        ipc.send('expandNode', node.id);
       },
       classNames: function(node) {
         return {
@@ -390,10 +392,7 @@ ipc.on('init-listeners', function(event) {
       },
       iconClass: 'glyphicon glyphicon-expand',
       onClick: function(node) {
-        graphController.resetViewAndChange(function() {
-          graphController.expandAll(node);
-          graphController.redraw();
-        });
+        ipc.send('expandAll', node.id);
       },
       classNames: function(node) {
         return {
@@ -417,12 +416,7 @@ ipc.on('init-listeners', function(event) {
       name: 'Collapse',
       iconClass: 'glyphicon glyphicon-collapse-up',
       onClick: function(node) {
-        graphController.resetViewAndChange(function() {
-          graphController.collapseNode(node);
-          graphController.hideAncestors();
-          graphController.redraw();
-          graphController.panToNode(node);
-        });
+        ipc.send('collapseNode', node.id);
       }
     }, {
       name: 'Toggle Dependencies',
@@ -435,8 +429,14 @@ ipc.on('init-listeners', function(event) {
   var codeMenu = new BootstrapMenu('#code-container #ace-editor', {
     //menuEvent: 'click',
     fetchElementData: function() {
-      var node = fileNodeIntervalTrees[editorController.getCurrentFileID()]
-        .findOne([editorController.getCursorRow() + 1, editorController.getCursorRow() + 1]);
+      try {
+        var node = fileNodeIntervalTrees[editorController.getCurrentFileID()]
+          .findOne([editorController.getCursorRow() + 1, editorController.getCursorRow() + 1]);
+      } catch (err) {
+        console.error(err);
+        console.error('fileNodeIntervalTrees', fileNodeIntervalTrees);
+        console.error(editorController.getCurrentFileID());
+      }
       return node;
     },
     actions: [{
@@ -445,19 +445,9 @@ ipc.on('init-listeners', function(event) {
         return (node != null);
       },
       onClick: function(node) {
-          ipc.send('expandTo', node.id);
-          $('g.node#' + node.id).trigger('click');
-        });
+        ipc.send('expandTo', node.id);
+        $('g.node#' + node.id).trigger('click');
       }
     }]
   });
 });
-
-function unhighlightNode(){
-
-  highlightedNode = null;
-}
-
-function highlightNode(){
-
-}

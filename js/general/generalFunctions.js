@@ -24,17 +24,18 @@ module.exports = {
   },
 
   /**
-   * [rbgToHex description]
-   * @param  {[type]} r [description]
-   * @param  {[type]} g [description]
-   * @param  {[type]} b [description]
-   * @return {[type]}   [description]
+   * Converts values for red green and blue to a hex representation
+   * @param  {Number} r The value for red ([0-255])
+   * @param  {Number} g The value for green ([0-255])
+   * @param  {Number} b The value for blue ([0-255])
+   * @return {String}   The hex representation of the input color-values
    */
   rgbToHex: function rgbToHex(r, g, b) {
-    function componentToHex(c) {
-        var hex = c.toString(16);
-        return hex.length == 1 ? "0" + hex : hex;
-    }
-      return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    function byte2Hex (n)
+    {
+      var nybHexString = "0123456789ABCDEF";
+      return String(nybHexString.substr((n >> 4) & 0x0F,1)) + nybHexString.substr(n & 0x0F,1);
+    };
+    return '#' + byte2Hex(r) + byte2Hex(g) + byte2Hex(b);
   }
 }

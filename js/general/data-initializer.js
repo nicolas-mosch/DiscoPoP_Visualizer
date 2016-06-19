@@ -21,7 +21,7 @@ module.exports = {
    * @param  {DiscoPopData} data  The data received from DiscoPoP
    * @return {IntervalTree[]}     The CU interval-trees of each file, organized by their start and end -lines
    */
-  prepareData: function(data) {
+  prepareData: function(data, getIntervalTrees) {
     var intervalTrees = [];
     var i, j;
     var node, classNode, dependency;
@@ -30,7 +30,9 @@ module.exports = {
 
     // --- FileMapping ---
     for (i = 0; i < data.fileMapping.length; i++) {
-      intervalTrees.push(new IntervalTree());
+      if (getIntervalTrees) {
+        intervalTrees.push(new IntervalTree());
+      }
       data.fileMapping[i] = new FileMap(data.fileMapping[i].path, data.fileMapping[i].content);
     }
 
@@ -62,14 +64,11 @@ module.exports = {
     for (i = 0; i < data.nodeData.length; i++) {
       node = data.nodeData[i];
       classNode = nodes[i];
-
       for (j = 0; j < node.childrenNodes.length; j++) {
         try {
           classNode.addChild(nodes[node.childrenNodes[j]]);
-        }catch(error){
-          console.error('Error trying to A to Bs children at in', nodes[node.childrenNodes[j]], classNode, node.childrenNodes[j], node);
-          console.error('Nodes', nodes);
-          //throw error;
+        } catch (error) {
+          console.error(error);
         }
       }
 
@@ -99,7 +98,9 @@ module.exports = {
           classNode.addDependency(new Dependency(nodes[dependency.cu], dependency.sinkLine, dependency.sourceLine, dependency.varName, 0));
         }
         try {
-          intervalTrees[node.fileId].insert([node.startLine, node.endLine], classNode);
+          if (getIntervalTrees) {
+            intervalTrees[node.fileId].insert([node.startLine, node.endLine], classNode);
+          }
         } catch (error) {
           console.error(node.fileId, intervalTrees);
           throw error;
