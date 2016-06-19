@@ -219,7 +219,7 @@ module.exports = {
                       edge = child.id + ' -> ' + functionCall.id;
                       functionCallEdges.push(edge);
                     }
-                  }else{
+                  } else {
                     edge = child.id + ' -> ' + functionCall.id;
                     digraph += '\n' + edge + ' [style=dotted, id="' + edge.replace(' -> ', 't') + '"];';
                   }
@@ -327,38 +327,52 @@ module.exports = {
       }
       console.log('Resulting DOT-String size: ', sizeof.sizeof(digraph, true), digraph.length);
 
-
-
       return svg;
     }
 
 
     function createLabel(node) {
+      function getHeatColor() {
+        var r = Math.floor(255 * node.heatFactor);
+        var b = Math.floor(255 * (1 - node.heatFactor));
+        return generalFunctions.rgbToHex(r, 0, b);
+      }
       var label = "<<TABLE BORDER=\"0\">";
       switch (node.type) {
         case 0:
-          label += "\n<TR><TD>[" + node.startLine + "-" + node.endLine + "]</TD></TR>";
-          label += "\n<TR><TD>Data-Read" + generalFunctions.humanFileSize(node.readDataSize, true) + "</TD></TR>";
-          label += "\n<TR><TD>Data-Written" + generalFunctions.humanFileSize(node.writeDataSize, true) + "</TD></TR>";
-          label += "\n<TR><TD>Data-Read" + generalFunctions.humanFileSize(node.readDataSize, true) + "</TD></TR>";
+          var colspan = 1;
+          if (node.children.length) {
+            colspan++;
+          }
+          if (node.dependencies.length) {
+            colspan++;
+          }
+          label += '\n<TR><TD COLSPAN="' + colspan + '">[' + node.startLine + '-' + node.endLine + ']</TD></TR>';
+          label += '\n<TR><TD COLSPAN="' + colspan + '">Data-Read: ' + generalFunctions.humanFileSize(node.readDataSize, true) + '</TD></TR>';
+          label += '\n<TR><TD COLSPAN="' + colspan + '">Data-Written: ' + generalFunctions.humanFileSize(node.writeDataSize, true) + '</TD></TR><TR>';
+          if (node.children.length) {
+            label += '\n<TD>&#8618;: ' + node.children.length + '</TD>';
+          }
+          label += '<TD><FONT COLOR="' + getHeatColor() + '">&#xf06d;</FONT></TD>';
+          if (node.dependencies.length) {
+            label += '<TD>D: ' + node.dependencies.length + '</TD>';
+          }
+          label += '\n</TR></TABLE>>';
           break;
         case 1:
-          label += "\n<TR><TD>" + node.name + "</TD></TR>";
-          label += "\n<TR><TD>[" + node.startLine + "-" + node.endLine + "]</TD></TR>";
+          label += '\n<TR><TD>' + node.name + '</TD></TR>';
+          label += '\n<TR><TD>[' + node.startLine + '-' + node.endLine + ']</TD></TR>';
+          label += '\n<TR><TD><FONT COLOR="' + getHeatColor() + '">&#xf06d;</FONT></TD></TR>';
+          label += '\n</TABLE>>';
           break;
         case 2:
-          label += "\n<TR><TD>Loop</TD></TR>";
-          label += "\n<TR><TD>[" + node.startLine + "-" + node.endLine + "]</TD></TR>";
+          label += '\n<TR><TD>Loop</TD></TR>';
+          label += '\n<TR><TD>[' + node.startLine + '-' + node.endLine + ']</TD></TR>';
+          label += '\n<TR><TD><FONT COLOR="' + getHeatColor() + '">&#xf06d;</FONT></TD></TR>';
+          label += '\n</TABLE>>';
           break;
         default:
           label = '"' + node.name + '"';
-      }
-
-      if (node.type >= 0 && node.type <= 2) {
-        var r = Math.floor(255 * node.heatFactor);
-        var b = Math.floor(255 * (1 - node.heatFactor));
-        label += "\n<TR><TD><FONT COLOR=\"" + generalFunctions.rgbToHex(r, 0, b) + "\" POINT-SIZE=\"20\">&#xf06d;</FONT></TD></TR>";
-        label += "\n</TABLE>>";
       }
       return label;
     }

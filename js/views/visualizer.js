@@ -28,7 +28,7 @@ ipc.on('clearGraph', function(event, message) {
  * TODO: test without loading data client-side (fetch everything from backend)
  */
 ipc.on('load-data', function(event, data) {
-  fileNodeIntervalTrees = dataInitializer.prepareData(data,  true);
+  fileNodeIntervalTrees = dataInitializer.prepareData(data, true);
   nodeData = data.nodeData;
   fileMaps = data.fileMapping;
   editorController = new EditorController(fileMaps);
@@ -42,8 +42,9 @@ ipc.on('update-graph', function(event, svg) {
   var svg = d3.select("#flow-graph-container svg");
   var inner = d3.select("#graph0");
 
+  var transform = d3.transform(inner.attr('transform'));
+
   // set zoom
-  // TODO: Keep previous scale. Implement Pan-To-Node option
   var zoom = d3.behavior.zoom().on("zoom", function(panToNode) {
     inner.attr(
       "transform",
@@ -54,7 +55,14 @@ ipc.on('update-graph', function(event, svg) {
   // Remove native doubleclick zoom
   svg.on("dblclick.zoom", null);
 
-  colorGraph();
+  // Reset previous zoom-scale and position
+  inner.transition()
+    .duration(50)
+    .call(zoom.translate([transform.translate[0], transform.translate[1]]).scale(transform.scale[0]).event);
+
+    colorGraph();
+    
+  // TODO: Add a Pan-To-Node option after graph is redrawn
 });
 
 /**
