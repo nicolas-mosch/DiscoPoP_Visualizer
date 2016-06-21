@@ -1,4 +1,4 @@
-# DiscoPoP_Frontend
+# DiscoPoP Visualizer
 
 Make sure you have npm installed on your system. 
 
@@ -13,6 +13,9 @@ To start the visualizer:
 ```{r, engine='bash', count_lines}
 npm start
 ```
+
+A version of the visualizer using Graphviz (and Viz.js)
+is available under the graphviz branch.
 
 
 
