@@ -60,16 +60,16 @@ ipc.on('update-graph', function(event, svg) {
     .duration(50)
     .call(zoom.translate([transform.translate[0], transform.translate[1]]).scale(transform.scale[0]).event);
 
-    colorGraph();
-    
+    colorGraph(inner);
+    colorGraph(d3.select("#legend-graph"));
+
   // TODO: Add a Pan-To-Node option after graph is redrawn
 });
 
 /**
  * Set the colors of the graph's elements
  */
-function colorGraph() {
-  var inner = d3.select("#graph0");
+function colorGraph(inner) {
 
   inner.selectAll('g.cu-node:not(.selected-node) polygon').style("fill", configuration.readSetting('cuColorFill'));
   $(".cu-node-label").css("color", configuration.readSetting('cuColorLabel'));
@@ -110,8 +110,6 @@ function colorGraph() {
   inner.selectAll('g.function-call-edge polygon')
     .style("stroke", configuration.readSetting('functionCallEdgeFill'))
     .style("fill", configuration.readSetting('functionCallEdgeWidth'));
-
-
 }
 
 
@@ -141,13 +139,10 @@ ipc.on('init-listeners', function(event) {
   // Legend
   $("#show-legend-button").on('click', function() {
     $("#legend-table").slideToggle("medium", function() {
-      var legendCanvas = d3.select("#legend-container svg");
-      legendCanvas.selectAll("*").remove();
-      legendController = new GraphController(legendCanvas, [], false);
-      legendController.createLegendGraph();
-      legendController.redraw();
+      
     });
   });
+
 
 
   // Select a file from file-tree
