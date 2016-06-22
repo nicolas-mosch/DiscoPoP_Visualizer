@@ -167,7 +167,7 @@ function importFiles() {
 
     graphController = new GraphController.controller(data.nodeData, data.rootNodes);
     mainWindow.webContents.send('init-listeners');
-    mainWindow.webContents.send('update-graph', graphController.generateSvgGraph());
+    mainWindow.webContents.send('update-graph', graphController.generateSvgGraph(data.rootNodes));
   });
   mainWindow.loadURL('file://' + __dirname + '/windows/visualizer.html');
 }

@@ -645,6 +645,7 @@ class FileMap {
   }
 }
 
+
 module.exports = {
   Node: Node,
   CuNode: CuNode,
@@ -654,5 +655,5 @@ module.exports = {
   NodeVariable: NodeVariable,
   FunctionCall: FunctionCall,
   Dependency: Dependency,
-  FileMap: FileMap
+  FileMap: FileMap,
 };

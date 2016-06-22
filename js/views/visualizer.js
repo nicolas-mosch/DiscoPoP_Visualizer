@@ -139,7 +139,7 @@ ipc.on('init-listeners', function(event) {
   // Legend
   $("#show-legend-button").on('click', function() {
     $("#legend-table").slideToggle("medium", function() {
-      
+
     });
   });
 
@@ -167,14 +167,13 @@ ipc.on('init-listeners', function(event) {
     // Highlight/Unhighlight
     if ($(this).hasClass('selected-node')) {
       $('g.selected-node').removeClass('selected-node');
-      colorGraph();
+      colorGraph(d3.select('#graph0'));
       return;
     }
     $('g.selected-node').removeClass('selected-node');
     editorController.unhighlight();
     editorController.highlightNodeInCode(node);
-    $(this).addClass('selected-node');
-    colorGraph();
+    highlightGraphNode($(this));
 
     // Create Node-Info Table
     var type;
@@ -455,3 +454,10 @@ ipc.on('init-listeners', function(event) {
   });
 
 });
+
+
+function highlightGraphNode(node){
+  console.log('higlighting', node);
+  node.addClass('selected-node');
+  colorGraph(d3.select('#graph0'));
+}

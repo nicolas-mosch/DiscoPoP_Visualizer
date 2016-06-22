@@ -1,3 +1,5 @@
+'use strict'
+
 var _ = require('lodash');
 var graphlib = require('graphlib');
 var configuration = require('../general/configuration');
@@ -7,11 +9,99 @@ const ipc = require("electron").ipcMain;
 var fs = require('fs');
 var Viz = require('../../node_modules/viz.js/viz.js');
 /**
+ * Class for keeping track of the node-expansions done by the user.
+ */
+class ExpansionPath {
+  constructor() {
+    this._expandedNodesPerLevel = [];
+    this._expansionLevelsPerNode = {};
+  }
+
+  /**
+   * Add a node to the expansion paths
+   * @param {Node} node The node to be added
+   */
+  addNode(node) {
+    if (!_.has(this._expansionLevelsPerNode, node.id)) {
+      var that = this;
+      var parentLevel = -1;
+      _.each(node.parents, function(parentNode) {
+        if (_.has(that._expansionLevelsPerNode, parentNode.id) && that._expansionLevelsPerNode[parentNode.id] > parentLevel) {
+          parentLevel = that._expansionLevelsPerNode[parentNode.id];
+        }
+      });
+      parentLevel++;
+      if (this._expandedNodesPerLevel.length <= parentLevel) {
+        this._expandedNodesPerLevel[parentLevel] = [];
+      }
+      this._expandedNodesPerLevel[parentLevel].push(node);
+      this._expansionLevelsPerNode[node.id] = parentLevel;
+    }
+  }
+
+  /**
+   * Remove a node from the expansion paths
+   * @param  {Node} node The node to be removed
+   */
+  removeNode(node) {
+    if (_.has(this._expansionLevelsPerNode, node.id)) {
+      var level = this._expansionLevelsPerNode[node.id];
+      var levelNodes = this._expandedNodesPerLevel[level];
+      var index = levelNodes.indexOf(node);
+      this._expandedNodesPerLevel[level].splice(index, 1);
+      delete this._expansionLevelsPerNode[node.id];
+      if (!this._expandedNodesPerLevel[level].length) {
+        this._expandedNodesPerLevel.splice(level);
+      }
+    }
+  }
+
+  /**
+   * Check whether there are any other expanded nodes at the same level as the given node
+   * @param  {Node}  node The node to check for
+   * @return {Boolean}      The result
+   */
+  hasSiblings(node) {
+    var level = this._expandedNodesPerLevel[this._expansionLevelsPerNode[node.id]];
+    return level.length > 1;
+  }
+
+  /**
+   * True if the given node is in an expansion-path (has been expanded)
+   * @param  {Node}  node The node to check for
+   * @return {Boolean}    The result
+   */
+  hasNode(node) {
+    return _.has(this._expansionLevelsPerNode, node.id);
+  }
+
+  /**
+   * Returns the expansion-level of the given node
+   * @param  {Node} node The node for which to get the level
+   * @return {number}    The node's expansion-level
+   */
+  getLevel(node) {
+    return this._expansionLevelsPerNode[node.id];
+  }
+
+  /**
+   * An array containing the nodes which were expanded at each level (in order)
+   * @type  {Node[][]}
+   */
+  expandedNodesPerLevel(level) {
+    return this._expandedNodesPerLevel[level];
+  }
+}
+
+/**
  * Module for interacting with the graph and updating the displayed one.
  * @module graphController
  */
 module.exports = {
   controller: function controller(nodes, rootNodes) {
+
+    var expansionPath = new ExpansionPath();
+
     function findFirstVisibleAncestor(node) {
       if (!node.parents.length)
         return false;
@@ -35,7 +125,7 @@ module.exports = {
      */
     ipc.on('toggleFunctionCalls', function(event, nodeId) {
       if (nodes[nodeId].collapsed) {
-        nodes[nodeId].expand();
+        expansionPath.addNode(nodes[nodeId].expand());
       } else {
         nodes[nodeId].collapse();
       }
@@ -63,14 +153,31 @@ module.exports = {
       console.log('expandOne', nodeId);
       var node = nodes[nodeId];
       if (node.type >= 0 && node.type < 3) {
+        expansionPath.addNode(node);
+        var firstVisibleLevel = expansionPath.getLevel(node) - configuration.readSetting('visibleParents');
         node.expand();
-        event.sender.send('update-graph', generateSvgGraph());
+        if (firstVisibleLevel < 0) {
+          event.sender.send('update-graph', generateSvgGraph(rootNodes));
+        } else {
+          event.sender.send('update-graph', generateSvgGraph(expansionPath.expandedNodesPerLevel(firstVisibleLevel)));
+        }
       }
     });
 
     ipc.on('collapseNode', function(event, nodeId) {
-      nodes[nodeId].collapse();
-      event.sender.send('update-graph', generateSvgGraph());
+      var node = nodes[nodeId];
+      var firstVisibleLevel = expansionPath.getLevel(node) - configuration.readSetting('visibleParents');
+      if (!expansionPath.hasSiblings(node)) {
+        firstVisibleLevel--;
+      }
+      expansionPath.removeNode(node);
+      node.collapse();
+
+      if (firstVisibleLevel < 0) {
+        event.sender.send('update-graph', generateSvgGraph(rootNodes));
+      } else {
+        event.sender.send('update-graph', generateSvgGraph(expansionPath.expandedNodesPerLevel(firstVisibleLevel)));
+      }
     });
 
     ipc.on('expandAll', function(event, nodeId) {
@@ -83,6 +190,7 @@ module.exports = {
         node = stack.pop();
         if (seen.indexOf(node.id) == -1) {
           seen.push(node.id);
+          expansionPath.addNode(node);
           node.expand();
           _.each(node.children, function(childNode) {
             if (childNode.children.length) {
@@ -92,7 +200,7 @@ module.exports = {
         }
       }
       while (stack.length);
-      event.sender.send('update-graph', generateSvgGraph());
+      event.sender.send('update-graph', generateSvgGraph(rootNodes));
     });
 
     ipc.on('fullGraph', function(event) {
@@ -106,6 +214,7 @@ module.exports = {
         node = stack.pop();
         if (seen.indexOf(node.id) == -1) {
           seen.push(node.id);
+          expansionPath.addNode(node);
           node.expand();
           _.each(node.children, function(childNode) {
             if (childNode.children.length) {
@@ -115,7 +224,7 @@ module.exports = {
         }
       }
       while (stack.length);
-      event.sender.send('update-graph', generateSvgGraph());
+      event.sender.send('update-graph', generateSvgGraph(rootNodes));
     });
 
     ipc.on('expandTo', function(event, nodeId) {
@@ -127,9 +236,16 @@ module.exports = {
         currentNode = currentNode.parents[0];
       }
       while (queue.length) {
-        queue.pop().expand();
+        currentNode = queue.pop();
+        expansionPath.addNode(currentNode);
+        currentNode.expand();
       }
-      event.sender.send('update-graph', generateSvgGraph());
+      var firstVisibleLevel = expansionPath.getLevel(currentNode) - configuration.readSetting('visibleParents');
+      if (firstVisibleLevel < 0) {
+        event.sender.send('update-graph', generateSvgGraph(rootNodes));
+      } else {
+        event.sender.send('update-graph', generateSvgGraph(expansionPath.expandedNodesPerLevel(firstVisibleLevel)));
+      }
     });
 
     /**
@@ -137,9 +253,10 @@ module.exports = {
      */
     ipc.on('resetGraph', function(event) {
       _.each(nodes, function(node) {
+        expansionPath.removeNode(node);
         node.collapse();
       });
-      event.sender.send('update-graph', generateSvgGraph());
+      event.sender.send('update-graph', generateSvgGraph(rootNodes));
     });
 
     ipc.on('nodeInfo', function(nodeId) {
@@ -150,7 +267,7 @@ module.exports = {
      * Generates the svg HTML-Markup for the full displayed graph
      * @return {String} the string containing the HTML-Markup for the svg
      */
-    function generateSvgGraph() {
+    function generateSvgGraph(startNodes) {
       /*
         digraph in DOT format. Used as input for Viz.js
        */
@@ -163,7 +280,7 @@ module.exports = {
       var dependencyEdges = [];
       var visibleAncestor;
 
-      _.each(rootNodes, function(root) {
+      _.each(startNodes, function(root) {
         functionNodes.push(root);
       });
 
