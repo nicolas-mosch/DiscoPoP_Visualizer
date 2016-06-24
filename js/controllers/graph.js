@@ -1,7 +1,6 @@
 'use strict'
 
 var _ = require('lodash');
-var graphlib = require('graphlib');
 var configuration = require('../general/configuration');
 var generalFunctions = require('../general/generalFunctions');
 var sizeof = require('sizeof');
@@ -13,6 +12,11 @@ var Viz = require('../../node_modules/viz.js/viz.js');
  */
 class ExpansionPath {
   constructor() {
+    this._expandedNodesPerLevel = [];
+    this._expansionLevelsPerNode = {};
+  }
+
+  reset(){
     this._expandedNodesPerLevel = [];
     this._expansionLevelsPerNode = {};
   }
@@ -253,7 +257,7 @@ module.exports = {
      */
     ipc.on('resetGraph', function(event) {
       _.each(nodes, function(node) {
-        expansionPath.removeNode(node);
+        expansionPath.reset();
         node.collapse();
       });
       event.sender.send('update-graph', generateSvgGraph(rootNodes));
