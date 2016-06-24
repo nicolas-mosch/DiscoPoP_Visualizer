@@ -617,7 +617,7 @@ class GraphController {
         } else if (that._graph.hasNode(childNode.id)) {
           // For collapsing CU-nodes, only collapase and remove the function-call function-nodes if they are not being pointed at by other CU-nodes
           graphNode = that._graph.node(childNode.id);
-          if (!graphNode.collapsed && that._graph.inEdges(childNode.entry).length == 1) {
+          if (!graphNode.collapsed && that._graph.inEdges(childNode.entry.id).length == 1) {
             that.collapseNode(childNode);
           }
           if (that._graph.inEdges(childNode.id).length == 1) {
