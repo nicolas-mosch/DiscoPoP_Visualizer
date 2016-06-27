@@ -111,8 +111,9 @@ text {
 .node {
   cursor: pointer;
 }
-.dependency-label{
-  size: 20px;
+
+.link-to-line{
+  color: black;
 }
 
 
