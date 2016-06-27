@@ -11,14 +11,23 @@ var Viz = require('../../node_modules/viz.js/viz.js');
  * Class for keeping track of the node-expansions done by the user.
  */
 class ExpansionPath {
-  constructor() {
+  constructor(rootNodes) {
+    this._expandedNodesPerLevel = [];
+    this._expansionLevelsPerNode = {};
+    this._rootNodes = rootNodes;
+  }
+
+  reset() {
     this._expandedNodesPerLevel = [];
     this._expansionLevelsPerNode = {};
   }
 
-  reset(){
-    this._expandedNodesPerLevel = [];
-    this._expansionLevelsPerNode = {};
+  getVisibleRootNodes() {
+    var level = this._expandedNodesPerLevel.length - configuration.readSetting('visibleParents');
+    if (level < 0) {
+      return this._rootNodes;
+    }
+    return this._expandedNodesPerLevel[level];
   }
 
   /**
@@ -40,6 +49,7 @@ class ExpansionPath {
       }
       this._expandedNodesPerLevel[parentLevel].push(node);
       this._expansionLevelsPerNode[node.id] = parentLevel;
+      node.expand();
     }
   }
 
@@ -57,43 +67,8 @@ class ExpansionPath {
       if (!this._expandedNodesPerLevel[level].length) {
         this._expandedNodesPerLevel.splice(level);
       }
+      node.collapse();
     }
-  }
-
-  /**
-   * Check whether there are any other expanded nodes at the same level as the given node
-   * @param  {Node}  node The node to check for
-   * @return {Boolean}      The result
-   */
-  hasSiblings(node) {
-    var level = this._expandedNodesPerLevel[this._expansionLevelsPerNode[node.id]];
-    return level.length > 1;
-  }
-
-  /**
-   * True if the given node is in an expansion-path (has been expanded)
-   * @param  {Node}  node The node to check for
-   * @return {Boolean}    The result
-   */
-  hasNode(node) {
-    return _.has(this._expansionLevelsPerNode, node.id);
-  }
-
-  /**
-   * Returns the expansion-level of the given node
-   * @param  {Node} node The node for which to get the level
-   * @return {number}    The node's expansion-level
-   */
-  getLevel(node) {
-    return this._expansionLevelsPerNode[node.id];
-  }
-
-  /**
-   * An array containing the nodes which were expanded at each level (in order)
-   * @type  {Node[][]}
-   */
-  expandedNodesPerLevel(level) {
-    return this._expandedNodesPerLevel[level];
   }
 }
 
@@ -103,8 +78,7 @@ class ExpansionPath {
  */
 module.exports = {
   controller: function controller(nodes, rootNodes) {
-
-    var expansionPath = new ExpansionPath();
+    var expansionPath = new ExpansionPath(rootNodes);
 
     function findFirstVisibleAncestor(node) {
       if (!node.parents.length)
@@ -129,11 +103,11 @@ module.exports = {
      */
     ipc.on('toggleFunctionCalls', function(event, nodeId) {
       if (nodes[nodeId].collapsed) {
-        expansionPath.addNode(nodes[nodeId].expand());
+        expansionPath.addNode(nodes[nodeId]);
       } else {
-        nodes[nodeId].collapse();
+        expansionPath.removeNode(nodes[nodeId]);
       }
-      event.sender.send('update-graph', generateSvgGraph());
+      event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
     });
 
     /**
@@ -143,14 +117,8 @@ module.exports = {
       var node = nodes[nodeId];
       if (node.type == 0) {
         nodes[nodeId].toggleDependencyVisibility();
-        event.sender.send('update-graph', generateSvgGraph());
+        event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
       }
-      /* else if (node.type < 3) {
-              var recursiveCall = this;
-              _.each(node.children, function(child) {
-                recursiveCall(child);
-              });
-            }*/
     });
 
     ipc.on('expandNode', function(event, nodeId) {
@@ -158,30 +126,14 @@ module.exports = {
       var node = nodes[nodeId];
       if (node.type >= 0 && node.type < 3) {
         expansionPath.addNode(node);
-        var firstVisibleLevel = expansionPath.getLevel(node) - configuration.readSetting('visibleParents');
-        node.expand();
-        if (firstVisibleLevel < 0) {
-          event.sender.send('update-graph', generateSvgGraph(rootNodes));
-        } else {
-          event.sender.send('update-graph', generateSvgGraph(expansionPath.expandedNodesPerLevel(firstVisibleLevel)));
-        }
+        event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
       }
     });
 
     ipc.on('collapseNode', function(event, nodeId) {
       var node = nodes[nodeId];
-      var firstVisibleLevel = expansionPath.getLevel(node) - configuration.readSetting('visibleParents');
-      if (!expansionPath.hasSiblings(node)) {
-        firstVisibleLevel--;
-      }
       expansionPath.removeNode(node);
-      node.collapse();
-
-      if (firstVisibleLevel < 0) {
-        event.sender.send('update-graph', generateSvgGraph(rootNodes));
-      } else {
-        event.sender.send('update-graph', generateSvgGraph(expansionPath.expandedNodesPerLevel(firstVisibleLevel)));
-      }
+      event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
     });
 
     ipc.on('expandAll', function(event, nodeId) {
@@ -204,7 +156,7 @@ module.exports = {
         }
       }
       while (stack.length);
-      event.sender.send('update-graph', generateSvgGraph(rootNodes));
+      event.sender.send('update-graph', generateSvgGraph([node]));
     });
 
     ipc.on('fullGraph', function(event) {
@@ -272,6 +224,11 @@ module.exports = {
      * @return {String} the string containing the HTML-Markup for the svg
      */
     function generateSvgGraph(startNodes) {
+      var log = "StartNodes: ";
+      _.each(startNodes, function(val) {
+        log += val.id + ", ";
+      });
+      console.log(log);
       /*
         digraph in DOT format. Used as input for Viz.js
        */
@@ -285,7 +242,11 @@ module.exports = {
       var visibleAncestor;
 
       _.each(startNodes, function(root) {
-        functionNodes.push(root);
+        if (root.type == 0) {
+          functionNodes = functionNodes.concat(root.children);
+        } else {
+          functionNodes.push(root);
+        }
       });
 
       /**
@@ -398,6 +359,8 @@ module.exports = {
         });
         var end = new Date().getTime();
         console.log('Execution-Time of Layout-Calculation: ', end - start);
+
+
         // Hack for adding classes to svg nodes (not supported by graphviz)
         var node, nodeClass;
         _.each(checkedNodes, function(nodeId) {

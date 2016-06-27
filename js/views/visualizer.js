@@ -457,7 +457,7 @@ ipc.on('init-listeners', function(event) {
 
 
 function highlightGraphNode(node){
-  console.log('higlighting', node);
+  console.log('higlighting', nodeData[node.attr("id")]);
   node.addClass('selected-node');
   colorGraph(d3.select('#graph0'));
 }
