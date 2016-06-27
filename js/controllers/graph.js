@@ -156,7 +156,7 @@ module.exports = {
         }
       }
       while (stack.length);
-      event.sender.send('update-graph', generateSvgGraph([node]));
+      event.sender.send('update-graph', generateSvgGraph([nodes[nodeId]]));
     });
 
     ipc.on('fullGraph', function(event) {
