@@ -151,7 +151,6 @@ function importFiles() {
 
   if (filePaths == null)
     return;
-  mainWindow.setProgressBar(0.5);
   var data = dataReader.buildFromFile(mappingPath, filePaths[0]);
 
   mainWindow.webContents.on('did-finish-load', function() {

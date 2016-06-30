@@ -600,6 +600,14 @@ class GraphController {
               that._graph.setEdge(edge.v, node.id, that._graph.edge(edge));
             }
           });
+		  _.each(that._graph.outEdges(childNode.id), function(edge) {
+            graphNode = that._graph.node(edge.w);
+            if (graphNode.remove) {
+              that._graph.removeNode(edge.w);
+            } else if (graphNode.parentNodes.indexOf(node.id) == -1) {
+              that._graph.setEdge(node.id, edge.w, that._graph.edge(edge));
+            }
+          });
           if (childNode.type > 0) {
             // Reset the collapsing-node's flow-edges
             _.each(that._graph.outEdges(childNode.id), function(edge) {
