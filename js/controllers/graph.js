@@ -328,9 +328,9 @@ class GraphController {
           labelType: 'html',
           class: 'dependency-edge',
           lineInterpolate: 'basis',
-          label: '<div class"dependency-label" style="color: black;"><a class="link-to-line" data-file-line="' + dependency.sourceLine + '" data-file-id="' + node.fileId + '">' + (dependency.isRaW() ? '&#xf019;' : '&#xf093;') + '</a>' +
+          label: '<div class"dependency-label" style="color: black;"><a class="link-to-line" data-file-line="' + dependency.sourceLine + '" data-file-id="' + node.fileId + '" style="font-family: font-awesome">' + (dependency.isRaW() ? '&#xf019;' : '&#xf093;') + '</a>' +
             '&rarr; ' + dependency.variableName + ' &rarr;' +
-            '<a class="link-to-line" data-file-line="' + dependency.sinkLine + '" data-file-id="' + dependency.cuNode.fileId + '">' + (dependency.isWaR() ? '&#xf019;' : '&#xf093;') + '</a></div>',
+            '<a class="link-to-line" data-file-line="' + dependency.sinkLine + '" data-file-id="' + dependency.cuNode.fileId + '" style="font-family: font-awesome">' + (dependency.isWaR() ? '&#xf019;' : '&#xf093;') + '</a></div>',
           arrowhead: 'vee'
         }, "DependencyEdge");
       }

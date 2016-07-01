@@ -73,7 +73,7 @@ $(document).ready(function() {
 
   var edgeColorData = [{
     id: 'flowEdge',
-    name: 'Data-Flow',
+    name: 'Control-Flow',
     color: configuration.readSetting('flowEdgeFill'),
     width: configuration.readSetting('flowEdgeWidth')
   }, {
