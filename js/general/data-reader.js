@@ -31,7 +31,7 @@ module.exports = {
     var childNodeId;
     var nodeMap = {};
     var fileIdMap = {};
-    var i;
+    var i, j;
     /**
      * Helper function: recursively sets the loopLevel, dataSize and descendantNodeCount of a node and its descendants
      */
@@ -119,6 +119,9 @@ module.exports = {
           node.globalVariables = node.globalVariableNames || [];
           delete node.localVariableNames;
           delete node.globalVariableNames;
+          for(j = 0; j < node.instructionsLineNumbers.length; j++){
+            node.instructionsLineNumbers[j] = parseInt(node.instructionsLineNumbers[j].split(':')[1]);
+          }
           break;
         case 1:
           functionCount++;

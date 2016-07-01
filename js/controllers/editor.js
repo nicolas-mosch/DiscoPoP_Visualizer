@@ -152,12 +152,22 @@ class EditorController {
     var fileID = node.fileId;
     var start = node.startLine;
     var end = node.endLine;
-    var range = new Range(start - 1, 0, end, 0);
+    if (node.type > 0) {
+      var range = new Range(start - 1, 0, end, 0);
+      this._ranges.push(range);
+      this._editor.addSelectionMarker(
+        range
+      );
+    }else{
+      _.each(node.lines, function(lineNumber){
+        var range = new Range(lineNumber - 1, 0, lineNumber, 0);
+        that._ranges.push(range);
+        that._editor.addSelectionMarker(
+          range
+        );
+      });
+    }
     this.displayFile(fileID);
-    this._ranges.push(range);
-    this._editor.addSelectionMarker(
-      range
-    );
     this._editor.gotoLine(end, 0, true);
     _.each(node.readLines, function(line) {
       // Mark read-lines

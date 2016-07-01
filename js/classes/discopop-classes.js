@@ -165,14 +165,25 @@ class CuNode extends Node {
    * @param  {!number[]}        writeLines      The lines on which a write occurs within the CU
    * @param  {number}           heatFactor      The factor of heat of this node in relation to other nodes in the graph
    */
-  constructor(id, fileId, startLine, endLine, readDataSize, writeDataSize, readLines, writeLines, heatFactor) {
-      super(id, fileId, 0, startLine, endLine, readDataSize, writeDataSize, readLines, writeLines, heatFactor);
+  constructor(id, fileId, instructionLineNumbers, readDataSize, writeDataSize, readLines, writeLines, heatFactor) {
+      var start = instructionLineNumbers[0];
+      var end = instructionLineNumbers[0];
+      for(var i = 0; i < instructionLineNumbers.length; i++){
+        if(instructionLineNumbers[i] < start){
+          start = instructionLineNumbers[i];
+        }
+        if(instructionLineNumbers[i] > end){
+          end = instructionLineNumbers[i];
+        }
+      }
+      super(id, fileId, 0, start, end, readDataSize, writeDataSize, readLines, writeLines, heatFactor);
       this._localVariables = [];
       this._globalVariables = [];
       this._dependencies = [];
       this._functionCalls = [];
       this._successors = [];
       this._predecessors = [];
+      this._lines = instructionLineNumbers;
     }
     /**
      * Add a successor CU to this node, and add this node to the predecessors of the added CU
@@ -223,6 +234,9 @@ class CuNode extends Node {
     this._localVariables.push(variable);
   }
 
+  get lines(){
+    return this._lines;
+  }
   /**
    * The successor-CUs of the CU
    * @type {CuNode[]}

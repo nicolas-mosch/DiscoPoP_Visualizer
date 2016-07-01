@@ -39,7 +39,7 @@ module.exports = {
       node = data.nodeData[i];
       switch (node.type) {
         case 0:
-          nodes.push(new CuNode(i, node.fileId, node.startLine, node.endLine, node.readDataSize, node.writeDataSize, node.readPhaseLineNumbers, node.writePhaseLineNumbers, node.heatFactor));
+          nodes.push(new CuNode(i, node.fileId, node.instructionsLineNumbers, node.readDataSize, node.writeDataSize, node.readPhaseLineNumbers, node.writePhaseLineNumbers, node.heatFactor));
           break;
         case 1:
           classNode = new FunctionNode(i, node.fileId, node.startLine, node.endLine, node.readDataSize, node.writeDataSize, node.readPhaseLineNumbers, node.writePhaseLineNumbers, node.heatFactor, node.name, node.descendantNodeCount);
