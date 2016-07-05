@@ -150,15 +150,27 @@ class EditorController {
     var that = this;
     var Range = ace.require('ace/range').Range;
     var fileID = node.fileId;
-    var start = node.startLine;
-    var end = node.endLine;
-    var range = new Range(start - 1, 0, end, 0);
     this.displayFile(fileID);
-    this._ranges.push(range);
-    this._editor.addSelectionMarker(
-      range
-    );
-    this._editor.gotoLine(end, 0, true);
+    var start = node.startLine;
+	var end = node.endLine;
+    if(node.type == 0){
+    	_.each(node.lines, function(line) {
+    		console.log("highlighting ", line);
+    		var range = new Range(line - 1, 0, line, 0);
+    		that._ranges.push(range);
+        	that._editor.addSelectionMarker(
+        			range
+        	);
+    	});
+    }else{
+    	var range = new Range(start - 1, 0, end, 0);
+    	this._ranges.push(range);
+    	this._editor.addSelectionMarker(
+    			range
+    	);
+    	this._editor.gotoLine(end, 0, true);
+    }
+    
     _.each(node.readLines, function(line) {
       // Mark read-lines
       start = line;

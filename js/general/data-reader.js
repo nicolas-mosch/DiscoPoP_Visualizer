@@ -105,6 +105,11 @@ module.exports = {
         node.predecessorCUs = [];
         node.functionCalls = node.functionCall;
         delete node.functionCall;
+        node.lines = [];
+        _.each(node.instructionsLineNumbers, function(line){
+        	node.lines.push(parseInt(line.split(':')[1]));
+        });
+        delete node.instructionsLineNumbers;
       } else {
         node.readDataSize = 0;
         node.writeDataSize = 0;
@@ -226,10 +231,7 @@ module.exports = {
 
     // get compute and set heatFactor
     _.each(fileContents, function(node) {
-      node.heatFactor = ((node.readDataSize + node.writeDataSize) / 2) / midCuDataSize;
-      if(node.heatFactor > 1){
-        node.heatFactor = 1;
-      }
+      node.heatFactor = Math.min(1, ((node.readDataSize + node.writeDataSize) / 2) / midCuDataSize);
     });
     var end = new Date().getTime();
     var time = end - start;

@@ -1,229 +1,260 @@
 html {
-  height: 100%;
+	height: 100%;
 }
+
 body {
-  background-color: #F6F6F6;
-  box-sizing: border-box;
-  height: 100%;
-  overflow: hidden;
+	background-color: #F6F6F6;
+	box-sizing: border-box;
+	height: 100%;
+	overflow: hidden;
 }
+
 @font-face {
-  font-family: quivira;
-  src: url("fonts/Quivira.otf") format("opentype");
+	font-family: quivira;
+	src: url("fonts/Quivira.otf") format("opentype");
 }
+
 @font-face {
-  font-family: 'font-awesome';
-  src: url("fonts/FontAwesome.ttf") format("opentype");
+	font-family: 'font-awesome';
+	src: url("fonts/FontAwesome.ttf") format("opentype");
 }
+
 #visualizer-table {
-  height: 100%;
-  width: 100%;
+	height: 100%;
+	width: 100%;
 }
+
 #visualizer-table td {
-  height: 100%;
+	height: 100%;
 }
 
 #index-content {
-  width: 100%;
-  height: calc(100% - 210px);
-  overflow: auto;
+	width: 100%;
+	height: calc(100% - 210px);
+	overflow: auto;
 }
 
-#index-content p{
-  margin-left: 70px;
-}
-#index-content h1{
-  margin-left: 30px;
+#index-content p {
+	margin-left: 70px;
 }
 
-#colorstrip{
-    height: 20px;
-    width: 250px;
-    margin-left: 70px;
-    background: linear-gradient(to right, blue , red);
+#index-content h1 {
+	margin-left: 30px;
 }
 
-#tud-logo{
-  float:right;
-  height: 50px;
+#colorstrip {
+	height: 20px;
+	width: 250px;
+	margin-left: 70px;
+	background: linear-gradient(to right, blue, red);
 }
 
+#tud-logo {
+	float: right;
+	height: 50px;
+}
 
 #index-header {
-  background-color: #F44336;
-  color: #fff;
-  height: 200px;
+	background-color: #F44336;
+	color: #fff;
+	height: 200px;
 }
-#index-header button{
-  color: black;
+
+#index-header button {
+	color: black;
 }
 
 #code-container {
-  height: 100%;
-  overflow: auto;
-  background-color: #707070;
+	height: 100%;
+	overflow: auto;
+	background-color: #707070;
 }
+
 #graph-container {
-  height: 100%;
-  width: 100%;
+	height: 100%;
+	width: 100%;
 }
+
 .tab-content {
-  height: 100%;
-  width: 100%;
+	height: 100%;
+	width: 100%;
 }
+
 svg {
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 }
-text {
-  font-weight: 300;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
-  font-size: 14px;
-  D
+
+svg text {
+	font-weight: 300;
+	font-size: 14px;
+	font-family: FontAwesome;
 }
+
 .edgePath path {
-  stroke: #333;
-  fill: none;
-  stroke-width: 1.5px;
+	stroke: #333;
+	fill: none;
+	stroke-width: 1.5px;
 }
+
 #graph {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
 }
 
 #legend-table {
-  width: 100%;
-  height: 220px;
-  display: none;
+	width: 100%;
+	height: 220px;
+	display: none;
 }
 
 #legend-container {
-  height: 220px;
-  width: 600px;
+	height: 220px;
+	width: 600px;
 }
-#help-container{
-  height: 100%;
-  width: 100%;
-  overflow: auto;
+
+#help-container {
+	height: 100%;
+	width: 100%;
+	overflow: auto;
 }
 
 .node {
-  cursor: pointer;
-}
-.dependency-label{
-  size: 20px;
+	cursor: pointer;
 }
 
-
+.dependency-label {
+	size: 20px;
+}
 
 .arrowhead {
-  stroke: black;
-  fill: black;
-  stroke-width: 1.5px;
+	stroke: black;
+	fill: black;
+	stroke-width: 1.5px;
 }
+
 .myMarker {
-  position: absolute;
-  background: rgba(100, 200, 100, 0.5);
-  z-index: 20
+	position: absolute;
+	background: rgba(100, 200, 100, 0.5);
+	z-index: 20
 }
 
 #ace-editor {
-  margin: 0 auto;
-  height: 100%;
+	margin: 0 auto;
+	height: 100%;
 }
+
 .editor_read_decoration {
-  border-radius: 30px 0px 0px 30px;
-  background-color: blue;
+	border-radius: 30px 0px 0px 30px;
+	background-color: blue;
 }
+
 .editor_write_decoration {
-  border-radius: 0px 30px 30px 0px;
-  background-color: green;
+	border-radius: 0px 30px 30px 0px;
+	background-color: green;
 }
+
 .editor_read_write_decoration {
-  border-radius: 20px 20px 20px 20px;
-  background: linear-gradient(to left, green 0%, green 50%, blue 50%, blue 50%, blue 100%);
+	border-radius: 20px 20px 20px 20px;
+	background: linear-gradient(to left, green 0%, green 50%, blue 50%, blue 50%, blue
+		100%);
 }
+
 .ace_scrollbar {
-  height: 5px !important;
+	height: 5px !important;
 }
+
 #svg-canvas {
-  margin: 0 auto;
-  height: 100%;
+	margin: 0 auto;
+	height: 100%;
 }
+
 .label {
-  font: 10px sans-serif;
-  color: black;
+	font: 10px sans-serif;
+	color: black;
 }
+
 .link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 1.5px;
+	fill: none;
+	stroke: #ccc;
+	stroke-width: 1.5px;
 }
+
 .control.glyphicon {
-  position: static;
+	position: static;
 }
+
 #tooltip-container {
-  position: absolute;
-  text-align: center;
-  padding: 2px;
-  font: 12px sans-serif;
-  background: lightsteelblue;
-  border: 0px;
-  border-radius: 3px;
-  pointer-events: none;
+	position: absolute;
+	text-align: center;
+	padding: 2px;
+	font: 12px sans-serif;
+	background: lightsteelblue;
+	border: 0px;
+	border-radius: 3px;
+	pointer-events: none;
 }
+
 #node-info-container {
-  z-index: 1000000;
-  position: absolute;
-  top: 40px;
-  right: 5px;
-  display: none;
-  background-color: #B0B0B0;
+	z-index: 1000000;
+	position: absolute;
+	top: 40px;
+	right: 5px;
+	display: none;
+	background-color: #B0B0B0;
 }
+
 #node-info-table td {
-  padding: 7px;
+	padding: 7px;
 }
+
 #code-view {
-  height: 100%;
-  width: 100%;
+	height: 100%;
+	width: 100%;
 }
+
 #file-select option {
-  font-size: 22px;
+	font-size: 22px;
 }
+
 #flow-graph-container {
-  height: 100%;
-  width: 100%;
+	height: 100%;
+	width: 100%;
 }
+
 a {
-  cursor: pointer;
+	cursor: pointer;
 }
+
 #dependency-container {
-  width: 100%;
-  max-height: 100px;
-  overflow: auto;
-  text-align: center;
+	width: 100%;
+	max-height: 100px;
+	overflow: auto;
+	text-align: center;
 }
 
-.variable-container{
-  width: 100%;
-  max-height: 100px;
-  overflow: auto;
-  text-align: center;
+.variable-container {
+	width: 100%;
+	max-height: 100px;
+	overflow: auto;
+	text-align: center;
 }
 
-#colorstrip{
-    height: 20px;
-    width: 250px;
-    background: linear-gradient(to right, blue , red);
-}
-#file-select-container{
-  background-color: #b3b3cc;
-}
-.jstree-icon.glyphicon-folder-open{
-  color: #e6e600;
+#colorstrip {
+	height: 20px;
+	width: 250px;
+	background: linear-gradient(to right, blue, red);
 }
 
-.jstree-icon.glyphicon-file{
-  color: white;
+#file-select-container {
+	background-color: #b3b3cc;
+}
+
+.jstree-icon.glyphicon-folder-open {
+	color: #e6e600;
+}
+
+.jstree-icon.glyphicon-file {
+	color: white;
 }

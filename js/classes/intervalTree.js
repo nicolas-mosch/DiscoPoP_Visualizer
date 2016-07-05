@@ -55,13 +55,14 @@ class IntervalTree {
 
   /**
    * Finds an interval in the tree that overlaps the given interval
-   * @param  {number[]} interval  The overlapping interval [start, end]
-   * @return {Object}             The value of the found interval-node
+   * @param  {Number}	start	The overlapping interval's start
+   * @param  {Number}	end		The overlapping interval's end
+   * @return {Object}			The value of the found interval-node
    */
-  findOne(interval) {
+  findOne(start, end) {
     var x = this._root;
-    while (x != null && (interval[1] < x.start || interval[0] > x.end)) {
-      if (_.has(x, 'left') && x.left.maxEnd >= interval[0]) {
+    while (x != null && (end < x.start || start > x.end)) {
+      if (_.has(x, 'left') && x.left.maxEnd >= start) {
         x = x.left;
       } else if (_.has(x, 'right')) {
         x = x.right;
@@ -74,10 +75,11 @@ class IntervalTree {
 
   /**
    * Finds all intervals in the tree that overlap the given interval
-   * @param  {number[]} interval The overlapping interval [start, end]
+   * @param  {Number} start	The overlapping interval's start
+   * @param  {Number} end The overlapping interval's end
    * @return {Object[]}          An array containing all of the values of the overlapping interval-nodes
    */
-  findAll(interval) {
+  findAll(start, end) {
     var intervalList = [];
     var queue = [];
     var x;
@@ -85,10 +87,10 @@ class IntervalTree {
 
     while (queue.length) {
       x = queue.pop();
-      if (interval[1] >= x.start && interval[0] <= x.end) {
+      if (end >= x.start && start <= x.end) {
         intervalList.push(x.value);
       }
-      if (_.has(x, 'left') && x.left.maxEnd >= interval[0]) {
+      if (_.has(x, 'left') && x.left.maxEnd >= start) {
         queue.push(x.left);
       }
       if (_.has(x, 'right'))

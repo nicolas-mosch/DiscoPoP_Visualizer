@@ -31,9 +31,11 @@ class ExpansionPath {
   }
 
   /**
-   * Add a node to the expansion paths
-   * @param {Node} node The node to be added
-   */
+	 * Add a node to the expansion paths
+	 * 
+	 * @param {Node}
+	 *            node The node to be added
+	 */
   addNode(node) {
     if (!_.has(this._expansionLevelsPerNode, node.id)) {
       var that = this;
@@ -54,9 +56,11 @@ class ExpansionPath {
   }
 
   /**
-   * Remove a node from the expansion paths
-   * @param  {Node} node The node to be removed
-   */
+	 * Remove a node from the expansion paths
+	 * 
+	 * @param {Node}
+	 *            node The node to be removed
+	 */
   removeNode(node) {
     if (_.has(this._expansionLevelsPerNode, node.id)) {
       var level = this._expansionLevelsPerNode[node.id];
@@ -74,6 +78,7 @@ class ExpansionPath {
 
 /**
  * Module for interacting with the graph and updating the displayed one.
+ * 
  * @module graphController
  */
 module.exports = {
@@ -99,8 +104,8 @@ module.exports = {
     }
 
     /**
-     * Shows/Hides the function-nodes and function-call-edges of the given node
-     */
+	 * Shows/Hides the function-nodes and function-call-edges of the given node
+	 */
     ipc.on('toggleFunctionCalls', function(event, nodeId) {
       if (nodes[nodeId].collapsed) {
         expansionPath.addNode(nodes[nodeId]);
@@ -111,8 +116,8 @@ module.exports = {
     });
 
     /**
-     * Toggle the visibility of the dependencies-edges for a given CU node
-     */
+	 * Toggle the visibility of the dependencies-edges for a given CU node
+	 */
     ipc.on('toggleDependencyEdges', function(event, nodeId) {
       var node = nodes[nodeId];
       if (node.type == 0) {
@@ -186,7 +191,8 @@ module.exports = {
     ipc.on('expandTo', function(event, nodeId) {
       var currentNode = nodes[nodeId];
       var queue = [];
-      // Find nearest visible ancestor of the given node to start expanding from
+      // Find nearest visible ancestor of the given node to start expanding
+		// from
       while (currentNode.parents.length && currentNode.parents[0].collapsed) {
         queue.push(currentNode.parents[0]);
         currentNode = currentNode.parents[0];
@@ -194,19 +200,13 @@ module.exports = {
       while (queue.length) {
         currentNode = queue.pop();
         expansionPath.addNode(currentNode);
-        currentNode.expand();
       }
-      var firstVisibleLevel = expansionPath.getLevel(currentNode) - configuration.readSetting('visibleParents');
-      if (firstVisibleLevel < 0) {
-        event.sender.send('update-graph', generateSvgGraph(rootNodes));
-      } else {
-        event.sender.send('update-graph', generateSvgGraph(expansionPath.expandedNodesPerLevel(firstVisibleLevel)));
-      }
+      event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
     });
 
     /**
-     * Resets the graph to its root-nodes
-     */
+	 * Resets the graph to its root-nodes
+	 */
     ipc.on('resetGraph', function(event) {
       _.each(nodes, function(node) {
         expansionPath.reset();
@@ -220,9 +220,10 @@ module.exports = {
     });
 
     /**
-     * Generates the svg HTML-Markup for the full displayed graph
-     * @return {String} the string containing the HTML-Markup for the svg
-     */
+	 * Generates the svg HTML-Markup for the full displayed graph
+	 * 
+	 * @return {String} the string containing the HTML-Markup for the svg
+	 */
     function generateSvgGraph(startNodes) {
       var log = "StartNodes: ";
       _.each(startNodes, function(val) {
@@ -230,8 +231,8 @@ module.exports = {
       });
       console.log(log);
       /*
-        digraph in DOT format. Used as input for Viz.js
-       */
+		 * digraph in DOT format. Used as input for Viz.js
+		 */
       var digraph;
 
       var checkedNodes = [];
@@ -250,9 +251,11 @@ module.exports = {
       });
 
       /**
-       * Recursively adds a subgraph to the digraph.
-       * @param {Node} node the node for which to add a sub-graph
-       */
+		 * Recursively adds a subgraph to the digraph.
+		 * 
+		 * @param {Node}
+		 *            node the node for which to add a sub-graph
+		 */
       function addSubgraph(node) {
         // Avoid endless-loops for recursive-functions
         if (checkedNodes.indexOf(node.id) > -1) {
@@ -260,7 +263,8 @@ module.exports = {
         }
         checkedNodes.push(node.id);
 
-        // Continue with new subgraph only if node is expanded, otherwise add as node (bottom)
+        // Continue with new subgraph only if node is expanded, otherwise add as
+		// node (bottom)
         if (node.expanded) {
           digraph += "\nsubgraph cluster" + node.id + " {"
           var edge;
@@ -289,8 +293,10 @@ module.exports = {
                 }
               });
 
-              // Add edges to called function-nodes to the queue to be added to the digraph at the end
-              // (adding them at the end, renders the called-function outside of this function)
+              // Add edges to called function-nodes to the queue to be added
+				// to the digraph at the end
+              // (adding them at the end, renders the called-function outside
+				// of this function)
               if (child.expanded) {
                 _.each(child.children, function(functionCall) {
                   if (functionCall.type == 1) {
@@ -341,7 +347,7 @@ module.exports = {
         }
       }
 
-      digraph = "digraph G {";
+      digraph = "digraph G {\nnode [fontname = \"font-awesome\"];";
       while (functionNodes.length) {
         addSubgraph(functionNodes.pop());
       };
@@ -398,7 +404,8 @@ module.exports = {
           svg = svg.replace('<g id="' + edge.replace(' -> ', 't') + '" class="edge"', '<g id="' + edge + '" class="edge dependency-edge"');
         });
 
-        // Hack for removing title tooltip from elements (not supported by graphviz)
+        // Hack for removing title tooltip from elements (not supported by
+		// graphviz)
         svg = svg.replace(/<title>.*<\/title>/g, '');
       } catch (err) {
         console.error(err);
@@ -431,7 +438,8 @@ module.exports = {
           if (node.dependencies.length) {
             colspan++;
           }
-          label += '\n<TR><TD COLSPAN="' + colspan + '">[' + node.startLine + '-' + node.endLine + ']</TD></TR>';
+          // label += '\n<TR><TD COLSPAN="' + colspan + '">[' + node.startLine
+			// + '-' + node.endLine + ']</TD></TR>';
           label += '\n<TR><TD COLSPAN="' + colspan + '">Data-Read: ' + generalFunctions.humanFileSize(node.readDataSize, true) + '</TD></TR>';
           label += '\n<TR><TD COLSPAN="' + colspan + '">Data-Written: ' + generalFunctions.humanFileSize(node.writeDataSize, true) + '</TD></TR><TR>';
           if (node.children.length) {
