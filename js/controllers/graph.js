@@ -122,8 +122,21 @@ module.exports = {
       var node = nodes[nodeId];
       if (node.type == 0) {
         nodes[nodeId].toggleDependencyVisibility();
-        event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
+      }else{
+    	  var stack = [node];
+    	  while(stack.length > 0){
+    		  node = stack.pop();
+    		  _.each(node.children, function(child){
+    			  if(child.type == 0){
+    				  child.toggleDependencyVisibility();
+    			  }else if(child.expanded){
+    				  stack.push(child);
+    			  }
+    			  
+    		  });
+    	  }
       }
+      event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
     });
 
     ipc.on('expandNode', function(event, nodeId) {
@@ -320,7 +333,7 @@ module.exports = {
                 _.each(child.dependencies, function(dependency) {
                   visibleAncestor = findFirstVisibleAncestor(dependency.cuNode);
                   edge = child.id + ' -> ' + visibleAncestor.id;
-                  digraph += '\n' + edge + '[id="' + edge.replace(' -> ', 't') + '", label="' + dependency.variableName + '", taillabel="' + (dependency.isRaW() ? 'R' : 'W') + '", headlabel="' + (dependency.isWaR() ? 'R' : 'W') + '"];';
+                  edge = '\n' + edge + '[id="' + edge.replace(' -> ', 't') + '", label="' + dependency.variableName + '", taillabel="' + (dependency.isRaW() ? 'R' : 'W') + '", headlabel="' + (dependency.isWaR() ? 'R' : 'W') + '", constraint=false];';
                   dependencyEdges.push(edge);
                 });
               }
@@ -351,8 +364,14 @@ module.exports = {
       while (functionNodes.length) {
         addSubgraph(functionNodes.pop());
       };
+      
+      // Add function-call and dependency edges outside of subgraphs. Correct clustering breaks otherwise
       _.each(functionCallEdges, function(edge) {
         digraph += '\n' + edge + ' [style=dotted, id="' + edge.replace(' -> ', 't') + '"];';
+      });
+      _.each(dependencyEdges, function(edge) {
+          digraph += edge;
+          
       });
       digraph += "\n}";
 
@@ -401,6 +420,7 @@ module.exports = {
         });
 
         _.each(dependencyEdges, function(edge) {
+          edge = svg.replace(/\[.*\]/, '');
           svg = svg.replace('<g id="' + edge.replace(' -> ', 't') + '" class="edge"', '<g id="' + edge + '" class="edge dependency-edge"');
         });
 

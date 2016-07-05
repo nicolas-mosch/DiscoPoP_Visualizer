@@ -264,9 +264,9 @@ ipc
 																cuDependencies
 																		.push({
 																			sourceRead : dependency
-																					.isRaW(),
-																			sinkRead : dependency
 																					.isWaR(),
+																			sinkRead : dependency
+																					.isRaW(),
 																			sourceFile : node.fileId,
 																			sinkFile : dependency.cuNode.fileId,
 																			varName : dependency.variableName,
@@ -536,12 +536,14 @@ ipc
 								// menuEvent: 'click',
 								fetchElementData : function() {
 									try {
-										var line = editorController.getCursorRow() + 1;
-										var nodes = fileNodeIntervalTrees[editorController.getCurrentFileID()]
-												.findAll(line, line);
+										var line = editorController
+												.getCursorRow() + 1;
+										var nodes = fileNodeIntervalTrees[editorController
+												.getCurrentFileID()].findAll(
+												line, line);
 										console.log('overlapping nodes', nodes);
-										for(var i = 0; i < nodes.length; i++){
-											if(nodes[i].lines.indexOf(line) > -1){
+										for (var i = 0; i < nodes.length; i++) {
+											if (nodes[i].lines.indexOf(line) > -1) {
 												console.log(nodes[i]);
 												return nodes[i];
 											}
