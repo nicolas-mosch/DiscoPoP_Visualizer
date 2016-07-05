@@ -26,14 +26,12 @@ var template = [{
   submenu: [{
     label: 'Import Data',
     accelerator: 'CmdOrCtrl+I',
-    role: 'import',
     click: function(item, focusedWindow) {
       importFiles();
     }
   }, {
     label: 'Open DevTools',
     accelerator: 'F12',
-    role: 'import',
     click: function(item, focusedWindow) {
       mainWindow.webContents.openDevTools();
     }
@@ -41,7 +39,6 @@ var template = [{
   {
     label: 'Exit',
     accelerator: 'CmdOrCtrl+Esc',
-    role: 'close',
     click: function(item, focusedWindow) {
       mainWindow.close();
     }
@@ -51,7 +48,6 @@ var template = [{
   submenu: [{
     label: 'Graph',
     accelerator: 'CmdOrCtrl+G',
-    role: 'graphSettings',
     click: function(item, focusedWindow) {
       if (graphSettingsWindow) {
         graphSettingsWindow.focus();
@@ -72,7 +68,6 @@ var template = [{
   }, {
     label: 'Code',
     accelerator: 'CmdOrCtrl+E',
-    role: 'codeSettings',
     click: function(item, focusedWindow) {}
   }]
 }];
@@ -155,8 +150,6 @@ function importFiles() {
 
   if (filePaths == null)
     return;
-  mainWindow.setProgressBar(0.5);
-
 
   mainWindow.webContents.on('did-finish-load', function() {
     var data = dataReader.buildFromFile(mappingPath, filePaths[0]);
