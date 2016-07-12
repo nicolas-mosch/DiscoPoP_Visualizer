@@ -14,9 +14,11 @@ To start the visualizer:
 npm start
 ```
 
+The master branch uses dagre-d3 for the layout of the graph.
+
 A version of the visualizer using Graphviz (and Viz.js)
 is available under the graphviz branch.
 
-
-
-
+Documentation for both versions is available here:
+[Version A](http://nicolas-mosch.github.io/DiscoPoP_Visualizer/documentation/version_A/) (Using Dagre-D3)
+[Version B](http://nicolas-mosch.github.io/DiscoPoP_Visualizer/documentation/version_B/) (Using Using Viz.js)
