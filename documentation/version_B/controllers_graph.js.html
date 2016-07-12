@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/graph.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/graph.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+var _ = require('lodash');
+var configuration = require('../general/configuration');
+var generalFunctions = require('../general/generalFunctions');
+var sizeof = require('sizeof');
+const ipc = require("electron").ipcMain;
+var fs = require('fs');
+var Viz = require('../../node_modules/viz.js/viz.js');
+/**
+ * Class for keeping track of the node-expansions done by the user.
+ */
+class ExpansionPath {
+  constructor(rootNodes) {
+    this._expandedNodesPerLevel = [];
+    this._expansionLevelsPerNode = {};
+    this._rootNodes = rootNodes;
+  }
+
+  reset() {
+    this._expandedNodesPerLevel = [];
+    this._expansionLevelsPerNode = {};
+  }
+
+  getVisibleRootNodes() {
+    var level = this._expandedNodesPerLevel.length - configuration.readSetting('visibleParents');
+    if (level &lt; 0) {
+      return this._rootNodes;
+    }
+    return this._expandedNodesPerLevel[level];
+  }
+
+  /**
+	 * Add a node to the expansion paths
+	 * 
+	 * @param {Node}
+	 *            node The node to be added
+	 */
+  addNode(node) {
+    if (!_.has(this._expansionLevelsPerNode, node.id)) {
+      var that = this;
+      var parentLevel = -1;
+      _.each(node.parents, function(parentNode) {
+        if (_.has(that._expansionLevelsPerNode, parentNode.id) &amp;&amp; that._expansionLevelsPerNode[parentNode.id] > parentLevel) {
+          parentLevel = that._expansionLevelsPerNode[parentNode.id];
+        }
+      });
+      parentLevel++;
+      if (this._expandedNodesPerLevel.length &lt;= parentLevel) {
+        this._expandedNodesPerLevel[parentLevel] = [];
+      }
+      this._expandedNodesPerLevel[parentLevel].push(node);
+      this._expansionLevelsPerNode[node.id] = parentLevel;
+      node.expand();
+    }
+  }
+
+  /**
+	 * Remove a node from the expansion paths
+	 * 
+	 * @param {Node}
+	 *            node The node to be removed
+	 */
+  removeNode(node) {
+    if (_.has(this._expansionLevelsPerNode, node.id)) {
+      var level = this._expansionLevelsPerNode[node.id];
+      var levelNodes = this._expandedNodesPerLevel[level];
+      var index = levelNodes.indexOf(node);
+      this._expandedNodesPerLevel[level].splice(index, 1);
+      delete this._expansionLevelsPerNode[node.id];
+      if (!this._expandedNodesPerLevel[level].length) {
+        this._expandedNodesPerLevel.splice(level);
+      }
+      node.collapse();
+    }
+  }
+}
+
+/**
+ * Module for interacting with the graph and updating the displayed one.
+ * 
+ * @module graphController
+ */
+module.exports = {
+  controller: function controller(nodes, rootNodes) {
+    var expansionPath = new ExpansionPath(rootNodes);
+
+    function findFirstVisibleAncestor(node) {
+      if (!node.parents.length)
+        return false;
+      var i, res;
+      for (i = 0; i &lt; node.parents.length; i++) {
+        if (node.parents[i].expanded) {
+          return node;
+        }
+      }
+      for (i = 0; i &lt; node.parents.length; i++) {
+        res = findFirstVisibleAncestor(node.parents[i]);
+        if (res) {
+          return res;
+        }
+      }
+      return false;
+    }
+
+    /**
+	 * Shows/Hides the function-nodes and function-call-edges of the given node
+	 */
+    ipc.on('toggleFunctionCalls', function(event, nodeId) {
+      if (nodes[nodeId].collapsed) {
+        expansionPath.addNode(nodes[nodeId]);
+      } else {
+        expansionPath.removeNode(nodes[nodeId]);
+      }
+      event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
+    });
+
+    /**
+	 * Toggle the visibility of the dependencies-edges for a given CU node
+	 */
+    ipc.on('toggleDependencyEdges', function(event, nodeId) {
+      var node = nodes[nodeId];
+      if (node.type == 0) {
+        nodes[nodeId].toggleDependencyVisibility();
+      }else{
+    	  var stack = [node];
+    	  while(stack.length > 0){
+    		  node = stack.pop();
+    		  _.each(node.children, function(child){
+    			  if(child.type == 0){
+    				  child.toggleDependencyVisibility();
+    			  }else if(child.expanded){
+    				  stack.push(child);
+    			  }
+    			  
+    		  });
+    	  }
+      }
+      event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
+    });
+
+    ipc.on('expandNode', function(event, nodeId) {
+      console.log('expandOne', nodeId);
+      var node = nodes[nodeId];
+      if (node.type >= 0 &amp;&amp; node.type &lt; 3) {
+        expansionPath.addNode(node);
+        event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
+      }
+    });
+
+    ipc.on('collapseNode', function(event, nodeId) {
+      var node = nodes[nodeId];
+      expansionPath.removeNode(node);
+      event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
+    });
+
+    ipc.on('expandAll', function(event, nodeId) {
+      console.log('expandAll', nodeId);
+      var node = nodes[nodeId];
+      var stack = [];
+      var seen = [];
+      stack.push(node);
+      do {
+        node = stack.pop();
+        if (seen.indexOf(node.id) == -1) {
+          seen.push(node.id);
+          expansionPath.addNode(node);
+          node.expand();
+          _.each(node.children, function(childNode) {
+            if (childNode.children.length) {
+              stack.push(childNode);
+            }
+          });
+        }
+      }
+      while (stack.length);
+      event.sender.send('update-graph', generateSvgGraph([nodes[nodeId]]));
+    });
+
+    ipc.on('fullGraph', function(event) {
+      var node;
+      var stack = [];
+      var seen = [];
+      _.each(rootNodes, function(root) {
+        stack.push(root);
+      });
+      do {
+        node = stack.pop();
+        if (seen.indexOf(node.id) == -1) {
+          seen.push(node.id);
+          expansionPath.addNode(node);
+          node.expand();
+          _.each(node.children, function(childNode) {
+            if (childNode.children.length) {
+              stack.push(childNode);
+            }
+          });
+        }
+      }
+      while (stack.length);
+      event.sender.send('update-graph', generateSvgGraph(rootNodes));
+    });
+
+    ipc.on('expandTo', function(event, nodeId) {
+      var currentNode = nodes[nodeId];
+      var queue = [];
+      // Find nearest visible ancestor of the given node to start expanding
+		// from
+      while (currentNode.parents.length &amp;&amp; currentNode.parents[0].collapsed) {
+        queue.push(currentNode.parents[0]);
+        currentNode = currentNode.parents[0];
+      }
+      while (queue.length) {
+        currentNode = queue.pop();
+        expansionPath.addNode(currentNode);
+      }
+      event.sender.send('update-graph', generateSvgGraph(expansionPath.getVisibleRootNodes()));
+    });
+
+    /**
+	 * Resets the graph to its root-nodes
+	 */
+    ipc.on('resetGraph', function(event) {
+      _.each(nodes, function(node) {
+        expansionPath.reset();
+        node.collapse();
+      });
+      event.sender.send('update-graph', generateSvgGraph(rootNodes));
+    });
+
+    ipc.on('nodeInfo', function(nodeId) {
+      var node = nodes[nodeId];
+    });
+
+    /**
+	 * Generates the svg HTML-Markup for the full displayed graph
+	 * 
+	 * @return {String} the string containing the HTML-Markup for the svg
+	 */
+    function generateSvgGraph(startNodes) {
+      var log = "StartNodes: ";
+      _.each(startNodes, function(val) {
+        log += val.id + ", ";
+      });
+      console.log(log);
+      /*
+		 * digraph in DOT format. Used as input for Viz.js
+		 */
+      var digraph;
+
+      var checkedNodes = [];
+      var functionNodes = [];
+      var functionCallEdges = [];
+      var addedFlowEdges = [];
+      var dependencyEdges = [];
+      var visibleAncestor;
+
+      _.each(startNodes, function(root) {
+        if (root.type == 0) {
+          functionNodes = functionNodes.concat(root.children);
+        } else {
+          functionNodes.push(root);
+        }
+      });
+
+      /**
+		 * Recursively adds a subgraph to the digraph.
+		 * 
+		 * @param {Node}
+		 *            node the node for which to add a sub-graph
+		 */
+      function addSubgraph(node) {
+        // Avoid endless-loops for recursive-functions
+        if (checkedNodes.indexOf(node.id) > -1) {
+          return;
+        }
+        checkedNodes.push(node.id);
+
+        // Continue with new subgraph only if node is expanded, otherwise add as
+		// node (bottom)
+        if (node.expanded) {
+          digraph += "\nsubgraph cluster" + node.id + " {"
+          var edge;
+          _.each(node.children, function(child) {
+            if (child.type == 2) {
+              addSubgraph(child);
+            } else if (child.type == 0) {
+              checkedNodes.push(child.id);
+              digraph += '\n' + child.id + ' [id=' + child.id + ', shape=rect;label=' + createLabel(child) + ', style="filled"];';
+
+              // Add edges to successors and predecessors of CU
+              _.each(child.successors, function(successor) {
+                visibleAncestor = findFirstVisibleAncestor(successor);
+                edge = child.id + ' -> ' + visibleAncestor.id;
+                if (addedFlowEdges.indexOf(edge) == -1) {
+                  digraph += "\n" + edge + ' [id="' + edge.replace(' -> ', 't') + '"];';
+                  addedFlowEdges.push(edge);
+                }
+              });
+              _.each(child.predecessors, function(predecessor) {
+                visibleAncestor = findFirstVisibleAncestor(predecessor);
+                edge = visibleAncestor.id + " -> " + child.id;
+                if (addedFlowEdges.indexOf(edge) == -1) {
+                  digraph += '\n' + edge + '[id="' + edge.replace(' -> ', 't') + '"];';
+                  addedFlowEdges.push(edge);
+                }
+              });
+
+              // Add edges to called function-nodes to the queue to be added
+				// to the digraph at the end
+              // (adding them at the end, renders the called-function outside
+				// of this function)
+              if (child.expanded) {
+                _.each(child.children, function(functionCall) {
+                  if (functionCall.type == 1) {
+                    if (functionCall.expanded) {
+                      edge = child.id + ' -> ' + functionCall.entry.id;
+                      functionCallEdges.push(edge);
+                    } else {
+                      edge = child.id + ' -> ' + functionCall.id;
+                      functionCallEdges.push(edge);
+                    }
+                  } else {
+                    edge = child.id + ' -> ' + functionCall.id;
+                    digraph += '\n' + edge + ' [style=dotted, id="' + edge.replace(' -> ', 't') + '"];';
+                  }
+                  functionNodes.push(functionCall);
+                });
+              }
+
+              // Add dependency-edges
+              if (child.dependenciesVisible) {
+                _.each(child.dependencies, function(dependency) {
+                  visibleAncestor = findFirstVisibleAncestor(dependency.cuNode);
+                  edge = child.id + ' -> ' + visibleAncestor.id;
+                  edge = '\n' + edge + '[id="' + edge.replace(' -> ', 't') + '", label="' + dependency.variableName + '", taillabel="' + (dependency.isRaW() ? 'R' : 'W') + '", headlabel="' + (dependency.isWaR() ? 'R' : 'W') + '", constraint=false];';
+                  dependencyEdges.push(edge);
+                });
+              }
+            }
+          });
+          digraph += '\nlabel=' + createLabel(node) + ';';
+          digraph += '\nstyle="filled"';
+          digraph += '\nid=' + node.id;
+          digraph += "\n}";
+        } else {
+          var shape;
+          switch (node.type) {
+            case 1:
+              shape = "hexagon";
+              break;
+            case 2:
+              shape = "ellipse";
+              break;
+            case 3:
+              shape = "diamond";
+              break;
+          }
+          digraph += "\n" + node.id + ' [id=' + node.id + ', shape="' + shape + '", label=' + createLabel(node) + ', style="filled"];';
+        }
+      }
+
+      digraph = "digraph G {\nnode [fontname = \"font-awesome\"];";
+      while (functionNodes.length) {
+        addSubgraph(functionNodes.pop());
+      };
+      
+      // Add function-call and dependency edges outside of subgraphs. Correct clustering breaks otherwise
+      _.each(functionCallEdges, function(edge) {
+        digraph += '\n' + edge + ' [style=dotted, id="' + edge.replace(' -> ', 't') + '"];';
+      });
+      _.each(dependencyEdges, function(edge) {
+          digraph += edge;
+          
+      });
+      digraph += "\n}";
+
+      var svg;
+      try {
+        var start = new Date().getTime();
+        svg = Viz(digraph, {
+          engine: "dot",
+          format: "svg"
+        });
+        var end = new Date().getTime();
+        console.log('Execution-Time of Layout-Calculation: ', end - start);
+
+
+        // Hack for adding classes to svg nodes (not supported by graphviz)
+        var node, nodeClass;
+        _.each(checkedNodes, function(nodeId) {
+          node = nodes[nodeId];
+          switch (node.type) {
+            case 0:
+              nodeClass = 'cu-node';
+              break;
+            case 1:
+              nodeClass = 'function-node';
+              break;
+            case 2:
+              nodeClass = 'loop-node';
+              break;
+            case 3:
+              nodeClass = 'function-call-node';
+              break;
+            default:
+              nodeClass = "default-node";
+          }
+
+          svg = svg.replace('&lt;g id="' + nodeId + '" class="node"', '&lt;g id="' + nodeId + '" class="node ' + nodeClass + '"');
+          svg = svg.replace('&lt;g id="' + nodeId + '" class="cluster"', '&lt;g id="' + nodeId + '" class="cluster ' + nodeClass + '"');
+        });
+        // Hack for adding classes to svg edges (not supported by graphviz)
+        _.each(addedFlowEdges, function(edge) {
+          svg = svg.replace('&lt;g id="' + edge.replace(' -> ', 't') + '" class="edge"', '&lt;g id="' + edge + '" class="edge flow-edge"');
+        });
+
+        _.each(functionCallEdges, function(edge) {
+          svg = svg.replace('&lt;g id="' + edge.replace(' -> ', 't') + '" class="edge"', '&lt;g id="' + edge + '" class="edge function-call-edge"');
+        });
+
+        _.each(dependencyEdges, function(edge) {
+          edge = svg.replace(/\[.*\]/, '');
+          svg = svg.replace('&lt;g id="' + edge.replace(' -> ', 't') + '" class="edge"', '&lt;g id="' + edge + '" class="edge dependency-edge"');
+        });
+
+        // Hack for removing title tooltip from elements (not supported by
+		// graphviz)
+        svg = svg.replace(/&lt;title>.*&lt;\/title>/g, '');
+      } catch (err) {
+        console.error(err);
+        fs.writeFile('error_dot.txt', digraph, function(err) {
+          if (err) {
+            return console.log('Unable to write file ' + err);
+          }
+          console.log('DOT-File was saved');
+        });
+      }
+      console.log('Resulting DOT-String size: ', sizeof.sizeof(digraph, true), digraph.length);
+
+      return svg;
+    }
+
+
+    function createLabel(node) {
+      function getHeatColor() {
+        var r = Math.floor(255 * node.heatFactor);
+        var b = Math.floor(255 * (1 - node.heatFactor));
+        return generalFunctions.rgbToHex(r, 0, b);
+      }
+      var label = "&lt;&lt;TABLE BORDER=\"0\">";
+      switch (node.type) {
+        case 0:
+          var colspan = 1;
+          if (node.children.length) {
+            colspan++;
+          }
+          if (node.dependencies.length) {
+            colspan++;
+          }
+          // label += '\n&lt;TR>&lt;TD COLSPAN="' + colspan + '">[' + node.startLine
+			// + '-' + node.endLine + ']&lt;/TD>&lt;/TR>';
+          label += '\n&lt;TR>&lt;TD COLSPAN="' + colspan + '">Data-Read: ' + generalFunctions.humanFileSize(node.readDataSize, true) + '&lt;/TD>&lt;/TR>';
+          label += '\n&lt;TR>&lt;TD COLSPAN="' + colspan + '">Data-Written: ' + generalFunctions.humanFileSize(node.writeDataSize, true) + '&lt;/TD>&lt;/TR>&lt;TR>';
+          if (node.children.length) {
+            label += '\n&lt;TD>&amp;#8618;: ' + node.children.length + '&lt;/TD>';
+          }
+          label += '&lt;TD>&lt;FONT COLOR="' + getHeatColor() + '">&amp;#xf06d;&lt;/FONT>&lt;/TD>';
+          if (node.dependencies.length) {
+            label += '&lt;TD>D: ' + node.dependencies.length + '&lt;/TD>';
+          }
+          label += '\n&lt;/TR>&lt;/TABLE>>';
+          break;
+        case 1:
+          label += '\n&lt;TR>&lt;TD>' + node.name + '&lt;/TD>&lt;/TR>';
+          label += '\n&lt;TR>&lt;TD>[' + node.startLine + '-' + node.endLine + ']&lt;/TD>&lt;/TR>';
+          label += '\n&lt;TR>&lt;TD>&lt;FONT COLOR="' + getHeatColor() + '">&amp;#xf06d;&lt;/FONT>&lt;/TD>&lt;/TR>';
+          label += '\n&lt;/TABLE>>';
+          break;
+        case 2:
+          label += '\n&lt;TR>&lt;TD>Loop&lt;/TD>&lt;/TR>';
+          label += '\n&lt;TR>&lt;TD>[' + node.startLine + '-' + node.endLine + ']&lt;/TD>&lt;/TR>';
+          label += '\n&lt;TR>&lt;TD>&lt;FONT COLOR="' + getHeatColor() + '">&amp;#xf06d;&lt;/FONT>&lt;/TD>&lt;/TR>';
+          label += '\n&lt;/TABLE>>';
+          break;
+        default:
+          label = '"' + node.name + '"';
+      }
+      return label;
+    }
+
+
+    return {
+      generateSvgGraph: generateSvgGraph
+    }
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-configuration.html">configuration</a></li><li><a href="module-data-initializer.html">data-initializer</a></li><li><a href="module-data-reader.html">data-reader</a></li><li><a href="module-generalFunctions.html">generalFunctions</a></li><li><a href="module-graphController.html">graphController</a></li></ul><h3>Classes</h3><ul><li><a href="CuNode.html">CuNode</a></li><li><a href="Dependency.html">Dependency</a></li><li><a href="EditorController.html">EditorController</a></li><li><a href="ExpansionPath.html">ExpansionPath</a></li><li><a href="FunctionCall.html">FunctionCall</a></li><li><a href="FunctionNode.html">FunctionNode</a></li><li><a href="IntervalTree.html">IntervalTree</a></li><li><a href="LibraryFunctionNode.html">LibraryFunctionNode</a></li><li><a href="LoopNode.html">LoopNode</a></li><li><a href="global.html#Node">Node</a></li><li><a href="NodeVariable.html">NodeVariable</a></li></ul><h3>Global</h3><ul><li><a href="global.html#colorGraph">colorGraph</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jul 12 2016 20:24:35 GMT+0200 (W. Europe Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

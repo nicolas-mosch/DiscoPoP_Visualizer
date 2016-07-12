@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: general/data-reader.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: general/data-reader.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var fs = require('fs');
+var _ = require('lodash');
+var sizeof = require('sizeof');
+
+/**
+ * Module for reading DiscoPoP's output-files and adding the necessary information to the generated JSON objects
+ * @module data-reader
+ */
+module.exports = {
+  /**
+   * Reads the files output by DiscoPoP and from them makes the necessary changes and creates the objects for the visualizer.
+   * @param  {string} mappingFilePath The path to the FileMapping file
+   * @param  {string} nodeFilePath    The path to the Node-Data file
+   * @return {DiscoPopData}           The complete data from DiscoPoP required by the visualizer
+   */
+  buildFromFile: function buildFromFile(mappingFilePath, nodeFilePath) {
+    var start = new Date().getTime();
+    var startCU, endCU, nodeID, i, start, end, fileID;
+    var rootNodes = [];
+    var fileMaps = [];
+    var functionNodes = [];
+    var maxCuDataSize = 0;
+    var minCuDataSize = Infinity;
+    var midCuDataSize;
+    var checkedNodes = [];
+    var dataSize;
+    var fileContents = fs.readFileSync(mappingFilePath, "utf-8");
+    var fileLines = fileContents.split('\n');
+    var fileLine;
+    var node, childNode, functionNode, dependency, functionCall;
+    var childNodeId;
+    var nodeMap = {};
+    var fileIdMap = {};
+    var i;
+    /**
+     * Helper function: recursively sets the loopLevel, dataSize and descendantNodeCount of a node and its descendants
+     */
+    function setDescendantData(node, loopLevel) {
+      if (checkedNodes.indexOf(node.id) == -1) {
+        checkedNodes.push(node.id);
+        if (node.type == 1) {
+          loopLevel = 0;
+        } else {
+          node.loopLevel = loopLevel;
+          loopLevel++;
+        }
+        _.each(node.childrenNodes, function(childNodeId) {
+          node.descendantNodeCount++;
+          var childNode = fileContents[childNodeId];
+          if (checkedNodes.indexOf(childNodeId) == -1 &amp;&amp; childNode.type >= 0 &amp;&amp; childNode.type &lt;= 2) {
+            setDescendantData(childNode, loopLevel);
+            node.readDataSize += childNode.readDataSize;
+            node.writeDataSize += childNode.writeDataSize;
+            if(childNode.type == 0 || childNode.type == 2){
+              node.readPhaseLineNumbers = _.union(node.readPhaseLineNumbers, childNode.readPhaseLineNumbers);
+              node.writePhaseLineNumbers = _.union(node.writePhaseLineNumbers, childNode.writePhaseLineNumbers);
+            }
+            node.descendantNodeCount += childNode.descendantNodeCount;
+          }
+        });
+      }
+    }
+
+    /**
+     * Helper function: updates the id and lines of the given dependency to single numbers
+     */
+    function updateDependencyData(dependency) {
+      dependency.cu = nodeMap[dependency.CUid];
+      delete dependency.CUid;
+      dependency.sinkLine = parseInt(dependency.sinkLine.split(':')[1]);
+      dependency.sourceLine = parseInt(dependency.sourceLine.split(':')[1]);
+    }
+
+
+    // ----- Set file-mapping -----
+    for (i = 0; i &lt; fileLines.length; i++) {
+      fileLine = fileLines[i].split('\t');
+      if (fileLine.length == 2) {
+        fileContents = fs.readFileSync(fileLine[1].trim(), "utf-8");
+        fileMaps.push({
+          path: fileLine[1].trim(),
+          content: fileContents
+        });
+        fileIdMap[fileLine[0]] = i;
+      }
+    }
+
+    //  ----- Set node-data -----
+    fileContents = JSON.parse(fs.readFileSync(nodeFilePath));
+
+    // Initialize counter-variables
+    var nodeCount = 0;
+    var cuCount = 0;
+    var functionCount = 0;
+    var loopCount = 0;
+    var libraryFunctionCount = 0;
+
+    // Add all initial nodes and set dataSize
+    // change id to single number
+    for (i = 0; i &lt; fileContents.length; i++) {
+      node = fileContents[i];
+      node.parentNodes = [];
+      node.descendantNodeCount = 0;
+      if (node.type == 0) {
+        node.predecessorCUs = [];
+        node.functionCalls = node.functionCall;
+        delete node.functionCall;
+        node.lines = [];
+        _.each(node.instructionsLineNumbers, function(line){
+        	node.lines.push(parseInt(line.split(':')[1]));
+        });
+        delete node.instructionsLineNumbers;
+      } else {
+        node.readDataSize = 0;
+        node.writeDataSize = 0;
+        node.readPhaseLineNumbers = [];
+        node.writePhaseLineNumbers = [];
+      }
+      nodeCount++;
+      switch (node.type) {
+        case 0:
+          cuCount++;
+          node.localVariables = node.localVariableNames || [];
+          node.globalVariables = node.globalVariableNames || [];
+          delete node.localVariableNames;
+          delete node.globalVariableNames;
+          break;
+        case 1:
+          functionCount++;
+          node.functionArguments = node.funcArguments || [];
+          delete node.funcArguments;
+          functionNodes.push(node);
+          break;
+        case 2:
+          loopCount++;
+          break;
+        case 3:
+          libraryFunctionCount++;
+          break;
+        default:
+          nodeCount++;
+      }
+      node.fileId = fileIdMap[node.id.split(':')[0]];
+      nodeMap[node.id] = i;
+      node.id = i;
+      node.startLine = parseInt(node.start.split(':')[1]);
+      node.endLine = parseInt(node.end.split(':')[1]);
+      delete node.start;
+      delete node.end;
+    };
+
+    // Add parentNodes and predecessorCUs properties to nodes
+    _.each(fileContents, function(node) {
+      for (i = 0; i &lt; node.childrenNodes.length; i++) {
+        childNodeId = nodeMap[node.childrenNodes[i]];
+
+        // Add missing library functions
+        if (typeof childNodeId === 'undefined') {
+          childNodeId = fileContents.length;
+          fileContents.push({
+            id: childNodeId,
+            type: 3,
+            name: 'Library Function',
+            parentNodes: [],
+            childrenNodes: []
+          });
+          nodeMap[node.childrenNodes[i]] = childNodeId;
+
+        }
+        // Update id of childNode
+        node.childrenNodes[i] = childNodeId;
+        // Add this node to childrens parentNodes
+        fileContents[childNodeId].parentNodes.push(node.id);
+      }
+
+      if (node.type == 0) {
+        // Update successor ids and set predecessors
+        for (i = 0; i &lt; node.successorCUs.length; i++) {
+          childNodeId = nodeMap[node.successorCUs[i]];
+          node.successorCUs[i] = childNodeId;
+          fileContents[childNodeId].predecessorCUs.push(node.id);
+        }
+
+        // Update ids and lines for dependencies
+        for (i = 0; i &lt; node.RAWDepsOn.length; i++) {
+          updateDependencyData(node.RAWDepsOn[i]);
+        }
+        for (i = 0; i &lt; node.WARDepsOn.length; i++) {
+          updateDependencyData(node.WARDepsOn[i]);
+        }
+        for (i = 0; i &lt; node.WAWDepsOn.length; i++) {
+          updateDependencyData(node.WAWDepsOn[i]);
+        }
+
+        // Update write and read-phase line numbers
+        for (i = 0; i &lt; node.readPhaseLineNumbers.length; i++) {
+          node.readPhaseLineNumbers[i] = parseInt(node.readPhaseLineNumbers[i].split(':')[1]);
+        }
+        for (i = 0; i &lt; node.writePhaseLineNumbers.length; i++) {
+          node.writePhaseLineNumbers[i] = parseInt(node.writePhaseLineNumbers[i].split(':')[1]);
+        }
+
+        for (i = 0; i &lt; node.functionCalls.length; i++) {
+          functionCall = node.functionCalls[i];
+          functionCall.line = parseInt(functionCall.atLine.split(':')[1]);
+          functionCall.function = nodeMap[functionCall.funcId];
+          delete functionCall.atLine;
+          delete functionCall.funcId;
+        }
+      }
+    });
+
+    // Find root nodes and set descendant data (loop level, read/write datasize, descendantNodeCount)
+    _.each(functionNodes, function(node) {
+      if (!node.parentNodes.length) {
+        rootNodes.push(node.id);
+        setDescendantData(node, 0);
+      }
+    });
+
+    // get max/min-CuDataSize
+    _.each(fileContents, function(node) {
+      if (node.type &lt; 3) {
+        maxCuDataSize = Math.max(maxCuDataSize, (node.readDataSize + node.writeDataSize));
+        minCuDataSize = Math.min(maxCuDataSize, (node.readDataSize + node.writeDataSize));
+      }
+    });
+
+    // get medium data-size for computing heat factor
+    midCuDataSize = (maxCuDataSize - minCuDataSize) / 2;
+
+    // get compute and set heatFactor
+    _.each(fileContents, function(node) {
+      node.heatFactor = Math.min(1, ((node.readDataSize + node.writeDataSize) / 2) / midCuDataSize);
+    });
+    var end = new Date().getTime();
+    var time = end - start;
+    console.log('Resulting dataset size: ' + sizeof.sizeof(fileContents, true));
+    console.log('#Nodes: ' + nodeCount + ', #CUs: ' + cuCount + ', #Functions: ' + functionCount + ', #Loops: ' + loopCount + ', #LibFuncs: ' + libraryFunctionCount);
+    console.log('Time elapsed: ', time);
+    return {
+      fileMapping: fileMaps,
+      nodeData: fileContents,
+      rootNodes: rootNodes
+    };
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-configuration.html">configuration</a></li><li><a href="module-data-initializer.html">data-initializer</a></li><li><a href="module-data-reader.html">data-reader</a></li><li><a href="module-generalFunctions.html">generalFunctions</a></li><li><a href="module-graphController.html">graphController</a></li></ul><h3>Classes</h3><ul><li><a href="CuNode.html">CuNode</a></li><li><a href="Dependency.html">Dependency</a></li><li><a href="EditorController.html">EditorController</a></li><li><a href="ExpansionPath.html">ExpansionPath</a></li><li><a href="FunctionCall.html">FunctionCall</a></li><li><a href="FunctionNode.html">FunctionNode</a></li><li><a href="IntervalTree.html">IntervalTree</a></li><li><a href="LibraryFunctionNode.html">LibraryFunctionNode</a></li><li><a href="LoopNode.html">LoopNode</a></li><li><a href="global.html#Node">Node</a></li><li><a href="NodeVariable.html">NodeVariable</a></li></ul><h3>Global</h3><ul><li><a href="global.html#colorGraph">colorGraph</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jul 12 2016 20:24:35 GMT+0200 (W. Europe Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

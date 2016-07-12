@@ -1,0 +1,2813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Global</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Global</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="colorGraph"><span class="type-signature"></span>colorGraph<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Set the colors of the graph's elements
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="views_visualizer.js.html">views/visualizer.js</a>, <a href="views_visualizer.js.html#line74">line 74</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+<h4 class="name" id="DiscoPopData">DiscoPopData</h4>
+
+
+
+
+<div class="description">
+    DiscoPoP's output data in JSON format
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fileMapping</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#JsonFileMap">JsonFileMap</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An object containing the File-Mapping output by DiscoPoP</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;JsonNode></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An extended version of DiscoPoP's output node-data object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rootNodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id's of the graph's root function-nodes (to be displayed initially)</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="documentation_typedefs.js.html">documentation/typedefs.js</a>, <a href="documentation_typedefs.js.html#line114">line 114</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="JsonCuNode">JsonCuNode</h4>
+
+
+
+
+<div class="description">
+    A DiscoPoP Computational-Unit node in JSON format
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fileId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">File-ID of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The type of the Node (always 0)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>startLine</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The first line of the CU's code-section</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>endLine</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The last line of the CU's code-section</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>childrenNodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The nodes which are children of this CU (ids of the function-nodes being called)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>parentNodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The nodes of which this CU is a child (array with a single function or loop node id)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>readDataSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of Bytes read in the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>writeDataSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of Bytes written in the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>successorCUs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The CUs succeeding this one</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>predecessorCUs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The CUs preceeding this one</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>basicBlockName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the basic block of the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>instructionsLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines of instructions of the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>readPhaseLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines on which a read occurs within the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>writePhaseLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines on which a write occurs within the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>localVariables</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Variable></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The variables accessed locally by the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>globalVariables</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Variable></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The variables accessed globally by the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>functionCalls</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="FunctionCall.html">FunctionCall</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The calls to functions from within the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>RAWDepsOn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Dependency.html">Dependency</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The Read-After-Write dependencies of the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>WARDepsOn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Dependency.html">Dependency</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The Write-After-Read dependencies of the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>WAWDepsOn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Dependency.html">Dependency</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The Write-After-Write dependencies of the CU</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>heatFactor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The node's heat in relation to all other nodes</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="documentation_typedefs.js.html">documentation/typedefs.js</a>, <a href="documentation_typedefs.js.html#line30">line 30</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="JsonDependency">JsonDependency</h4>
+
+
+
+
+<div class="description">
+    A DiscoPoP Dependency
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>cu</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the CU on which there is a dependency</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sinkLine</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The line of the sink of the dependency</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sourceLine</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The line of the source of the dependency</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>varName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the variable causing the dependency</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="documentation_typedefs.js.html">documentation/typedefs.js</a>, <a href="documentation_typedefs.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="JsonFileMap">JsonFileMap</h4>
+
+
+
+
+<div class="description">
+    A DiscoPoP File-Map in JSON format
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The full path to the file</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>contents</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The contents of the file</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="documentation_typedefs.js.html">documentation/typedefs.js</a>, <a href="documentation_typedefs.js.html#line107">line 107</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="JsonFunctionCall">JsonFunctionCall</h4>
+
+
+
+
+<div class="description">
+    A DiscoPoP Function-Call
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>line</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The line on which the function is called</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>function</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the node of the function being called</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="documentation_typedefs.js.html">documentation/typedefs.js</a>, <a href="documentation_typedefs.js.html#line17">line 17</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="JsonFunctionNode">JsonFunctionNode</h4>
+
+
+
+
+<div class="description">
+    A DiscoPoP Function node in JSON format
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fileId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">File-ID of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The type of the Node (always 1)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>start</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The first line of the function's code-section</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The last line of the function's code-section</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>writePhaseLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines on which a write occurs within the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>readPhaseLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines on which a read occurs within the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>readDataSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of Bytes read in the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>writeDataSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of Bytes written in the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>descendantNodeCount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of nodes that are descendants of this one</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the function</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>childrenNodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The nodes which are children of this function</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>parentNodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The nodes of which this function is a child (empty if main or root-node, CU's calling the function otherwise)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>funcArguments</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Variable></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The arguments of the function</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>heatFactor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The node's heat in relation to all other nodes</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="documentation_typedefs.js.html">documentation/typedefs.js</a>, <a href="documentation_typedefs.js.html#line57">line 57</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="JsonLibraryFunctionNode">JsonLibraryFunctionNode</h4>
+
+
+
+
+<div class="description">
+    A DiscoPoP Library-Function node in JSON format
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fileId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">File-ID of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The type of the node (always 3)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the library-function</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>parentNodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id's of the nodes nodes that call the function (always CU's)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>funcArguments</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Variable></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The arguments of the function</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="documentation_typedefs.js.html">documentation/typedefs.js</a>, <a href="documentation_typedefs.js.html#line96">line 96</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="JsonLoopNode">JsonLoopNode</h4>
+
+
+
+
+<div class="description">
+    A DiscoPoP Loop node in JSON format
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The id of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fileId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">File-ID of the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The type of the node (always 2)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>startLine</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The first line of the loop's code-section</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>endLine</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The last line of the loop's code-section</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>writePhaseLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines on which a write occurs within the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>readPhaseLineNumbers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lines on which a read occurs within the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>readDataSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of Bytes read in the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>writeDataSize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of Bytes written in the node</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>descendantNodeCount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The amount of nodes that are descendants of this one</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>childrenNodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#Node">Node</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The nodes which are children of this loop</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>parentNodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="global.html#Node">Node</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The nodes of which this loop is a child (a single function node id)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>loopLevel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The nested-level of the loop (within other loops)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>heatFactor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The node's heat in relation to all other nodes</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="documentation_typedefs.js.html">documentation/typedefs.js</a>, <a href="documentation_typedefs.js.html#line77">line 77</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="JsonVariable">JsonVariable</h4>
+
+
+
+
+<div class="description">
+    A DiscoPoP Variable
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The type of the variable</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the variable</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="documentation_typedefs.js.html">documentation/typedefs.js</a>, <a href="documentation_typedefs.js.html#line10">line 10</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id="Node">Node</h4>
+
+
+
+
+<div class="description">
+    A DiscoPoP node in JSON format
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="global.html#JsonCuNode">JsonCuNode</a></span>
+|
+
+<span class="param-type"><a href="global.html#JsonFunctionNode">JsonFunctionNode</a></span>
+|
+
+<span class="param-type"><a href="global.html#JsonLoopNode">JsonLoopNode</a></span>
+|
+
+<span class="param-type"><a href="global.html#JsonLibraryFunctionNode">JsonLibraryFunctionNode</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="documentation_typedefs.js.html">documentation/typedefs.js</a>, <a href="documentation_typedefs.js.html#line24">line 24</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-configuration.html">configuration</a></li><li><a href="module-data-initializer.html">data-initializer</a></li><li><a href="module-data-reader.html">data-reader</a></li><li><a href="module-generalFunctions.html">generalFunctions</a></li><li><a href="module-graphController.html">graphController</a></li></ul><h3>Classes</h3><ul><li><a href="CuNode.html">CuNode</a></li><li><a href="Dependency.html">Dependency</a></li><li><a href="EditorController.html">EditorController</a></li><li><a href="ExpansionPath.html">ExpansionPath</a></li><li><a href="FunctionCall.html">FunctionCall</a></li><li><a href="FunctionNode.html">FunctionNode</a></li><li><a href="IntervalTree.html">IntervalTree</a></li><li><a href="LibraryFunctionNode.html">LibraryFunctionNode</a></li><li><a href="LoopNode.html">LoopNode</a></li><li><a href="global.html#Node">Node</a></li><li><a href="NodeVariable.html">NodeVariable</a></li></ul><h3>Global</h3><ul><li><a href="global.html#colorGraph">colorGraph</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Jul 12 2016 20:24:35 GMT+0200 (W. Europe Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
