@@ -125,7 +125,7 @@ function importFiles() {
   // Import File-Mapping
   var filePaths = dialog.showOpenDialog({
     title: 'Import File-Mapping',
-    defaultPath: 'data',
+    defaultPath: '.',
     filters: [{
       name: 'Text',
       extensions: ['txt']

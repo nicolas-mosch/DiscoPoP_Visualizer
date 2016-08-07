@@ -1,6 +1,6 @@
 # DiscoPoP_Frontend
 
-Make sure you have npm installed on your system. 
+Make sure you have node.js and npm installed on your system. 
 
 After cloning the project, insert the following to the command-line from the project's folder:
 
