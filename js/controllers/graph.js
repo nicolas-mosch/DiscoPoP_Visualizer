@@ -1,7 +1,7 @@
 'use strict';
 
 var d3 = require('d3');
-var dagreD3 = require('../models/dagre-d3');
+var dagreD3 = require('../external/dagre-d3');
 var _ = require('lodash');
 var configuration = require('../general/configuration');
 var generalFunctions = require('../general/generalFunctions');

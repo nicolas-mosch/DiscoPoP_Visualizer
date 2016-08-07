@@ -1,9 +1,9 @@
 const ipc = require("electron").ipcRenderer;
 var _ = require('lodash/core');
 var d3 = require('d3');
-var $ = require('jquery');
-global.jQuery = require('jquery');
-window.$ = require('jquery');
+var $ = global.jQuery = window.$ = require('jquery');
+// Hack to fix outdated libraries accessing outdated ui property
+window.$.ui = require('jquery-ui');
 require('bootstrap');
 var BootstrapMenu = require('bootstrap-menu');
 var sizeof = require('sizeof');
