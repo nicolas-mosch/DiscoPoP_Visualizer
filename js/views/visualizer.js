@@ -17,6 +17,7 @@ var configuration = require('../js/general/configuration');
 var nodeData, fileMaps, fileNodeIntervalTrees;
 var editorController;
 
+var originalNodeIdMap;
 ipc.on('alert', function(event, message) {
 	alert(message);
 });
@@ -34,6 +35,7 @@ ipc.on('load-data', function(event, data) {
 	nodeData = data.nodeData;
 	fileMaps = data.fileMapping;
 	editorController = new EditorController(fileMaps);
+	originalNodeIdMap = data.nodeMap;
 });
 
 /**
@@ -239,6 +241,7 @@ ipc
 											type = "undefined";
 										}
 										var data = {
+											originalID: originalNodeIdMap[node.id],
 											file : fileMaps[node.fileId].fileName,
 											lines : node.startLine + ' - '
 													+ node.endLine,

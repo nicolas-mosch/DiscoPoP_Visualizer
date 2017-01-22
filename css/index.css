@@ -202,7 +202,9 @@ svg text {
 	top: 40px;
 	right: 5px;
 	display: none;
-	background-color: #B0B0B0;
+	background-color: #F5F5DC;
+	border-radius: 5px;
+	padding: 10px;
 }
 
 #node-info-table td {
