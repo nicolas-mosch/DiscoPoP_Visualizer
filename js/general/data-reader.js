@@ -236,10 +236,17 @@ module.exports = {
     console.log('Resulting dataset size: ' + sizeof.sizeof(fileContents, true));
     console.log('#Nodes: ' + nodeCount + ', #CUs: ' + cuCount + ', #Functions: ' + functionCount + ', #Loops: ' + loopCount + ', #LibFuncs: ' + libraryFunctionCount);
     console.log('Time elapsed: ', time);
-    return {
+    
+	var originalNodeIdMap = [];
+	_.each(nodeMap, function(val, key){
+		originalNodeIdMap[val] = key;
+	});
+	
+	return {
       fileMapping: fileMaps,
       nodeData: fileContents,
-      rootNodes: rootNodes
+      rootNodes: rootNodes,
+	  nodeMap: originalNodeIdMap
     };
   }
 };

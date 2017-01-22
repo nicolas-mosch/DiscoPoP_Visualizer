@@ -180,7 +180,8 @@ text {
   top: 40px;
   right: 5px;
   display: none;
-  background-color: #B0B0B0;
+  background-color: #EFF3E1;
+  border-radius: 5px;
 }
 #node-info-table td {
   padding: 7px;

@@ -21,6 +21,7 @@ var legendController;
 var nodeData;
 var fileMaps;
 var fileNodeIntervalTrees;
+var nodeIdMap;
 
 ipc.on('alert', function(event, message) {
   alert(message);
@@ -45,7 +46,8 @@ ipc.on('init', function(event, data) {
 
   nodeData = data.nodeData;
   fileMaps = data.fileMapping;
-
+  nodeIdMap = data.nodeMap;
+  
   graphController = new GraphController(canvas, data.rootNodes, true);
 
   editorController = new EditorController(data.fileMapping);
@@ -158,6 +160,7 @@ function initEventListeners() {
     }
 
     var data = {
+	  originalID: nodeIdMap[node.id],
       file: fileMaps[node.fileId].fileName,
       lines: node.startLine + ' - ' + node.endLine,
       type: type
