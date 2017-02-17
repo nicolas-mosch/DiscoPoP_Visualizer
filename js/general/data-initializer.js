@@ -65,21 +65,12 @@ module.exports = {
       node = data.nodeData[i];
       classNode = nodes[i];
       for (j = 0; j < node.childrenNodes.length; j++) {
-        try {
           classNode.addChild(nodes[node.childrenNodes[j]]);
-        } catch (error) {
-          console.error(error);
-        }
       }
 
       if (node.type == 0) {
         for (j = 0; j < node.successorCUs.length; j++) {
-          try{
-			classNode.addSuccessor(nodes[node.successorCUs[j]]);
-		  }catch(error)
-		  {
-			  console.error("Error adding successorCU ", nodes[node.successorCUs[j]], node.successorCUs[j]);
-		  }
+		  classNode.addSuccessor(nodes[node.successorCUs[j]]);
         }
         for (j = 0; j < node.localVariables.length; j++) {
           classNode.addLocalVariable(new NodeVariable(node.localVariables[j].name, node.localVariables[j].type));

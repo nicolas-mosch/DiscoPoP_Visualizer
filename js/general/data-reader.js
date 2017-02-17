@@ -98,7 +98,13 @@ module.exports = {
     // Add all initial nodes and set dataSize
     // change id to single number
     for (i = 0; i < fileContents.length; i++) {
-      node = fileContents[i];
+	  node = fileContents[i];
+	  if(node.type < 0 || node.type > 3){
+		console.error("\nError: Invalid type for node " + node.id);
+		fileContents.splice(i, 1);
+		--i;
+		continue;
+	  }
       node.parentNodes = [];
       node.descendantNodeCount = 0;
       if (node.type == 0) {
@@ -148,6 +154,12 @@ module.exports = {
       delete node.start;
       delete node.end;
     };
+	
+	originalNodeIdMap = [];
+	
+	_.each(nodeMap, function(val, key){
+		originalNodeIdMap[val] = key;
+	});
 
     // Add parentNodes and predecessorCUs properties to nodes
     _.each(fileContents, function(node) {
@@ -156,6 +168,7 @@ module.exports = {
 
         // Add missing library functions
         if (typeof childNodeId === 'undefined') {
+		  console.info("\nNode " + originalNodeIdMap[node.id] + " has a childNode which does not exist ("+node.childrenNodes[i]+"). Adding it manually as a Library Function");
           childNodeId = fileContents.length;
           fileContents.push({
             id: childNodeId,
@@ -178,7 +191,16 @@ module.exports = {
         for (i = 0; i < node.successorCUs.length; i++) {
           childNodeId = nodeMap[node.successorCUs[i]];
           node.successorCUs[i] = childNodeId;
-          fileContents[childNodeId].predecessorCUs.push(node.id);
+          
+		  try{
+			  fileContents[childNodeId].predecessorCUs.push(node.id);
+		  }catch(error){
+			  console.error("\nError: could not add node " + originalNodeIdMap[node.id] + " to predecessorCUs of " + originalNodeIdMap[childNodeId]);
+			  console.error(error);
+			  console.info("Removing " + originalNodeIdMap[childNodeId] + " from successorCUs of " + originalNodeIdMap[node.id]);
+			  node.successorCUs.splice(i, 1);
+			  --i;
+			}
         }
 
         // Update ids and lines for dependencies
@@ -217,6 +239,10 @@ module.exports = {
         setDescendantData(node, 0);
       }
     });
+	
+	if(!rootNodes.length){
+		console.error("\nError: Could not find any root nodes. Likely due to broken successorCU values.");
+	}
 
     // get max/min-CuDataSize
     _.each(fileContents, function(node) {
@@ -239,11 +265,6 @@ module.exports = {
     console.log('#Nodes: ' + nodeCount + ', #CUs: ' + cuCount + ', #Functions: ' + functionCount + ', #Loops: ' + loopCount + ', #LibFuncs: ' + libraryFunctionCount);
     console.log('Time elapsed: ', time);
 	
-	originalNodeIdMap = [];
-	
-	_.each(nodeMap, function(val, key){
-		originalNodeIdMap[val] = key;
-	});
     return {
       fileMapping: fileMaps,
       nodeData: fileContents,
