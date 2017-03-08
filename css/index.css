@@ -122,6 +122,7 @@ svg text {
 
 .node {
 	cursor: pointer;
+	border-radius: 5px;
 }
 
 .dependency-label {

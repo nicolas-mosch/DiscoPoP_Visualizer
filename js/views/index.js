@@ -10,6 +10,10 @@ ipc.on('redrawGraph', function(event, message) {
   colorLegendGraph();
 });
 
+ipc.on('alert', function(event, message) {
+	alert(message);
+});
+
 $(document).ready(function() {
     $("#import-button").on('click', function(){
       ipc.send('import-files');

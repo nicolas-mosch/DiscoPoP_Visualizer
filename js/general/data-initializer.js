@@ -98,7 +98,7 @@ module.exports = {
             intervalTrees[node.fileId].insert([node.startLine, node.endLine], classNode);
           }
         } catch (error) {
-          console.error(node.fileId, intervalTrees);
+          console.error(node, intervalTrees);
           throw error;
         }
       }

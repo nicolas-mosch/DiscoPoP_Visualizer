@@ -13,10 +13,11 @@ var EditorController = require('../js/controllers/editor');
 var dataInitializer = require('../js/general/data-initializer');
 var generalFunctions = require('../js/general/generalFunctions');
 var configuration = require('../js/general/configuration');
-
+var currentZoom;
 var nodeData, fileMaps, fileNodeIntervalTrees;
 var editorController;
-
+var zoom;
+var init = false;
 var originalNodeIdMap;
 ipc.on('alert', function(event, message) {
 	alert(message);
@@ -46,11 +47,15 @@ ipc.on('update-graph', function(event, svg) {
 	$("#flow-graph-container").html(svg);
 	var svg = d3.select("#flow-graph-container svg");
 	var inner = d3.select("#graph0");
-
-	var transform = d3.transform(inner.attr('transform'));
+	var currentScale, currentTranslate;
+	
+	if(init){
+		currentScale = zoom.scale();
+		currentTranslate = zoom.translate();
+	}
 
 	// set zoom
-	var zoom = d3.behavior.zoom().on(
+	zoom = d3.behavior.zoom().on(
 			"zoom",
 			function(panToNode) {
 				inner.attr("transform", "translate(" + d3.event.translate + ")"
@@ -60,15 +65,17 @@ ipc.on('update-graph', function(event, svg) {
 	// Remove native doubleclick zoom
 	svg.on("dblclick.zoom", null);
 
-	// Reset previous zoom-scale and position
-	inner.transition().duration(50).call(
-			zoom.translate([ transform.translate[0], transform.translate[1] ])
-					.scale(transform.scale[0]).event);
-
+	if(init){
+		svg.transition().duration(0)
+		.call(zoom.translate(currentTranslate)
+		.scale(currentScale).event);
+	}
+	
+	
 	colorGraph(inner);
 	colorGraph(d3.select("#legend-graph"));
-
-	// TODO: Add a Pan-To-Node option after graph is redrawn
+	
+	init = true;
 });
 
 /**

@@ -32,6 +32,7 @@ module.exports = {
     var nodeMap = {};
     var fileIdMap = {};
     var i;
+	var errors = false;
     /**
      * Helper function: recursively sets the loopLevel, dataSize and descendantNodeCount of a node and its descendants
      */
@@ -76,12 +77,16 @@ module.exports = {
     for (i = 0; i < fileLines.length; i++) {
       fileLine = fileLines[i].split('\t');
       if (fileLine.length == 2) {
-        fileContents = fs.readFileSync(fileLine[1].trim(), "utf-8");
-        fileMaps.push({
-          path: fileLine[1].trim(),
-          content: fileContents
-        });
-        fileIdMap[fileLine[0]] = i;
+        try{
+			fileContents = fs.readFileSync(fileLine[1].trim(), "utf-8");
+			fileMaps.push({
+				path: fileLine[1].trim(),
+				content: fileContents
+			});
+			fileIdMap[fileLine[0]] = i;
+		}catch(err){
+			console.error(err + "\n");
+		}
       }
     }
 
@@ -146,7 +151,15 @@ module.exports = {
         default:
           nodeCount++;
       }
-      node.fileId = fileIdMap[node.id.split(':')[0]];
+	  
+	  node.fileId = fileIdMap[node.id.split(':')[0]];
+	  
+	  if(typeof node.fileId == "undefined"){
+		console.error("Error: No file was found with ID: " + node.id.split(':')[0] + " in FileMapping. (File-ID taken from split of Node-ID " + node.id + " by ':')");
+		errors = true;
+	  }
+	  
+	  
       nodeMap[node.id] = i;
       node.id = i;
       node.startLine = parseInt(node.start.split(':')[1]);
@@ -200,6 +213,7 @@ module.exports = {
 			  console.info("Removing " + originalNodeIdMap[childNodeId] + " from successorCUs of " + originalNodeIdMap[node.id]);
 			  node.successorCUs.splice(i, 1);
 			  --i;
+			  errors = true;
 			}
         }
 
@@ -265,7 +279,11 @@ module.exports = {
     console.log('#Nodes: ' + nodeCount + ', #CUs: ' + cuCount + ', #Functions: ' + functionCount + ', #Loops: ' + loopCount + ', #LibFuncs: ' + libraryFunctionCount);
     console.log('Time elapsed: ', time);
 	
-    return {
+	if(errors){
+		return false;
+	}
+	
+	return {
       fileMapping: fileMaps,
       nodeData: fileContents,
       rootNodes: rootNodes,

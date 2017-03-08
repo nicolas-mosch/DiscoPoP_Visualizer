@@ -150,9 +150,16 @@ function importFiles() {
 
   if (filePaths == null)
     return;
-
+	
+  var data = dataReader.buildFromFile(mappingPath, filePaths[0]);
+  
+  if(!data){
+	mainWindow.webContents.send('alert', 'An error occurred while loading the data. Check the console log for more information.');
+	return;
+  }
+  
   mainWindow.webContents.on('did-finish-load', function() {
-    var data = dataReader.buildFromFile(mappingPath, filePaths[0]);
+    
     mainWindow.webContents.send('load-data', data);
 
     fileNodeIntervalTrees = dataInitializer.prepareData(data);
