@@ -248,6 +248,7 @@ ipc
 											type = "undefined";
 										}
 										var data = {
+											id: node.id,
 											originalID: originalNodeIdMap[node.id],
 											file : fileMaps[node.fileId].fileName,
 											lines : node.startLine + ' - '

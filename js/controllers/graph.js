@@ -253,10 +253,12 @@ module.exports = {
       var functionCallEdges = [];
       var addedFlowEdges = [];
       var dependencyEdges = [];
+	  var hiddenNodes = [];
       var visibleAncestor;
 
       _.each(startNodes, function(root) {
         if (root.type == 0) {
+		  hiddenNodes.push(root);
           functionNodes = functionNodes.concat(root.children);
         } else {
           functionNodes.push(root);
@@ -365,16 +367,29 @@ module.exports = {
         addSubgraph(functionNodes.pop());
       };
       
+	  _.each(hiddenNodes, function(node){
+	    _.each(node.children, function(functionNode){
+	      digraph += '\n'+(-functionNode.id)+' [id='+(-functionNode.id)+', shape="point", label="entry", style="filled"];';
+	      digraph += '\n' + (-functionNode.id) + ' -> ' + (functionNode.type == 1 ? functionNode.entry.id : functionNode.id) + ';';
+		});
+	  });
+	  
       // Add function-call and dependency edges outside of subgraphs. Correct clustering breaks otherwise
       _.each(functionCallEdges, function(edge) {
         digraph += '\n' + edge + ' [style=dotted, id="' + edge.replace(' -> ', 't') + '"];';
       });
       _.each(dependencyEdges, function(edge) {
-          digraph += edge;
-          
+          digraph += edge;          
       });
       digraph += "\n}";
-
+      
+	  fs.writeFile('debug_dot.txt', digraph, function(err) {
+          if (err) {
+            return console.log('Unable to write file ' + err);
+          }
+          console.log('DOT-File was saved');
+        });
+	  
       var svg;
       try {
         var start = new Date().getTime();
