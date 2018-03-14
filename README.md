@@ -1,19 +1,31 @@
-# DiscoPoP_Frontend
+# DiscoPoP Visualizer
 
-Make sure you have node.js and npm installed on your system. 
+A tool for visualizing the output of the DiscoPoP
 
-After cloning the project, insert the following to the command-line from the project's folder:
+### Prerequisites
 
-To install the dependencies:
-```{r, engine='bash', count_lines}
+For developing You will need to have node.js and npm installed on your system
+
+### Installing
+
+Clone the repository to your system
+
+```
+git clone https://github.com/nicolas-mosch/DiscoPoP_Visualizer.git
+```
+
+Install dependencies (from project's folder)
+
+```
 npm install
 ```
 
-To start the visualizer:
-```{r, engine='bash', count_lines}
+Start application (from project's folder)
+
+```
 npm start
 ```
 
+## Documentation
 
-
-
+You can find the documentation [here](http://nicolas-mosch.github.io/DiscoPoP_Visualizer/documentation/version_B/)
