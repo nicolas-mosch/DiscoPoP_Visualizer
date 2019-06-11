@@ -87,11 +87,11 @@ module.exports = {
         }
         for (j = 0; j < node.WARDepsOn.length; j++) {
           dependency = node.WARDepsOn[j];
-          classNode.addDependency(new Dependency(nodes[dependency.cu], dependency.sinkLine, dependency.sourceLine, dependency.varName, 0));
+          classNode.addDependency(new Dependency(nodes[dependency.cu], dependency.sinkLine, dependency.sourceLine, dependency.varName, 1));
         }
         for (j = 0; j < node.WAWDepsOn.length; j++) {
           dependency = node.WAWDepsOn[j];
-          classNode.addDependency(new Dependency(nodes[dependency.cu], dependency.sinkLine, dependency.sourceLine, dependency.varName, 0));
+          classNode.addDependency(new Dependency(nodes[dependency.cu], dependency.sinkLine, dependency.sourceLine, dependency.varName, 2));
         }
         try {
           if (getIntervalTrees) {

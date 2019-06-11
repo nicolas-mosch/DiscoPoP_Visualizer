@@ -1,5 +1,4 @@
-const
-ipc = require("electron").ipcRenderer;
+const ipc = require("electron").ipcRenderer;
 var _ = require('lodash/core');
 var d3 = require('d3');
 var $ = global.jQuery = window.$ = require('jquery');
@@ -283,7 +282,8 @@ ipc
 																			sinkFile : dependency.cuNode.fileId,
 																			varName : dependency.variableName,
 																			sourceLine : dependency.sourceLine,
-																			sinkLine : dependency.sinkLine
+																			sinkLine : dependency.sinkLine,
+																			type: dependency.isRaW() ? "RAW" : dependency.isWaR() ? "WAR" : "WAW"
 																		});
 															});
 										}
@@ -553,10 +553,8 @@ ipc
 										var nodes = fileNodeIntervalTrees[editorController
 												.getCurrentFileID()].findAll(
 												line, line);
-										console.log('overlapping nodes', nodes);
 										for (var i = 0; i < nodes.length; i++) {
 											if (nodes[i].lines.indexOf(line) > -1) {
-												console.log(nodes[i]);
 												return nodes[i];
 											}
 										}
@@ -585,7 +583,6 @@ ipc
 				});
 
 function highlightGraphNode(node) {
-	console.log('higlighting', nodeData[node.attr("id")]);
 	node.addClass('selected-node');
 	colorGraph(d3.select('#graph0'));
 }

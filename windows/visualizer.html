@@ -104,7 +104,7 @@
                             {{#each dependencies}}
                             <a class="link-to-line" data-file-line="{{this.sourceLine}}" data-file-id="{{this.sourceFile}}"><span class="glyphicon glyphicon-{{#if this.sourceRead}}open{{else}}save{{/if}}"></span></a>
                             <label style="font-weight: bold">&rarr; {{this.varName}} &rarr;</label>
-                            <a class="link-to-line" data-file-line="{{this.sinkLine}}" data-file-id="{{this.sinkFile}}"><span class="glyphicon glyphicon-{{#if this.sinkRead}}open{{else}}save{{/if}}"></span></a>
+                            <a class="link-to-line" data-file-line="{{this.sinkLine}}" data-file-id="{{this.sinkFile}}"><span class="glyphicon glyphicon-{{#if this.sinkRead}}open{{else}}save{{/if}}"></span></a> ({{this.type}})
                             <br /> {{/each}}
                           </div>
                         </td>

@@ -1,9 +1,13 @@
 // Requires
-var app = require('app'); // Module to control application life.
-var BrowserWindow = require('browser-window'); // Module to create native browser window.
-var Menu = require('menu');
-var MenuItem = require('menu-item');
-const ipc = require("electron").ipcMain;
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  MenuItem,
+  dialog,
+  ipcMain,
+  globalShortcut
+} = require('electron');
 var _ = require('lodash/core');
 var configuration = require('./js/general/configuration.js');
 var dataReader = require('./js/general/data-reader.js');
@@ -18,8 +22,6 @@ var nodes;
 var fileMaps;
 var fileNodeIntervalTrees;
 var graphController;
-
-const dialog = require('electron').dialog;
 
 var template = [{
   label: 'File',
@@ -55,7 +57,10 @@ var template = [{
       }
       graphSettingsWindow = new BrowserWindow({
         width: 600,
-        height: 350
+        height: 350,
+        webPreferences: {
+          nodeIntegration: true
+        }
       });
       graphSettingsWindow.setMenu(null);
       graphSettingsWindow.setAlwaysOnTop(true);
@@ -70,22 +75,31 @@ var template = [{
     accelerator: 'CmdOrCtrl+E',
     click: function(item, focusedWindow) {}
   }]
+},
+{
+  label: 'Tools',
+  submenu: [{
+    label: 'DepFile Compare',
+    click: function(item, focusedWindow) {
+      compareDepFiles();
+    }
+  }]
 }];
 
-ipc.on('import-files', function() {
+ipcMain.on('import-files', function() {
   importFiles();
 });
 
-ipc.on('closeGraphSettingsWindow', function() {
+ipcMain.on('closeGraphSettingsWindow', function() {
   graphSettingsWindow.close();
 });
 
-ipc.on('saveGraphSettings', function() {
+ipcMain.on('saveGraphSettings', function() {
   //graphSettingsWindow.close();
   mainWindow.webContents.send('redrawGraph');
 });
 
-ipc.on('viz-test', function(message, dot){
+ipcMain.on('viz-test', function(message, dot){
   vizWriter.write(dot);
 });
 
@@ -103,7 +117,10 @@ app.on('ready', function() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 600
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   // and load the index.html of the app.
@@ -170,4 +187,53 @@ function importFiles() {
     mainWindow.webContents.send('update-graph', graphController.generateSvgGraph(data.rootNodes));
   });
   mainWindow.loadURL('file://' + __dirname + '/windows/visualizer.html');
+}
+
+function compareDepFiles() {
+  var deps1, deps2;
+  // Import First Dep-File
+  var filePaths = dialog.showOpenDialog({
+    title: 'Import First Dependency File',
+    defaultPath: '.',
+    filters: [{
+      name: 'Text',
+      extensions: ['txt']
+    }],
+    properties: ['openFile']
+  });
+
+  if (filePaths == null)
+    return;
+  deps1 = dataReader.buildDepsFromFile(filePaths[0]);
+
+  var filePaths = dialog.showOpenDialog({
+    title: 'Import Second Dependency File',
+    defaultPath: '.',
+    filters: [{
+      name: 'Text',
+      extensions: ['txt']
+    }],
+    properties: ['openFile']
+  });
+
+  if (filePaths == null)
+    return;
+	
+  deps2 = dataReader.buildDepsFromFile(filePaths[0]);
+  
+  var data = dataReader.compareDepFiles(deps1, deps2);
+
+  if(!data){
+	  mainWindow.webContents.send('alert', 'An error occurred while comparing the deps. Check the console log for more information.');
+	  return;
+  }
+  data = {
+    depMap1: deps1,
+    depMap2: deps2,
+    result: data
+  };
+  mainWindow.webContents.on('did-finish-load', function() {
+    mainWindow.webContents.send('display-results', data);
+  });
+  mainWindow.loadURL('file://' + __dirname + '/windows/compare-deps.html');
 }

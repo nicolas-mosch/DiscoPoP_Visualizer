@@ -284,30 +284,30 @@ module.exports = {
           digraph += "\nsubgraph cluster" + node.id + " {"
           var edge;
           _.each(node.children, function(child) {
+            // Add edges to successors and predecessors of CU
+            _.each(child.successors, function(successor) {
+              visibleAncestor = findFirstVisibleAncestor(successor);
+              edge = child.id + ' -> ' + visibleAncestor.id;
+              if (addedFlowEdges.indexOf(edge) == -1) {
+                digraph += "\n" + edge + ' [id="' + edge.replace(' -> ', 't') + '"];';
+                addedFlowEdges.push(edge);
+              }
+            });
+            _.each(child.predecessors, function(predecessor) {
+              visibleAncestor = findFirstVisibleAncestor(predecessor);
+              edge = visibleAncestor.id + " -> " + child.id;
+              if (addedFlowEdges.indexOf(edge) == -1) {
+                digraph += '\n' + edge + '[id="' + edge.replace(' -> ', 't') + '"];';
+                addedFlowEdges.push(edge);
+              }
+            });
+          });
+          _.each(node.children, function(child) {
             if (child.type == 2) {
               addSubgraph(child);
             } else if (child.type == 0) {
               checkedNodes.push(child.id);
               digraph += '\n' + child.id + ' [id=' + child.id + ', shape=rect;label=' + createLabel(child) + ', style="filled"];';
-
-              // Add edges to successors and predecessors of CU
-              _.each(child.successors, function(successor) {
-                visibleAncestor = findFirstVisibleAncestor(successor);
-                edge = child.id + ' -> ' + visibleAncestor.id;
-                if (addedFlowEdges.indexOf(edge) == -1) {
-                  digraph += "\n" + edge + ' [id="' + edge.replace(' -> ', 't') + '"];';
-                  addedFlowEdges.push(edge);
-                }
-              });
-              _.each(child.predecessors, function(predecessor) {
-                visibleAncestor = findFirstVisibleAncestor(predecessor);
-                edge = visibleAncestor.id + " -> " + child.id;
-                if (addedFlowEdges.indexOf(edge) == -1) {
-                  digraph += '\n' + edge + '[id="' + edge.replace(' -> ', 't') + '"];';
-                  addedFlowEdges.push(edge);
-                }
-              });
-
               // Add edges to called function-nodes to the queue to be added
 				// to the digraph at the end
               // (adding them at the end, renders the called-function outside
@@ -335,7 +335,7 @@ module.exports = {
                 _.each(child.dependencies, function(dependency) {
                   visibleAncestor = findFirstVisibleAncestor(dependency.cuNode);
                   edge = child.id + ' -> ' + visibleAncestor.id;
-                  edge = '\n' + edge + '[id="' + edge.replace(' -> ', 't') + '", label="' + dependency.variableName + '", taillabel="' + (dependency.isRaW() ? 'R' : 'W') + '", headlabel="' + (dependency.isWaR() ? 'R' : 'W') + '", constraint=false];';
+                  edge = '\n' + edge + '[id="' + edge.replace(' -> ', 't') + '", label="' + dependency.variableName + '", taillabel="' + (dependency.isRaW() ? 'W' : 'R') + '", headlabel="' + (dependency.isWaR() ? 'R' : 'W') + '", constraint=false];';
                   dependencyEdges.push(edge);
                 });
               }
@@ -355,7 +355,7 @@ module.exports = {
               shape = "ellipse";
               break;
             case 3:
-              shape = "diamond";
+              shape = "pentagon";
               break;
           }
           digraph += "\n" + node.id + ' [id=' + node.id + ', shape="' + shape + '", label=' + createLabel(node) + ', style="filled"];';

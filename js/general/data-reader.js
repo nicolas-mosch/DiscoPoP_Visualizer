@@ -287,7 +287,48 @@ module.exports = {
       fileMapping: fileMaps,
       nodeData: fileContents,
       rootNodes: rootNodes,
-	  nodeMap: originalNodeIdMap
+	    nodeMap: originalNodeIdMap
     };
+  },
+
+  buildDepsFromFile: function buildDepsFromFile(filePath) {
+    var fileContents = fs.readFileSync(filePath, "utf-8");
+    var fileLines = fileContents.split('\n');
+    var fileLine;
+    const depRegex = /[ARW]+ [0-9]+:[0-9]+\|\S*/g;
+    const dstLineRegex = /[0-9]+:[0-9]+/;
+    var depMap = {};
+    var deps, dstLine;
+    for(var i in fileLines){
+      fileLine = fileLines[i];
+      if(fileLine.includes("NOM")){
+        dstLine = fileLine.match(dstLineRegex)[0];
+        deps = fileLine.match(depRegex);
+        depMap[dstLine] = deps;
+      }
+    }
+    return depMap;    
+  },
+
+  compareDepFiles: function compareDepFiles(depMap1, depMap2){
+    //depMap1: TM, depMap2: DP
+    var additionalDeps = {};
+    for(var key in depMap1){
+      try{
+        if(key in depMap2){
+          let difference = depMap1[key].filter(x => !depMap2[key].includes(x));
+          if(difference.length){
+            additionalDeps[key] = difference;
+          }
+        }else{
+          additionalDeps[key] = depMap1[key];
+        }
+      }catch(e){
+        console.log("Error in: ", key);
+        console.log("Error in: ", depMap1);
+        throw e;
+      }
+    }
+    return additionalDeps;
   }
 };
