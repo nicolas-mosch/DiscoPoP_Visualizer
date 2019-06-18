@@ -297,17 +297,21 @@ module.exports = {
     var fileLine;
     const depRegex = /[ARW]+ [0-9]+:[0-9]+\|\S*/g;
     const dstLineRegex = /[0-9]+:[0-9]+/;
-    var depMap = {};
+    var depSet = [];
     var deps, dstLine;
     for(var i in fileLines){
       fileLine = fileLines[i];
       if(fileLine.includes("NOM")){
         dstLine = fileLine.match(dstLineRegex)[0];
         deps = fileLine.match(depRegex);
-        depMap[dstLine] = deps;
+        for(var j in deps){
+          if(!depSet.includes(dstLine + " " + deps[j])){
+            depSet.push(dstLine + " " + deps[j]);
+          }
+        }
       }
     }
-    return depMap;    
+    return depSet;    
   },
 
   compareDepFiles: function compareDepFiles(depMap1, depMap2){

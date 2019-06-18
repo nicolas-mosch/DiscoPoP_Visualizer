@@ -188,7 +188,7 @@ function importFiles() {
   });
   mainWindow.loadURL('file://' + __dirname + '/windows/visualizer.html');
 }
-
+var compareDeps = false;
 function compareDepFiles() {
   var deps1, deps2;
   // Import First Dep-File
@@ -204,36 +204,19 @@ function compareDepFiles() {
 
   if (filePaths == null)
     return;
-  deps1 = dataReader.buildDepsFromFile(filePaths[0]);
-
-  var filePaths = dialog.showOpenDialog({
-    title: 'Import Second Dependency File',
-    defaultPath: '.',
-    filters: [{
-      name: 'Text',
-      extensions: ['txt']
-    }],
-    properties: ['openFile']
-  });
-
-  if (filePaths == null)
-    return;
-	
-  deps2 = dataReader.buildDepsFromFile(filePaths[0]);
-  
-  var data = dataReader.compareDepFiles(deps1, deps2);
-
-  if(!data){
-	  mainWindow.webContents.send('alert', 'An error occurred while comparing the deps. Check the console log for more information.');
-	  return;
+  deps = dataReader.buildDepsFromFile(filePaths[0]);
+  var data = {
+    name: filePaths[0],
+    set: deps
   }
-  data = {
-    depMap1: deps1,
-    depMap2: deps2,
-    result: data
-  };
-  mainWindow.webContents.on('did-finish-load', function() {
-    mainWindow.webContents.send('display-results', data);
-  });
-  mainWindow.loadURL('file://' + __dirname + '/windows/compare-deps.html');
+  
+  if(!compareDeps){
+    mainWindow.webContents.on('did-finish-load', function() {
+      mainWindow.webContents.send('add-set', deps);
+    });
+    mainWindow.loadURL('file://' + __dirname + '/windows/compare-deps.html');
+    compareDeps = true;
+  }else{
+    mainWindow.webContents.send('add-set', deps);
+  }
 }
