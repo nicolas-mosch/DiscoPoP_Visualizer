@@ -10,8 +10,7 @@
   "author": "Nicolas Morew",
   "license": "MIT",
   "devDependencies": {
-    "electron-packager": "7.0.3",
-    "electron-prebuilt": "0.36.2"
+    "electron-packager": "7.0.3"
   },
   "dependencies": {
     "ace-builds": "1.2.2",
@@ -20,11 +19,11 @@
     "bootstrap-menu": "1.0.13",
     "colresizable": "1.6.0",
     "d3": "3.5.16",
-    "electron": "^5.0.2",
+    "electron": "5.0.2",
     "handlebars": "4.0.5",
     "jquery": "3.1.0",
     "jquery-ui": "1.12.0",
-    "json-view": "^0.4.0",
+    "json-view": "0.4.0",
     "jstree": "3.3.1",
     "lodash": "4.13.1",
     "nconf": "0.8.4",
